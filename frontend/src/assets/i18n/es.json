@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "routes": "Líneas y horarios",
+    "map": "Mapa",
+    "faq": "Preguntas frecuentes",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "dashboard": "Mi panel",
+    "myBookings": "Mis reservas",
+    "logout": "Cerrar sesión"
+  },
+  "auth": {
+    "email": "Correo electrónico",
+    "emailPlaceholder": "ejemplo@correo.com",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellidos",
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión para gestionar tus reservas",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "signUp": "Regístrate"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "subtitle": "Regístrate para empezar a reservar",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Inicia sesión"
+    },
+    "errors": {
+      "emailRequired": "El email es obligatorio",
+      "emailInvalid": "Introduce un email válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordMin": "Mínimo 8 caracteres",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "firstNameRequired": "El nombre es obligatorio",
+      "lastNameRequired": "Los apellidos son obligatorios"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Transporte interurbano en Jaén",
+      "title": "Tu viaje en autobús, más fácil que nunca",
+      "subtitle": "Consulta rutas y horarios, visualiza tu recorrido en el mapa, reserva tu asiento y recibe tu ticket electrónico. Todo en un mismo lugar.",
+      "ctaPrimary": "Buscar trayectos",
+      "ctaSecondary": "Ver mapa",
+      "mapPreview": "Mapa interactivo de líneas",
+      "statLines": "Líneas disponibles",
+      "statStops": "Paradas",
+      "statInfo": "Información actualizada"
+    },
+    "features": {
+      "title": "Todo lo que necesitas para tu viaje",
+      "subtitle": "Una plataforma completa orientada al viajero interurbano de Jaén",
+      "map": {
+        "title": "Mapa interactivo",
+        "desc": "Visualiza todas las rutas y paradas sobre un mapa. Sigue tu recorrido en tiempo real."
+      },
+      "schedules": {
+        "title": "Horarios y rutas",
+        "desc": "Consulta horarios actualizados, frecuencias y paradas de todas las líneas disponibles."
+      },
+      "booking": {
+        "title": "Reserva online",
+        "desc": "Elige tu trayecto, selecciona tu asiento y confirma tu reserva en pocos pasos."
+      },
+      "alerts": {
+        "title": "Alertas e incidencias",
+        "desc": "Recibe notificaciones por correo electrónico ante cualquier cambio o incidencia en tu servicio."
+      },
+      "ticket": {
+        "title": "Ticket electrónico",
+        "desc": "Genera tu billete digital con código QR. Sin papel, sin colas, sin complicaciones."
+      },
+      "support": {
+        "title": "Atención al viajero",
+        "desc": "Consulta preguntas frecuentes o contacta con nosotros a través del formulario."
+      }
+    },
+    "cta": {
+      "title": "Empieza a viajar de forma más inteligente",
+      "subtitle": "Crea tu cuenta gratis y gestiona todos tus viajes desde un mismo lugar",
+      "button": "Crear cuenta gratis"
+    }
+  },
+  "dashboard": {
+    "welcome": "Hola",
+    "subtitle": "Gestiona tus reservas, consulta rutas y planifica tu próximo viaje",
+    "quickActions": "Acciones rápidas",
+    "actions": {
+      "search": "Buscar trayecto",
+      "map": "Ver mapa",
+      "bookings": "Mis reservas",
+      "contact": "Contacto"
+    },
+    "prototypeBanner": "Entorno de prototipo académico. Los pagos y datos de usuarios son ficticios."
+  }
+}

@@ -1,0 +1,151 @@
+// Angular Material 21 - M3 theme (azul transporte)
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$blue-palette,
+      tertiary: mat.$cyan-palette,
+    ),
+    typography: (
+      brand-family: 'Inter, sans-serif',
+      plain-family: 'Inter, sans-serif',
+    ),
+    density: 0,
+  ));
+}
+
+// ── CSS Custom Properties ───────────────────────────────────────────────────
+:root {
+  --color-primary:        #1565C0;
+  --color-primary-dark:   #0D47A1;
+  --color-primary-light:  #1E88E5;
+  --color-accent:         #0097A7;
+  --color-accent-light:   #00BCD4;
+
+  --color-text-primary:   #1A1A2E;
+  --color-text-secondary: #4A5568;
+  --color-text-muted:     #718096;
+
+  --color-bg:             #F7F9FC;
+  --color-surface:        #FFFFFF;
+  --color-border:         #E2E8F0;
+
+  --color-success:        #2E7D32;
+  --color-warning:        #F57C00;
+  --color-error:          #C62828;
+
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:   0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:   0 10px 15px rgba(0,0,0,.08), 0 4px 6px rgba(0,0,0,.05);
+  --shadow-card: 0 2px 12px rgba(21, 101, 192, .1);
+
+  --radius-sm:  6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --transition: 200ms ease;
+}
+
+// ── Reset & Base ────────────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ── Tipografía ──────────────────────────────────────────────────────────────
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.35rem; }
+
+p {
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition);
+
+  &:hover { color: var(--color-primary-dark); }
+}
+
+// ── Material overrides ──────────────────────────────────────────────────────
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-card {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-card) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  height: 44px;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.mat-mdc-snack-bar-container {
+  border-radius: var(--radius-sm) !important;
+}
+
+// ── Utilidades ──────────────────────────────────────────────────────────────
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.page-padding {
+  padding: 2rem 1.5rem;
+}
+
+.text-center { text-align: center; }
+.text-muted  { color: var(--color-text-muted); font-size: .875rem; }
+
+.flex         { display: flex; }
+.flex-col     { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-1  { gap: .5rem; }
+.gap-2  { gap: 1rem; }
+.gap-3  { gap: 1.5rem; }
+.w-full { width: 100%; }
+
+// ── Scrollbar personalizada ─────────────────────────────────────────────────
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+// ── Animaciones de entrada ──────────────────────────────────────────────────
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.35s ease both;
+}

@@ -1,0 +1,27 @@
+# ── Backend ───────────────────────────────────────────────────────────────────
+backend/target/
+backend/.mvn/
+backend/${project.build.directory}/
+backend/.idea/
+*.class
+*.jar
+*.war
+
+# ── Frontend ──────────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.swp
+.vscode/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Env / secrets ─────────────────────────────────────────────────────────────
+.env
+*.env.local

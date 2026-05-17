@@ -1,0 +1,81 @@
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__content fade-in-up">
+      <span class="hero__badge">🚌 {{ 'home.hero.badge' | translate }}</span>
+      <h1 class="hero__title">{{ 'home.hero.title' | translate }}</h1>
+      <p class="hero__subtitle">{{ 'home.hero.subtitle' | translate }}</p>
+
+      <div class="hero__actions">
+        <a mat-raised-button color="primary" routerLink="/routes" class="hero__cta-primary">
+          <mat-icon>search</mat-icon>
+          {{ 'home.hero.ctaPrimary' | translate }}
+        </a>
+        <a mat-stroked-button routerLink="/map" class="hero__cta-secondary">
+          <mat-icon>map</mat-icon>
+          {{ 'home.hero.ctaSecondary' | translate }}
+        </a>
+      </div>
+
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <span class="hero__stat-number">50+</span>
+          <span class="hero__stat-label">{{ 'home.hero.statLines' | translate }}</span>
+        </div>
+        <div class="hero__stat-divider"></div>
+        <div class="hero__stat">
+          <span class="hero__stat-number">200+</span>
+          <span class="hero__stat-label">{{ 'home.hero.statStops' | translate }}</span>
+        </div>
+        <div class="hero__stat-divider"></div>
+        <div class="hero__stat">
+          <span class="hero__stat-number">24/7</span>
+          <span class="hero__stat-label">{{ 'home.hero.statInfo' | translate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__visual fade-in-up">
+      <div class="hero__map-placeholder">
+        <mat-icon class="hero__map-icon">map</mat-icon>
+        <p>{{ 'home.hero.mapPreview' | translate }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ 'home.features.title' | translate }}</h2>
+      <p>{{ 'home.features.subtitle' | translate }}</p>
+    </div>
+
+    <div class="features__grid">
+      @for (feat of features; track feat.key) {
+        <div class="feature-card fade-in-up">
+          <div class="feature-card__icon">
+            <mat-icon>{{ feat.icon }}</mat-icon>
+          </div>
+          <h3 class="feature-card__title">{{ feat.key + '.title' | translate }}</h3>
+          <p class="feature-card__desc">{{ feat.key + '.desc' | translate }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA REGISTRO -->
+<section class="cta-section">
+  <div class="container cta-section__inner">
+    <div>
+      <h2 class="cta-section__title">{{ 'home.cta.title' | translate }}</h2>
+      <p class="cta-section__subtitle">{{ 'home.cta.subtitle' | translate }}</p>
+    </div>
+    <a mat-raised-button routerLink="/register" class="cta-section__btn">
+      {{ 'home.cta.button' | translate }}
+      <mat-icon>arrow_forward</mat-icon>
+    </a>
+  </div>
+</section>

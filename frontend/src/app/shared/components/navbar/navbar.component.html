@@ -1,0 +1,67 @@
+<mat-toolbar class="navbar">
+  <div class="navbar__inner container">
+
+    <!-- Logo -->
+    <a class="navbar__logo" routerLink="/">
+      <span class="navbar__logo-icon">🚌</span>
+      <span class="navbar__logo-text">BusJaén</span>
+    </a>
+
+    <!-- Nav links (desktop) -->
+    <nav class="navbar__links">
+      <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        {{ 'nav.home' | translate }}
+      </a>
+      <a mat-button routerLink="/routes">
+        {{ 'nav.routes' | translate }}
+      </a>
+      <a mat-button routerLink="/map">
+        {{ 'nav.map' | translate }}
+      </a>
+      <a mat-button routerLink="/faq">
+        {{ 'nav.faq' | translate }}
+      </a>
+    </nav>
+
+    <div class="navbar__spacer"></div>
+
+    <!-- Language switcher -->
+    <button mat-icon-button [matMenuTriggerFor]="langMenu" class="navbar__lang-btn" title="Idioma">
+      <span class="lang-flag">{{ currentLang === 'es' ? '🇪🇸' : '🇬🇧' }}</span>
+    </button>
+    <mat-menu #langMenu="matMenu">
+      <button mat-menu-item (click)="switchLang('es')">🇪🇸 Español</button>
+      <button mat-menu-item (click)="switchLang('en')">🇬🇧 English</button>
+    </mat-menu>
+
+    <!-- Auth actions -->
+    @if (auth.isLoggedIn()) {
+      <button mat-button [matMenuTriggerFor]="userMenu" class="navbar__user-btn">
+        <mat-icon>account_circle</mat-icon>
+        <span class="navbar__user-name">{{ auth.userName() }}</span>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/dashboard">
+          <mat-icon>dashboard</mat-icon>
+          {{ 'nav.dashboard' | translate }}
+        </button>
+        <button mat-menu-item routerLink="/my-bookings">
+          <mat-icon>confirmation_number</mat-icon>
+          {{ 'nav.myBookings' | translate }}
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="auth.logout()">
+          <mat-icon>logout</mat-icon>
+          {{ 'nav.logout' | translate }}
+        </button>
+      </mat-menu>
+    } @else {
+      <a mat-button routerLink="/login" class="navbar__login-btn">
+        {{ 'nav.login' | translate }}
+      </a>
+      <a mat-raised-button color="primary" routerLink="/register" class="navbar__register-btn">
+        {{ 'nav.register' | translate }}
+      </a>
+    }
+  </div>
+</mat-toolbar>

@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "home": "Home",
+    "routes": "Lines & schedules",
+    "map": "Map",
+    "faq": "FAQ",
+    "login": "Log in",
+    "register": "Sign up",
+    "dashboard": "My dashboard",
+    "myBookings": "My bookings",
+    "logout": "Log out"
+  },
+  "auth": {
+    "email": "Email address",
+    "emailPlaceholder": "example@email.com",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Log in to manage your bookings",
+      "submit": "Log in",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "Sign up to start booking",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Log in"
+    },
+    "errors": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Minimum 8 characters",
+      "passwordMismatch": "Passwords do not match",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Interurban transport in Jaén",
+      "title": "Your bus journey, easier than ever",
+      "subtitle": "Check routes and schedules, view your journey on the map, book your seat and get your e-ticket. All in one place.",
+      "ctaPrimary": "Search journeys",
+      "ctaSecondary": "View map",
+      "mapPreview": "Interactive lines map",
+      "statLines": "Available lines",
+      "statStops": "Stops",
+      "statInfo": "Live information"
+    },
+    "features": {
+      "title": "Everything you need for your trip",
+      "subtitle": "A complete platform for interurban travellers in Jaén",
+      "map": {
+        "title": "Interactive map",
+        "desc": "View all routes and stops on a map. Track your journey in real time."
+      },
+      "schedules": {
+        "title": "Schedules & routes",
+        "desc": "Check updated timetables, frequencies and stops for all available lines."
+      },
+      "booking": {
+        "title": "Online booking",
+        "desc": "Choose your journey, select your seat and confirm your booking in a few steps."
+      },
+      "alerts": {
+        "title": "Alerts & incidents",
+        "desc": "Receive email notifications for any changes or incidents on your service."
+      },
+      "ticket": {
+        "title": "E-ticket",
+        "desc": "Get your digital ticket with QR code. No paper, no queues, no hassle."
+      },
+      "support": {
+        "title": "Traveller support",
+        "desc": "Browse FAQs or contact us through the contact form."
+      }
+    },
+    "cta": {
+      "title": "Start travelling smarter",
+      "subtitle": "Create your free account and manage all your trips in one place",
+      "button": "Create free account"
+    }
+  },
+  "dashboard": {
+    "welcome": "Hello",
+    "subtitle": "Manage your bookings, check routes and plan your next journey",
+    "quickActions": "Quick actions",
+    "actions": {
+      "search": "Search journey",
+      "map": "View map",
+      "bookings": "My bookings",
+      "contact": "Contact"
+    },
+    "prototypeBanner": "Academic prototype environment. Payments and user data are fictional."
+  }
+}

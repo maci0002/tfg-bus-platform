@@ -1,0 +1,95 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, .06);
+  height: 64px !important;
+  padding: 0 !important;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: .5rem;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    text-decoration: none;
+    margin-right: 1rem;
+
+    &-icon { font-size: 1.5rem; }
+
+    &-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: -.3px;
+    }
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+
+    a {
+      color: var(--color-text-secondary) !important;
+      font-weight: 500;
+      font-size: .9rem;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+
+      &:hover,
+      &.active {
+        color: var(--color-primary) !important;
+        background: rgba(21, 101, 192, .06) !important;
+      }
+    }
+  }
+
+  &__spacer { flex: 1; }
+
+  &__lang-btn {
+    color: var(--color-text-secondary) !important;
+    .lang-flag { font-size: 1.1rem; }
+  }
+
+  &__user-btn {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--color-text-primary) !important;
+    font-weight: 500;
+  }
+
+  &__user-name {
+    font-size: .875rem;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__login-btn {
+    color: var(--color-primary) !important;
+    font-weight: 500;
+  }
+
+  &__register-btn {
+    margin-left: .25rem;
+    border-radius: var(--radius-sm) !important;
+    font-weight: 600 !important;
+    padding: 0 1.25rem !important;
+  }
+}
+
+// Ocultar links en móvil
+@media (max-width: 768px) {
+  .navbar__links { display: none; }
+  .navbar__user-name { display: none; }
+}

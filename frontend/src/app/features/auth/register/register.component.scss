@@ -1,0 +1,87 @@
+// Reutiliza los estilos base de login, añade lo específico del register
+.auth-page {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 50%, #F7F9FC 100%);
+}
+
+.auth-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 480px;
+
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  &__logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: .4rem;
+  }
+
+  &__subtitle {
+    font-size: .9rem;
+    color: var(--color-text-muted);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__submit {
+    width: 100%;
+    height: 48px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-sm) !important;
+    margin-top: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+  }
+
+  &__footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: .875rem;
+    color: var(--color-text-muted);
+
+    a {
+      color: var(--color-primary);
+      font-weight: 600;
+      margin-left: .25rem;
+    }
+  }
+}

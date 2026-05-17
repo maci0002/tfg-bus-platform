@@ -1,0 +1,36 @@
+<div class="dashboard page-padding">
+  <div class="container">
+
+    <!-- Bienvenida -->
+    <div class="dashboard__header fade-in-up">
+      <div>
+        <h1 class="dashboard__title">
+          {{ 'dashboard.welcome' | translate }}, {{ auth.currentUser()?.firstName }}!
+        </h1>
+        <p class="dashboard__subtitle">{{ 'dashboard.subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="dashboard__section fade-in-up">
+      <h2 class="dashboard__section-title">{{ 'dashboard.quickActions' | translate }}</h2>
+      <div class="dashboard__actions-grid">
+        @for (action of quickActions; track action.route) {
+          <a [routerLink]="action.route" class="action-card">
+            <div class="action-card__icon">
+              <mat-icon>{{ action.icon }}</mat-icon>
+            </div>
+            <span class="action-card__label">{{ action.key | translate }}</span>
+          </a>
+        }
+      </div>
+    </div>
+
+    <!-- Info prototipo -->
+    <div class="dashboard__info-banner fade-in-up">
+      <mat-icon>info</mat-icon>
+      <span>{{ 'dashboard.prototypeBanner' | translate }}</span>
+    </div>
+
+  </div>
+</div>

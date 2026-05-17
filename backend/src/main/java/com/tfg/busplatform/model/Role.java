@@ -1,0 +1,6 @@
+package com.tfg.busplatform.model;
+
+public enum Role {
+    ROLE_USER,
+    ROLE_ADMIN
+}

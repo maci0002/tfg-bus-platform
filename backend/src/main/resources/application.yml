@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: bus-platform
+  profiles:
+    active: dev
+
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+app:
+  jwt:
+    secret: 8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb
+    expiration-ms: 86400000
+  cors:
+    allowed-origins: http://localhost:4200
