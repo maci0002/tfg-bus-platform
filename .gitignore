@@ -28,3 +28,5 @@ Thumbs.db
 
 # ── Documentación interna (queda fuera del repo) ──────────────────────────────
 docs/
+
+.claude/
