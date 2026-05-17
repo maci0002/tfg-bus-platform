@@ -1,9 +1,8 @@
 {
   "nav": {
     "home": "Inicio",
-    "routes": "Líneas y horarios",
+    "lines": "Líneas",
     "map": "Mapa",
-    "faq": "Preguntas frecuentes",
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "dashboard": "Mi panel",
@@ -45,40 +44,43 @@
     "hero": {
       "badge": "Transporte interurbano en Jaén",
       "title": "Tu viaje en autobús, más fácil que nunca",
-      "subtitle": "Consulta rutas y horarios, visualiza tu recorrido en el mapa, reserva tu asiento y recibe tu ticket electrónico. Todo en un mismo lugar.",
-      "ctaPrimary": "Buscar trayectos",
-      "ctaSecondary": "Ver mapa",
-      "mapPreview": "Mapa interactivo de líneas",
+      "subtitle": "Consulta rutas y horarios, visualiza tu recorrido en el mapa y planifica tu próximo viaje en pocos clics.",
       "statLines": "Líneas disponibles",
       "statStops": "Paradas",
       "statInfo": "Información actualizada"
+    },
+    "quick": {
+      "linesTitle": "Explorar líneas",
+      "linesDesc": "Consulta todas las rutas disponibles y sus horarios",
+      "mapTitle": "Ver mapa",
+      "mapDesc": "Visualiza las paradas y recorridos sobre el mapa"
     },
     "features": {
       "title": "Todo lo que necesitas para tu viaje",
       "subtitle": "Una plataforma completa orientada al viajero interurbano de Jaén",
       "map": {
         "title": "Mapa interactivo",
-        "desc": "Visualiza todas las rutas y paradas sobre un mapa. Sigue tu recorrido en tiempo real."
+        "desc": "Visualiza todas las rutas y paradas sobre un mapa."
       },
       "schedules": {
         "title": "Horarios y rutas",
-        "desc": "Consulta horarios actualizados, frecuencias y paradas de todas las líneas disponibles."
+        "desc": "Consulta horarios y paradas de todas las líneas disponibles."
       },
       "booking": {
         "title": "Reserva online",
-        "desc": "Elige tu trayecto, selecciona tu asiento y confirma tu reserva en pocos pasos."
+        "desc": "Elige tu trayecto, selecciona tu asiento y confirma tu reserva."
       },
       "alerts": {
         "title": "Alertas e incidencias",
-        "desc": "Recibe notificaciones por correo electrónico ante cualquier cambio o incidencia en tu servicio."
+        "desc": "Recibe notificaciones ante cualquier cambio en tu servicio."
       },
       "ticket": {
         "title": "Ticket electrónico",
-        "desc": "Genera tu billete digital con código QR. Sin papel, sin colas, sin complicaciones."
+        "desc": "Genera tu billete digital con código QR. Sin papel, sin colas."
       },
       "support": {
         "title": "Atención al viajero",
-        "desc": "Consulta preguntas frecuentes o contacta con nosotros a través del formulario."
+        "desc": "Consulta preguntas frecuentes o contacta con nosotros."
       }
     },
     "cta": {
@@ -86,6 +88,42 @@
       "subtitle": "Crea tu cuenta gratis y gestiona todos tus viajes desde un mismo lugar",
       "button": "Crear cuenta gratis"
     }
+  },
+  "planner": {
+    "title": "Planifica tu viaje",
+    "subtitle": "Introduce origen y destino y consulta las opciones disponibles",
+    "origin": "Origen",
+    "originPlaceholder": "Ej. Jaén",
+    "destination": "Destino",
+    "destinationPlaceholder": "Ej. Úbeda",
+    "date": "Fecha",
+    "time": "Hora",
+    "search": "Buscar",
+    "swap": "Intercambiar origen y destino",
+    "noResults": "No se han encontrado trayectos para esa búsqueda.",
+    "resultsFound": "resultados encontrados",
+    "stops": "paradas",
+    "viewLine": "Ver línea"
+  },
+  "lines": {
+    "title": "Líneas disponibles",
+    "subtitle": "Consulta todas las rutas interurbanas del entorno de Jaén",
+    "empty": "Aún no hay líneas disponibles.",
+    "stops": "paradas"
+  },
+  "lineDetail": {
+    "back": "Volver a líneas",
+    "notFound": "Línea no encontrada.",
+    "stops": "paradas",
+    "routeMap": "Recorrido",
+    "stopsTitle": "Paradas",
+    "departures": "Salidas"
+  },
+  "map": {
+    "title": "Mapa de líneas",
+    "subtitle": "Selecciona una línea para ver su recorrido",
+    "lines": "Líneas",
+    "allLines": "Todas las paradas"
   },
   "dashboard": {
     "welcome": "Hola",

@@ -1,0 +1,118 @@
+<div class="planner">
+
+  <!-- Formulario de búsqueda -->
+  <form [formGroup]="form" (ngSubmit)="search()" class="planner__form">
+    <div class="planner__fields">
+
+      <mat-form-field appearance="outline" class="planner__field">
+        <mat-label>{{ 'planner.origin' | translate }}</mat-label>
+        <mat-icon matPrefix>trip_origin</mat-icon>
+        <input matInput type="text" formControlName="origin"
+               [matAutocomplete]="autoOrigin"
+               [placeholder]="'planner.originPlaceholder' | translate">
+        <mat-autocomplete #autoOrigin="matAutocomplete">
+          @for (s of filteredOrigin | async; track s.id) {
+            <mat-option [value]="s.name">{{ s.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <button type="button" mat-mini-fab class="planner__swap" (click)="swap()"
+              [attr.aria-label]="'planner.swap' | translate">
+        <mat-icon>swap_horiz</mat-icon>
+      </button>
+
+      <mat-form-field appearance="outline" class="planner__field">
+        <mat-label>{{ 'planner.destination' | translate }}</mat-label>
+        <mat-icon matPrefix>place</mat-icon>
+        <input matInput type="text" formControlName="destination"
+               [matAutocomplete]="autoDest"
+               [placeholder]="'planner.destinationPlaceholder' | translate">
+        <mat-autocomplete #autoDest="matAutocomplete">
+          @for (s of filteredDestination | async; track s.id) {
+            <mat-option [value]="s.name">{{ s.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="planner__field planner__field--small">
+        <mat-label>{{ 'planner.date' | translate }}</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="planner__field planner__field--small">
+        <mat-label>{{ 'planner.time' | translate }}</mat-label>
+        <input matInput type="time" formControlName="time">
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit"
+              class="planner__submit" [disabled]="form.invalid || loading()">
+        <mat-icon>search</mat-icon>
+        {{ 'planner.search' | translate }}
+      </button>
+    </div>
+  </form>
+
+  <!-- Resultados -->
+  @if (loading()) {
+    <div class="planner__loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (searched() && !error()) {
+    @if (results().length === 0) {
+      <div class="planner__empty">
+        <mat-icon>info</mat-icon>
+        <p>{{ 'planner.noResults' | translate }}</p>
+      </div>
+    } @else {
+      <div class="planner__results">
+        <h3 class="planner__results-title">
+          {{ results().length }} {{ 'planner.resultsFound' | translate }}
+        </h3>
+        @for (trip of results(); track trip.lineId + trip.departureTime) {
+          <article class="trip-card" [style.--line-color]="trip.lineColor">
+            <header class="trip-card__header">
+              <span class="trip-card__badge" [style.background]="trip.lineColor">
+                {{ trip.lineCode }}
+              </span>
+              <span class="trip-card__line">{{ trip.lineName }}</span>
+            </header>
+
+            <div class="trip-card__body">
+              <div class="trip-card__time">
+                <span class="trip-card__hour">{{ trip.departureTime }}</span>
+                <span class="trip-card__stop">{{ trip.originStop }}</span>
+              </div>
+              <div class="trip-card__arrow">
+                <mat-icon>arrow_forward</mat-icon>
+                <span class="trip-card__duration">{{ formatMinutes(trip.durationMinutes) }}</span>
+              </div>
+              <div class="trip-card__time trip-card__time--right">
+                <span class="trip-card__hour">{{ trip.arrivalTime }}</span>
+                <span class="trip-card__stop">{{ trip.destinationStop }}</span>
+              </div>
+            </div>
+
+            <footer class="trip-card__footer">
+              <span class="trip-card__stops-count">
+                <mat-icon>directions_bus</mat-icon>
+                {{ trip.stops.length }} {{ 'planner.stops' | translate }}
+              </span>
+              <a mat-button color="primary" [routerLink]="['/lines', trip.lineId]">
+                {{ 'planner.viewLine' | translate }}
+                <mat-icon iconPositionEnd>chevron_right</mat-icon>
+              </a>
+            </footer>
+          </article>
+        }
+      </div>
+    }
+  } @else if (error()) {
+    <div class="planner__error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  }
+</div>

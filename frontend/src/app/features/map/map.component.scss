@@ -1,0 +1,191 @@
+.map-page {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: calc(100vh - 64px);
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
+  }
+
+  &__sidebar {
+    background: var(--color-surface, #fff);
+    border-right: 1px solid var(--color-border, #E2E8F0);
+    padding: 1.5rem;
+    overflow-y: auto;
+    z-index: 1;
+
+    @media (max-width: 800px) {
+      border-right: none;
+      border-bottom: 1px solid var(--color-border, #E2E8F0);
+      max-height: 280px;
+    }
+  }
+
+  &__header {
+    margin-bottom: 1.25rem;
+
+    h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--color-text-primary, #1A1A2E);
+      margin: 0 0 .25rem;
+    }
+
+    p {
+      color: var(--color-text-muted, #718096);
+      font-size: .85rem;
+      margin: 0;
+    }
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+
+  &__filters {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+
+    h3 {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--color-text-secondary, #4A5568);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin: 0 0 .35rem;
+    }
+  }
+
+  &__map {
+    height: 100%;
+    min-height: 400px;
+    z-index: 0;
+    background: #F1F5F9;
+
+    @media (max-width: 800px) { min-height: 60vh; }
+  }
+}
+
+.line-chip {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .55rem .75rem;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--color-bg, #F7F9FC);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+
+  &:hover {
+    background: #fff;
+    border-color: var(--color-border, #E2E8F0);
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  }
+
+  &--active {
+    background: #fff;
+    border-color: var(--line-color, var(--color-primary, #1565C0));
+    box-shadow: 0 0 0 2px rgba(21, 101, 192, .12);
+  }
+
+  &--all {
+    color: var(--color-primary, #1565C0);
+    font-weight: 600;
+    margin-bottom: .35rem;
+    background: rgba(21, 101, 192, .04);
+
+    &:hover { background: rgba(21, 101, 192, .08); }
+
+    mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
+  }
+
+  &__badge {
+    color: #fff;
+    font-weight: 700;
+    font-size: .7rem;
+    padding: .15rem .45rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  &__text {
+    font-size: .85rem;
+    color: var(--color-text-primary, #1A1A2E);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// ── Estilos de Leaflet personalizados ──────────────────────────────────────
+:host ::ng-deep {
+  // Tooltip de paradas más limpio
+  .leaflet-tooltip {
+    background: rgba(26, 26, 46, .92);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: .35rem .6rem;
+    font-size: .8rem;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    backdrop-filter: blur(4px);
+
+    &::before { display: none; }
+  }
+
+  // Etiqueta de código de línea sobre el recorrido
+  .map-line-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: none !important;
+
+    span {
+      color: #fff;
+      font-weight: 700;
+      font-size: .7rem;
+      padding: .25rem .55rem;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+      letter-spacing: .3px;
+    }
+  }
+
+  // Controles de zoom más sutiles
+  .leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08) !important;
+    border-radius: 6px !important;
+    overflow: hidden;
+
+    a {
+      background: #fff !important;
+      color: var(--color-text-secondary, #4A5568) !important;
+      border-bottom: 1px solid var(--color-border, #E2E8F0) !important;
+
+      &:hover {
+        background: var(--color-bg, #F7F9FC) !important;
+        color: var(--color-primary, #1565C0) !important;
+      }
+    }
+  }
+
+  .leaflet-control-attribution {
+    background: rgba(255,255,255,.85) !important;
+    backdrop-filter: blur(4px);
+    font-size: .7rem !important;
+    border-radius: 4px 0 0 0;
+  }
+}

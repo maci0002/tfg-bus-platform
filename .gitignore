@@ -25,3 +25,6 @@ Thumbs.db
 # ── Env / secrets ─────────────────────────────────────────────────────────────
 .env
 *.env.local
+
+# ── Documentación interna (queda fuera del repo) ──────────────────────────────
+docs/

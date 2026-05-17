@@ -1,0 +1,51 @@
+<div class="lines-page page-padding">
+  <div class="container">
+
+    <header class="lines-page__header">
+      <h1>{{ 'lines.title' | translate }}</h1>
+      <p>{{ 'lines.subtitle' | translate }}</p>
+    </header>
+
+    @if (loading()) {
+      <div class="lines-page__loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (lines().length === 0) {
+      <div class="lines-page__empty">
+        <mat-icon>info</mat-icon>
+        <p>{{ 'lines.empty' | translate }}</p>
+      </div>
+    } @else {
+      <div class="lines-grid">
+        @for (line of lines(); track line.id) {
+          <a class="line-card" [routerLink]="['/lines', line.id]"
+             [style.--line-color]="line.color">
+            <div class="line-card__header">
+              <span class="line-card__badge" [style.background]="line.color">
+                {{ line.code }}
+              </span>
+              <span class="line-card__name">{{ line.name }}</span>
+            </div>
+
+            <div class="line-card__route">
+              <div class="line-card__stop">
+                <mat-icon>trip_origin</mat-icon>
+                <span>{{ line.originName }}</span>
+              </div>
+              <div class="line-card__connector"></div>
+              <div class="line-card__stop">
+                <mat-icon>place</mat-icon>
+                <span>{{ line.destinationName }}</span>
+              </div>
+            </div>
+
+            <div class="line-card__meta">
+              <span><mat-icon>directions_bus</mat-icon> {{ line.totalStops }} {{ 'lines.stops' | translate }}</span>
+              <span><mat-icon>schedule</mat-icon> {{ formatDuration(line.durationMinutes) }}</span>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>

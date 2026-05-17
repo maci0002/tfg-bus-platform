@@ -1,0 +1,71 @@
+<div class="detail-page page-padding">
+  <div class="container">
+
+    <a routerLink="/lines" class="detail-page__back">
+      <mat-icon>arrow_back</mat-icon> {{ 'lineDetail.back' | translate }}
+    </a>
+
+    @if (loading()) {
+      <div class="detail-page__loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (error() || !line()) {
+      <div class="detail-page__empty">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ 'lineDetail.notFound' | translate }}</p>
+      </div>
+    } @else {
+      <header class="detail-page__header" [style.--line-color]="line()!.color">
+        <span class="detail-page__badge" [style.background]="line()!.color">
+          {{ line()!.code }}
+        </span>
+        <div>
+          <h1>{{ line()!.name }}</h1>
+          <p class="detail-page__route">
+            {{ line()!.originName }} <mat-icon>arrow_forward</mat-icon> {{ line()!.destinationName }}
+          </p>
+        </div>
+        <div class="detail-page__meta">
+          <span><mat-icon>schedule</mat-icon> {{ formatDuration(line()!.durationMinutes) }}</span>
+          <span><mat-icon>directions_bus</mat-icon> {{ line()!.stops.length }} {{ 'lineDetail.stops' | translate }}</span>
+        </div>
+      </header>
+
+      <div class="detail-page__grid">
+
+        <!-- Mapa -->
+        <section class="detail-card detail-card--map">
+          <h2><mat-icon>map</mat-icon> {{ 'lineDetail.routeMap' | translate }}</h2>
+          <div #mapEl class="detail-page__map"></div>
+        </section>
+
+        <!-- Paradas -->
+        <section class="detail-card">
+          <h2><mat-icon>location_on</mat-icon> {{ 'lineDetail.stopsTitle' | translate }}</h2>
+          <ol class="stop-list">
+            @for (stop of line()!.stops; track stop.stopId) {
+              <li class="stop-list__item" [style.--line-color]="line()!.color">
+                <div class="stop-list__dot"></div>
+                <div class="stop-list__content">
+                  <span class="stop-list__name">{{ stop.name }}</span>
+                  <span class="stop-list__time">+{{ stop.minutesFromStart }} min</span>
+                </div>
+              </li>
+            }
+          </ol>
+        </section>
+
+        <!-- Horarios -->
+        <section class="detail-card">
+          <h2><mat-icon>schedule</mat-icon> {{ 'lineDetail.departures' | translate }}</h2>
+          <div class="departure-grid">
+            @for (time of line()!.departureTimes; track time) {
+              <span class="departure-grid__chip">{{ time }}</span>
+            }
+          </div>
+        </section>
+
+      </div>
+    }
+  </div>
+</div>

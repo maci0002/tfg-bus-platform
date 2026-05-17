@@ -1,0 +1,119 @@
+.lines-page {
+  &__header {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--color-text-primary, #1A1A2E);
+      margin-bottom: .35rem;
+    }
+
+    p {
+      color: var(--color-text-muted, #718096);
+      font-size: .95rem;
+    }
+  }
+
+  &__loading,
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 1rem;
+    color: var(--color-text-muted, #718096);
+  }
+}
+
+.lines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.25rem;
+}
+
+.line-card {
+  display: block;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #E2E8F0);
+  border-left: 5px solid var(--line-color, var(--color-primary, #1565C0));
+  border-radius: var(--radius-md, 12px);
+  padding: 1.4rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 200ms ease, transform 200ms ease;
+
+  &:hover {
+    box-shadow: var(--shadow-card, 0 2px 12px rgba(21,101,192,.1));
+    transform: translateY(-2px);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    margin-bottom: 1.1rem;
+  }
+
+  &__badge {
+    color: #fff;
+    font-weight: 700;
+    font-size: .85rem;
+    padding: .25rem .65rem;
+    border-radius: 4px;
+    letter-spacing: .3px;
+  }
+
+  &__name {
+    font-weight: 600;
+    color: var(--color-text-primary, #1A1A2E);
+    font-size: 1rem;
+  }
+
+  &__route {
+    margin-bottom: 1.1rem;
+  }
+
+  &__stop {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .9rem;
+    color: var(--color-text-secondary, #4A5568);
+    padding: .2rem 0;
+
+    mat-icon {
+      font-size: 1.1rem;
+      width: 1.1rem;
+      height: 1.1rem;
+      color: var(--line-color);
+    }
+  }
+
+  &__connector {
+    margin-left: .55rem;
+    height: 14px;
+    border-left: 2px dotted var(--line-color);
+    opacity: .5;
+  }
+
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    padding-top: .85rem;
+    border-top: 1px solid var(--color-border, #E2E8F0);
+    font-size: .8rem;
+    color: var(--color-text-muted, #718096);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+}

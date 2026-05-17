@@ -1,0 +1,40 @@
+<div class="map-page">
+
+  <aside class="map-page__sidebar">
+    <header class="map-page__header">
+      <h1>{{ 'map.title' | translate }}</h1>
+      <p>{{ 'map.subtitle' | translate }}</p>
+    </header>
+
+    @if (loading()) {
+      <div class="map-page__loading">
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+    } @else {
+      <div class="map-page__filters">
+        <h3>{{ 'map.lines' | translate }}</h3>
+
+        <button class="line-chip line-chip--all"
+                [class.line-chip--active]="selectedLineId() === null"
+                (click)="selectLine(null)">
+          <mat-icon>public</mat-icon>
+          {{ 'map.allLines' | translate }}
+        </button>
+
+        @for (line of lines(); track line.id) {
+          <button class="line-chip"
+                  [class.line-chip--active]="selectedLineId() === line.id"
+                  [style.--line-color]="line.color"
+                  (click)="selectLine(line)">
+            <span class="line-chip__badge" [style.background]="line.color">
+              {{ line.code }}
+            </span>
+            <span class="line-chip__text">{{ line.name }}</span>
+          </button>
+        }
+      </div>
+    }
+  </aside>
+
+  <div #mapEl class="map-page__map"></div>
+</div>

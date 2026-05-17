@@ -2,12 +2,12 @@
 .hero {
   background: linear-gradient(135deg, #0D47A1 0%, #1565C0 40%, #0097A7 100%);
   color: #fff;
-  padding: 5rem 0 4rem;
+  padding: 4rem 0 3rem;
   overflow: hidden;
 
   &__inner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 3rem;
     align-items: center;
 
@@ -142,6 +142,86 @@
     width: 4rem !important;
     height: 4rem !important;
     opacity: .6;
+  }
+}
+
+// ── Planificador ────────────────────────────────────────────────────────────
+.planner-section {
+  padding: 3rem 0;
+  background: var(--color-bg, #F7F9FC);
+
+  &__header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text-primary, #1A1A2E);
+      margin-bottom: .35rem;
+    }
+
+    p {
+      color: var(--color-text-muted, #718096);
+      font-size: .95rem;
+    }
+  }
+}
+
+// ── Accesos rápidos ─────────────────────────────────────────────────────────
+.quick-access {
+  padding: 2rem 0 3rem;
+
+  &__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 700px) { grid-template-columns: 1fr; }
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border, #E2E8F0);
+    border-radius: var(--radius-md, 12px);
+    padding: 1.25rem 1.5rem;
+    text-decoration: none;
+    transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
+
+    &:hover {
+      box-shadow: var(--shadow-card, 0 2px 12px rgba(21,101,192,.1));
+      transform: translateY(-2px);
+      border-color: rgba(21, 101, 192, .3);
+    }
+
+    > mat-icon:first-child {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+      color: var(--color-primary, #1565C0);
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary, #1A1A2E);
+      margin: 0 0 .2rem;
+    }
+
+    p {
+      font-size: .85rem;
+      color: var(--color-text-muted, #718096);
+      margin: 0;
+    }
+  }
+
+  &__arrow {
+    margin-left: auto;
+    color: var(--color-text-muted, #718096);
   }
 }
 

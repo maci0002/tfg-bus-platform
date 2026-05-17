@@ -7,6 +7,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
   },
   {
+    path: 'lines',
+    loadComponent: () => import('./features/lines/lines.component').then(m => m.LinesComponent),
+  },
+  {
+    path: 'lines/:id',
+    loadComponent: () => import('./features/lines/line-detail/line-detail.component').then(m => m.LineDetailComponent),
+  },
+  {
+    path: 'map',
+    loadComponent: () => import('./features/map/map.component').then(m => m.MapComponent),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent),
   },

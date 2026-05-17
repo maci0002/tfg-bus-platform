@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TripPlannerComponent } from '../planner/trip-planner.component';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatIconModule,
     MatCardModule,
     TranslateModule,
+    TripPlannerComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',

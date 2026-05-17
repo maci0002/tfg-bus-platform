@@ -6,25 +6,14 @@
       <h1 class="hero__title">{{ 'home.hero.title' | translate }}</h1>
       <p class="hero__subtitle">{{ 'home.hero.subtitle' | translate }}</p>
 
-      <div class="hero__actions">
-        <a mat-raised-button color="primary" routerLink="/routes" class="hero__cta-primary">
-          <mat-icon>search</mat-icon>
-          {{ 'home.hero.ctaPrimary' | translate }}
-        </a>
-        <a mat-stroked-button routerLink="/map" class="hero__cta-secondary">
-          <mat-icon>map</mat-icon>
-          {{ 'home.hero.ctaSecondary' | translate }}
-        </a>
-      </div>
-
       <div class="hero__stats">
         <div class="hero__stat">
-          <span class="hero__stat-number">50+</span>
+          <span class="hero__stat-number">7</span>
           <span class="hero__stat-label">{{ 'home.hero.statLines' | translate }}</span>
         </div>
         <div class="hero__stat-divider"></div>
         <div class="hero__stat">
-          <span class="hero__stat-number">200+</span>
+          <span class="hero__stat-number">16</span>
           <span class="hero__stat-label">{{ 'home.hero.statStops' | translate }}</span>
         </div>
         <div class="hero__stat-divider"></div>
@@ -34,13 +23,39 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="hero__visual fade-in-up">
-      <div class="hero__map-placeholder">
-        <mat-icon class="hero__map-icon">map</mat-icon>
-        <p>{{ 'home.hero.mapPreview' | translate }}</p>
-      </div>
+<!-- PLANIFICADOR -->
+<section class="planner-section">
+  <div class="container">
+    <div class="planner-section__header">
+      <h2>{{ 'planner.title' | translate }}</h2>
+      <p>{{ 'planner.subtitle' | translate }}</p>
     </div>
+    <app-trip-planner></app-trip-planner>
+  </div>
+</section>
+
+<!-- ACCESOS RÁPIDOS -->
+<section class="quick-access">
+  <div class="container quick-access__inner">
+    <a routerLink="/lines" class="quick-access__card">
+      <mat-icon>directions_bus</mat-icon>
+      <div>
+        <h3>{{ 'home.quick.linesTitle' | translate }}</h3>
+        <p>{{ 'home.quick.linesDesc' | translate }}</p>
+      </div>
+      <mat-icon class="quick-access__arrow">chevron_right</mat-icon>
+    </a>
+    <a routerLink="/map" class="quick-access__card">
+      <mat-icon>map</mat-icon>
+      <div>
+        <h3>{{ 'home.quick.mapTitle' | translate }}</h3>
+        <p>{{ 'home.quick.mapDesc' | translate }}</p>
+      </div>
+      <mat-icon class="quick-access__arrow">chevron_right</mat-icon>
+    </a>
   </div>
 </section>
 
