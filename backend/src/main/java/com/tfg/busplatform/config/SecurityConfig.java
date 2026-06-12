@@ -1,5 +1,6 @@
 package com.tfg.busplatform.config;
 
+import com.tfg.busplatform.security.JsonAuthenticationEntryPoint;
 import com.tfg.busplatform.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final JsonAuthenticationEntryPoint authenticationEntryPoint;
 
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigin;
@@ -43,11 +45,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/transport/**").permitAll()
+                        // Mapa de asientos público (para previsualizar antes de logarse)
+                        .requestMatchers(HttpMethod.GET, "/bookings/seats").permitAll()
+                        // Resto de operaciones de reserva: requieren autenticación
+                        .requestMatchers("/bookings/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

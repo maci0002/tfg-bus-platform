@@ -21,7 +21,8 @@
       "subtitle": "Inicia sesión para gestionar tus reservas",
       "submit": "Iniciar sesión",
       "noAccount": "¿No tienes cuenta?",
-      "signUp": "Regístrate"
+      "signUp": "Regístrate",
+      "sessionExpired": "Tu sesión ha caducado. Vuelve a iniciar sesión."
     },
     "register": {
       "title": "Crear cuenta",
@@ -103,7 +104,61 @@
     "noResults": "No se han encontrado trayectos para esa búsqueda.",
     "resultsFound": "resultados encontrados",
     "stops": "paradas",
-    "viewLine": "Ver línea"
+    "viewLine": "Ver línea",
+    "reserve": "Reservar"
+  },
+  "booking": {
+    "back": "Volver",
+    "notFound": "No se pudo cargar el viaje.",
+    "selectSeat": "Elige tu asiento",
+    "driver": "Conductor",
+    "summary": "Resumen",
+    "seat": "Asiento",
+    "noSeat": "Aún no seleccionado",
+    "available": "Disponibles",
+    "totalPrice": "Precio total",
+    "continue": "Continuar",
+    "prototypeNote": "Este es un prototipo académico — los datos son ficticios.",
+    "legend": {
+      "free": "Libre",
+      "selected": "Seleccionado",
+      "occupied": "Ocupado"
+    },
+    "changeSeat": "Cambiar asiento",
+    "confirmTitle": "Confirma tu reserva",
+    "confirmSubtitle": "Revisa los detalles antes de confirmar",
+    "passenger": "Pasajero",
+    "notLogged": "Inicia sesión para confirmar",
+    "loginRequired": "Necesitas iniciar sesión para completar la reserva",
+    "confirmReservation": "Confirmar reserva",
+    "pendingPaymentInfo": "La reserva quedará en estado 'Pendiente de pago'. El pago y la emisión del ticket electrónico se implementarán en la siguiente iteración.",
+    "status": {
+      "pendingPayment": "Pendiente de pago",
+      "confirmed": "Confirmada",
+      "cancelled": "Cancelada"
+    }
+  },
+  "myBookings": {
+    "title": "Mis reservas",
+    "subtitle": "Consulta y gestiona todas tus reservas",
+    "newBooking": "Nueva reserva",
+    "empty": {
+      "title": "Aún no tienes reservas",
+      "subtitle": "Busca un trayecto y haz tu primera reserva",
+      "action": "Buscar trayecto"
+    }
+  },
+  "bookingDetail": {
+    "back": "Volver a mis reservas",
+    "notFound": "Reserva no encontrada o sin acceso.",
+    "reservationCode": "Código de reserva",
+    "date": "Fecha",
+    "totalPaid": "Precio",
+    "pendingPaymentNote": "Reserva pendiente de pago. El proceso de pago se completará en la siguiente fase del prototipo.",
+    "qrComingSoon": "Tu ticket electrónico con código QR estará disponible aquí cuando se confirme el pago.",
+    "cancel": "Cancelar reserva",
+    "cancelConfirm": "¿Seguro que quieres cancelar esta reserva?",
+    "cancelled": "Reserva cancelada"
   },
   "lines": {
     "title": "Líneas disponibles",

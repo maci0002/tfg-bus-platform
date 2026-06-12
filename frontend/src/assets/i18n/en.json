@@ -21,7 +21,8 @@
       "subtitle": "Log in to manage your bookings",
       "submit": "Log in",
       "noAccount": "Don't have an account?",
-      "signUp": "Sign up"
+      "signUp": "Sign up",
+      "sessionExpired": "Your session has expired. Please log in again."
     },
     "register": {
       "title": "Create account",
@@ -103,7 +104,61 @@
     "noResults": "No trips found for this search.",
     "resultsFound": "results found",
     "stops": "stops",
-    "viewLine": "View line"
+    "viewLine": "View line",
+    "reserve": "Book"
+  },
+  "booking": {
+    "back": "Back",
+    "notFound": "Could not load this trip.",
+    "selectSeat": "Choose your seat",
+    "driver": "Driver",
+    "summary": "Summary",
+    "seat": "Seat",
+    "noSeat": "Not selected yet",
+    "available": "Available",
+    "totalPrice": "Total price",
+    "continue": "Continue",
+    "prototypeNote": "This is an academic prototype — data is fictional.",
+    "legend": {
+      "free": "Free",
+      "selected": "Selected",
+      "occupied": "Taken"
+    },
+    "changeSeat": "Change seat",
+    "confirmTitle": "Confirm your booking",
+    "confirmSubtitle": "Review the details before confirming",
+    "passenger": "Passenger",
+    "notLogged": "Log in to confirm",
+    "loginRequired": "You need to log in to complete the booking",
+    "confirmReservation": "Confirm booking",
+    "pendingPaymentInfo": "The booking will be marked as 'Pending payment'. Payment and e-ticket issuance will be implemented in the next iteration.",
+    "status": {
+      "pendingPayment": "Pending payment",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "myBookings": {
+    "title": "My bookings",
+    "subtitle": "Browse and manage all your bookings",
+    "newBooking": "New booking",
+    "empty": {
+      "title": "You don't have any bookings yet",
+      "subtitle": "Search for a trip and book your first one",
+      "action": "Search trip"
+    }
+  },
+  "bookingDetail": {
+    "back": "Back to my bookings",
+    "notFound": "Booking not found or no access.",
+    "reservationCode": "Booking reference",
+    "date": "Date",
+    "totalPaid": "Price",
+    "pendingPaymentNote": "Booking pending payment. The payment process will be completed in the next phase of the prototype.",
+    "qrComingSoon": "Your e-ticket with QR code will be shown here once payment is completed.",
+    "cancel": "Cancel booking",
+    "cancelConfirm": "Are you sure you want to cancel this booking?",
+    "cancelled": "Booking cancelled"
   },
   "lines": {
     "title": "Available lines",

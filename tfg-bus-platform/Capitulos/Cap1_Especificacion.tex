@@ -1,0 +1,743 @@
+\chapter{Especificación del trabajo}
+\label{cap:especificacion}
+
+\section{Introducción}
+\label{sec:cap1-introduccion}
+
+El presente Trabajo Fin de Grado (TFG) consiste en el diseño y desarrollo de un prototipo web de gestión de transporte de autobuses orientado a mejorar la experiencia del viajero. La solución propuesta integra, en una única plataforma, funcionalidades que el usuario necesita durante la planificación y realización de un desplazamiento: consulta de líneas, paradas, rutas y horarios, visualización del recorrido mediante un mapa interactivo, recepción de avisos sobre incidencias del servicio y realización de reservas en línea con generación de tickets electrónicos.
+
+La motivación principal del trabajo se enmarca en la realidad del transporte interurbano en el entorno de Jaén, donde la experiencia digital del usuario presenta limitaciones apreciables. En particular, se observan dificultades recurrentes para acceder de forma clara y unificada a información de rutas y horarios, al interpretar el recorrido completo y sus paradas de manera visual, y al recibir comunicaciones proactivas ante incidencias o cambios del servicio. Estas limitaciones generan incertidumbre en el viajero y afectan a la percepción del servicio, especialmente en trayectos donde la planificación previa y la disponibilidad de información actualizada son aspectos críticos.
+
+Además, existe disponibilidad de fuentes de datos de transporte publicadas en formatos reutilizables, como GTFS (\textit{General Transit Feed Specification}) y servicios web tipo API (\textit{Application Programming Interface}), que permiten acceder a información relevante del servicio. Sin embargo, la disponibilidad de datos no garantiza por sí misma una experiencia de usuario adecuada: es necesario transformar esa información en una plataforma orientada al cliente final y complementarla con servicios propios, como autenticación segura, reserva con selección de asiento (característica especialmente relevante en transporte interurbano), ticket electrónico y gestión de cancelaciones y reembolsos en un entorno de prototipado.
+
+
+\section{Objetivos del trabajo}
+\label{sec:objetivos}
+
+El objetivo principal de este trabajo es diseñar, desarrollar y validar un prototipo web de gestión de transporte de autobuses orientado a mejorar la experiencia del viajero. El prototipo integrará en una única plataforma la consulta de información de transporte (líneas, paradas, rutas y horarios), la visualización del recorrido mediante un mapa interactivo, la comunicación de incidencias mediante correo electrónico y un flujo de reserva de billetes con selección de asiento y emisión de ticket electrónico, en un entorno de prototipado.
+
+Con el fin de alcanzar el objetivo principal, se plantean los siguientes objetivos específicos:
+
+\begin{itemize}
+    \item Analizar el estado del arte de soluciones digitales de transporte, así como los estándares y tecnologías aplicables, identificando prácticas relevantes para sistemas de consulta, planificación y reserva de trayectos.
+    \item Recopilar y especificar los requisitos funcionales y no funcionales del sistema, redactando criterios de aceptación.
+    \item Diseñar la solución propuesta, definiendo arquitectura, componentes, modelo de datos y principales flujos de interacción usuario-sistema (consulta, reserva, notificación).
+    \item Seleccionar y justificar las tecnologías y herramientas de desarrollo a emplear, atendiendo a criterios de viabilidad, mantenibilidad, seguridad y adecuación al alcance del prototipo.
+    \item Implementar el prototipo web incorporando, como mínimo, los módulos de autenticación, consulta y visualización de información en mapa, gestión de reservas con selección de asiento, generación de ticket electrónico, sistema de incidencias con notificación por correo.
+    \item Definir y ejecutar un plan de pruebas que permita verificar el cumplimiento de los requisitos y evaluar el comportamiento del prototipo, registrando evidencias y resultados reproducibles.
+    \item Documentar todo el proceso de desarrollo siguiendo una metodología de Ingeniería del Software, describiendo la planificación, iteraciones realizadas, decisiones de diseño, resultados obtenidos y propuestas de mejora futura.
+\end{itemize}
+
+La ejecución de estos objetivos se justifica por la necesidad de mejorar la experiencia digital del usuario en el transporte interurbano, especialmente en el entorno de Jaén, donde la consulta de información, la interpretación visual de recorridos y la comunicación de incidencias presentan limitaciones para el viajero. El trabajo pretende demostrar que, a partir de fuentes de información disponibles y mediante el diseño de una plataforma centrada en el usuario, es posible ofrecer una solución más clara, integrada y útil para la planificación y gestión del viaje.
+
+
+\section{Antecedentes y estado del arte}
+\label{sec:estado-arte}
+
+\subsection{Contexto y antecedentes relevantes}
+
+En los últimos años, la digitalización del transporte público ha evolucionado desde la simple publicación de horarios hacia plataformas orientadas al usuario que integran consulta de horarios, planificación de trayectos, avisos operativos y, en determinados casos, compra de billetes. Esta evolución está ligada a dos factores principales. En primer lugar, el crecimiento de la demanda de servicios digitales, que ha cambiado la forma en la que el viajero planifica y gestiona sus desplazamientos. En segundo lugar, la apertura de datos de transporte por parte de administraciones y operadores, que ha permitido construir aplicaciones capaces de ofrecer información de servicio de forma más clara y reutilizable.
+
+En el ámbito interurbano, la experiencia digital adquiere especial relevancia por la necesidad de planificación previa, la dependencia de horarios concretos y disponer de información fiable ante incidencias o cambios de servicio. La ausencia de una experiencia integrada puede afectar de forma significativa a la percepción del servicio, especialmente cuando la información se encuentra dispersa en múltiples canales o no se presenta de manera visual y orientada a tareas del usuario (por ejemplo, ``quiero ir de A a B y saber por dónde pasa el autobús'').
+
+\subsection{Estándares y enfoques actuales en sistemas de transporte}
+
+En los sistemas actuales de información de transporte resulta fundamental disponer de datos estructurados, actualizados y reutilizables. Para ello, muchas administraciones y operadores emplean estándares o interfaces que permiten publicar información sobre líneas, paradas, horarios, recorridos e incidencias de forma que pueda ser consumida por diferentes aplicaciones.
+
+Sobre este tipo de datos se construyen habitualmente dos grandes grupos de soluciones. Por un lado, las aplicaciones de consulta y visualización, que permiten mostrar líneas, paradas, horarios y recorridos sobre un mapa. Por otro lado, las herramientas de planificación de trayectos, orientadas a responder consultas de tipo origen--destino y facilitar al usuario la elección de la mejor alternativa sin necesidad de conocer previamente la línea o el operador que debe utilizar.
+
+Además de la consulta de información, las plataformas modernas de transporte tienden a incorporar funcionalidades asociadas a la gestión completa del viaje, como reserva de billetes, emisión de tickets digitales, validación mediante códigos QR, notificaciones de incidencias, cancelaciones y políticas de reembolso. En el caso del transporte interurbano, estas funcionalidades adquieren especial importancia, ya que el viajero suele planificar el desplazamiento con antelación y puede necesitar información adicional como asiento, condiciones del billete o cambios en el servicio.
+
+\subsubsection{El estándar GTFS como base de información de transporte}
+
+GTFS (\textit{General Transit Feed Specification}) es un estándar abierto utilizado para publicar información sobre el transporte público de manera estructurada. Su objetivo principal es permitir que los datos de una red de transporte puedan ser interpretados por distintas aplicaciones sin depender de un formato propio de cada operador. De este modo, información como paradas, rutas, viajes, horarios y calendarios de servicio puede organizarse de forma común y reutilizable.
+
+El origen de GTFS se encuentra en una colaboración entre \textit{TriMet}, la agencia de transporte público de Portland, y Google. Inicialmente surgió para facilitar la incorporación de datos de transporte público en aplicaciones de planificación como Google \textit{Maps}, pero con el tiempo se consolidó como un estándar general utilizado por numerosas agencias y desarrolladores.
+
+De forma simplificada, GTFS permite describir la parte planificada de un servicio de transporte. Esta información suele distribuirse mediante un conjunto de ficheros, entre los que pueden encontrarse datos sobre agencias, rutas, paradas, viajes, horarios de paso y calendarios. Gracias a esta estructura, una aplicación puede obtener la información necesaria para mostrar líneas, consultar horarios o representar recorridos sobre un mapa.
+
+Además de la información planificada, existe GTFS \textit{Realtime}, orientado a representar información dinámica del servicio, como retrasos, cancelaciones, posiciones de vehículos o alertas. Esta distinción entre datos planificados y datos en tiempo real resulta importante en el diseño de aplicaciones de transporte, ya que permite combinar la red y los horarios previstos con información actualizada sobre incidencias o cambios del servicio.
+
+En el contexto de esta propuesta, GTFS es relevante porque proporciona una base adecuada para centralizar y explotar información de transporte. El objetivo del prototipo no es únicamente mostrar datos de líneas y horarios, sino transformarlos en una experiencia más útil para el usuario: consulta sencilla, visualización en mapa, planificación de trayectos, notificación de incidencias y reserva de billetes. Por tanto, el uso de datos estructurados como los proporcionados por GTFS o por \textit{APIs} equivalentes permite plantear una solución más integrada y mantenible.
+
+En el caso de Andalucía, la Red de Consorcios de Transporte de Andalucía proporciona información abierta sobre líneas, horarios, noticias, puntos de venta y tarifas, incluyendo el área de Jaén. Esta disponibilidad de datos resulta especialmente útil para este proyecto, ya que permite plantear una solución centrada en el entorno de Jaén y orientada a reducir la dispersión de información entre diferentes operadores y portales web.
+
+\subsubsection{Análisis de soluciones existentes}
+
+Para completar el estado del arte se ha realizado una revisión de distintas soluciones digitales relacionadas con el transporte en autobús en el entorno de Jaén. El objetivo de este análisis no es valorar comercialmente a los operadores existentes, sino identificar qué funcionalidades ofrecen actualmente, qué limitaciones presentan desde el punto de vista de la experiencia del usuario y qué oportunidades de mejora justifican la solución propuesta.
+
+El análisis se centra principalmente en los siguientes criterios: disponibilidad de información de líneas y horarios, facilidad de búsqueda del trayecto, existencia de compra o reserva online, visualización del recorrido, comunicación de incidencias, atención al usuario y grado de centralización de la información. Estos criterios permiten comparar las soluciones actuales con las funcionalidades previstas en el prototipo propuesto.
+
+\paragraph{Soluciones con compra online.}
+Un primer tipo de solución observado corresponde a portales que permiten la compra online de billetes asociados a líneas o trayectos concretos. Estas plataformas suelen ofrecer secciones diferenciadas para líneas regulares, compra de billetes, información corporativa, flota, contacto y condiciones del servicio.
+
+La principal ventaja de este enfoque es que permite al usuario adquirir un billete de forma digital, reduciendo la necesidad de realizar la compra presencialmente. Sin embargo, el proceso suele estar organizado desde la perspectiva de la línea u operador: el viajero debe conocer previamente qué línea necesita utilizar o navegar entre las opciones disponibles hasta localizar el trayecto adecuado.
+
+Esta aproximación puede resultar suficiente para usuarios habituales, pero presenta limitaciones para personas que no conocen la red de transporte o que simplemente desean indicar un origen, un destino y una fecha para obtener alternativas. Desde la perspectiva del prototipo propuesto, se identifica como oportunidad de mejora la incorporación de una búsqueda más orientada al viajero, basada en origen--destino, junto con visualización del recorrido, selección de asiento y emisión de ticket electrónico dentro de un flujo único.
+
+\paragraph{Soluciones informativas basadas en horarios tabulados.}
+Un segundo grupo de soluciones está formado por páginas web de carácter principalmente informativo. En ellas se publican datos sobre servicios, flota, contacto y horarios de líneas regulares. La información horaria suele presentarse mediante tablas que incluyen salidas, días de servicio, observaciones de calendario y, en algunos casos, indicaciones específicas sobre determinados trayectos.
+
+Este modelo tiene la ventaja de ser sencillo y de proporcionar información básica de forma directa. No obstante, exige que el usuario interprete manualmente la tabla, identifique qué horario se ajusta a su caso y comprenda posibles abreviaturas, condiciones de calendario o excepciones. Además, en general no se integra con funcionalidades como reserva online, selección de asiento, visualización del recorrido sobre mapa o notificaciones personalizadas.
+
+Desde el punto de vista de la experiencia de usuario, este enfoque puede resultar limitado para viajeros no habituales, ya que requiere conocer previamente la línea, el sentido del trayecto y la parada correspondiente. Por ello, el prototipo planteado propone transformar esta información en una consulta más guiada, visual y centrada en la necesidad real del viajero.
+
+\paragraph{Soluciones de operador con servicios avanzados.}
+También se han identificado soluciones de operador con un mayor número de funcionalidades. Algunas plataformas incorporan, además de la consulta de horarios, secciones de noticias, atención al cliente, preguntas frecuentes, reclamaciones, objetos perdidos, cancelación de venta online, registro de usuarios y formularios de contacto. En algunos casos se observa incluso una aproximación más cercana a la búsqueda por origen o a la gestión de servicios específicos.
+
+Este tipo de solución representa un avance respecto a las páginas meramente informativas, ya que integra más funciones relacionadas con la gestión del viaje y la atención al usuario. Sin embargo, mantiene una limitación relevante: su alcance se encuentra vinculado a un operador concreto. Por tanto, aunque pueda ofrecer una experiencia razonablemente completa dentro de su propio servicio, no centraliza el conjunto de líneas disponibles en el entorno de Jaén ni permite consultar alternativas de diferentes operadores desde una misma interfaz.
+
+La oportunidad de mejora consiste en trasladar las funcionalidades más útiles de este tipo de plataformas ---consulta de horarios, atención al usuario, cancelaciones, avisos y registro--- a una solución más unificada, capaz de ofrecer una experiencia homogénea independientemente del operador que preste el servicio.
+
+En conjunto, las soluciones analizadas muestran que ya existen herramientas digitales útiles para resolver necesidades concretas del transporte en autobús. Sin embargo, dichas soluciones suelen estar orientadas a un operador, una línea o una funcionalidad específica. Esta situación confirma la oportunidad de plantear una aplicación que unifique la consulta de información, la visualización del recorrido, la reserva, el ticket electrónico y la comunicación de incidencias desde una perspectiva más centrada en el viajero.
+
+
+\section{Descripción de la situación de partida}
+\label{sec:situacion-partida}
+
+El presente trabajo parte de una situación en la que existen diferentes soluciones digitales y fuentes de información relacionadas con el transporte en autobús en el entorno de Jaén, pero no una plataforma única que integre de forma homogénea la consulta, planificación, reserva y comunicación con el usuario. La situación de partida no se caracteriza por una ausencia total de digitalización, sino por una digitalización fragmentada, en la que cada fuente o servicio cubre una parte concreta de la necesidad del viajero.
+
+Esta fragmentación afecta especialmente a los desplazamientos interurbanos, donde el usuario suele necesitar información fiable antes de iniciar el viaje y donde cualquier cambio de horario, recorrido o servicio puede tener un impacto directo en la planificación.
+
+El proyecto se plantea, por tanto, como una acción de mejora sobre este contexto. No pretende sustituir a los operadores existentes ni implantar un sistema real de explotación comercial, sino diseñar y desarrollar un prototipo académico que demuestre la viabilidad de una plataforma web centralizada, orientada a mejorar la experiencia del viajero. Dicha plataforma aprovechará fuentes de información disponibles y añadirá funcionalidades propias, como visualización de rutas en mapa, reserva con selección de asiento, generación de tickets electrónicos y notificación de incidencias mediante correo electrónico.
+
+La realización del trabajo queda condicionada por su naturaleza de proyecto académico. El desarrollo será llevado a cabo por un único alumno, asumiendo las tareas de análisis, diseño, implementación, pruebas y documentación. Además, el sistema se construirá como prototipo, por lo que se utilizarán datos ficticios para usuarios, reservas y pagos, y los procesos económicos se plantearán en modo simulado o de pruebas. Estas condiciones delimitan el alcance del proyecto y permiten centrar el esfuerzo en validar la propuesta funcional y técnica.
+
+\subsection{Descripción del entorno actual}
+
+El entorno actual sobre el que se plantea este trabajo corresponde al transporte en autobús en el ámbito de Jaén, con especial atención al transporte interurbano. A diferencia de un proyecto implantado en una empresa concreta, este prototipo no se integra en una organización específica, sino que se orienta a mejorar un contexto de uso formado por viajeros, operadores de transporte, canales digitales de consulta y fuentes de datos públicas o reutilizables.
+
+En este entorno conviven diferentes formas de acceso a la información. El usuario puede encontrar horarios, líneas, recorridos, información de contacto o compra de billetes en páginas web de operadores, aplicaciones de transporte urbano, portales informativos o servicios de datos abiertos. Cada uno de estos recursos cubre una necesidad concreta, pero no siempre ofrece una visión global del viaje desde el punto de vista del usuario final.
+
+El transporte interurbano presenta particularidades que justifican el desarrollo de una solución específica. En este tipo de desplazamientos, el viajero suele planificar el trayecto con mayor antelación que en el transporte urbano, necesita conocer horarios concretos, paradas de salida y llegada, posibles incidencias y, en algunos casos, disponer de una reserva previa. Además, funcionalidades como la selección de asiento, el ticket electrónico o la gestión de cancelaciones resultan especialmente relevantes en este contexto.
+
+Desde el punto de vista técnico, el entorno actual cuenta con fuentes de información que pueden servir como base para el prototipo, especialmente datos relativos a líneas, paradas, horarios, tarifas e incidencias. Sin embargo, estos datos deben ser transformados y presentados mediante una interfaz orientada al usuario para que resulten realmente útiles. Por ello, el trabajo no se centra únicamente en consumir información existente, sino en integrarla dentro de una plataforma web que facilite la consulta, planificación y gestión del viaje.
+
+\subsection{Resumen de las deficiencias y carencias identificadas}
+
+A partir de la descripción del entorno actual, se identifican varias deficiencias y carencias que justifican el desarrollo del prototipo propuesto. Estas carencias no deben interpretarse como una ausencia total de soluciones digitales en el ámbito del transporte en autobús, sino como una falta de integración entre los distintos servicios, fuentes de información y necesidades reales del viajero.
+
+El principal problema detectado es que la información y las funcionalidades relacionadas con el transporte se encuentran repartidas entre diferentes canales. Esto provoca que el usuario no siempre disponga de una experiencia completa, homogénea y orientada a la planificación real de su viaje.
+
+Las principales carencias identificadas son las siguientes:
+
+\paragraph{Fragmentación de la información.}
+La información relativa a líneas, horarios, compra de billetes, incidencias o atención al cliente puede encontrarse distribuida entre distintas páginas web, aplicaciones o portales. Esta dispersión obliga al usuario a conocer previamente qué fuente debe consultar o a realizar varias búsquedas hasta encontrar la información adecuada.
+
+La mejora planteada consiste en centralizar la consulta de información de transporte dentro de una única plataforma, reduciendo la dependencia de múltiples canales y facilitando el acceso a los datos más relevantes del viaje.
+
+\paragraph{Consulta poco orientada a origen y destino.}
+Muchas soluciones actuales organizan la información a partir de líneas, operadores o tablas de horarios. Sin embargo, la forma habitual en la que un viajero plantea su necesidad es más directa: conocer cómo desplazarse desde un origen hasta un destino en una fecha y hora determinadas.
+
+El prototipo pretende mejorar este aspecto incorporando una consulta más orientada al usuario, basada en origen, destino, fecha y hora, de manera que no sea imprescindible conocer previamente la línea u operador correspondiente.
+
+\paragraph{Visualización limitada del recorrido.}
+La información presentada mediante tablas o listados permite consultar horarios, pero no siempre ayuda a comprender el recorrido completo del autobús, las paradas intermedias, el sentido del trayecto o la ubicación exacta de los puntos de subida y bajada.
+
+Como mejora, se plantea la incorporación de un mapa interactivo que permita visualizar rutas, paradas y recorridos de forma clara. Esta funcionalidad resulta especialmente útil para usuarios no habituales o para trayectos interurbanos que requieren mayor planificación.
+
+\paragraph{Comunicación poco proactiva de incidencias.}
+La publicación de avisos o noticias en una página web puede informar sobre cambios del servicio, pero no garantiza que el usuario afectado reciba dicha información a tiempo. En el transporte interurbano, una incidencia no consultada a tiempo puede afectar de forma directa a la planificación del viaje.
+
+El prototipo propone incorporar notificaciones por correo electrónico ante incidencias o modificaciones relevantes, con el objetivo de ofrecer una comunicación más directa y útil para el viajero.
+
+\paragraph{Gestión digital incompleta del viaje.}
+En una experiencia integrada, el usuario debería poder consultar información, seleccionar un trayecto, reservar, elegir asiento, recibir un ticket electrónico y, si fuera necesario, cancelar la reserva según una política definida. Sin embargo, estas funcionalidades no siempre se encuentran disponibles dentro de un mismo flujo.
+
+El sistema propuesto plantea una gestión más completa del viaje, incorporando reserva con selección de asiento, generación de ticket electrónico y cancelación/reembolso simulado en un entorno de prototipado.
+
+\paragraph{Experiencia poco homogénea entre soluciones.}
+Cada portal o aplicación puede presentar una estructura, navegación, terminología y conjunto de funcionalidades diferente. Esto obliga al usuario a adaptarse a distintos formatos de consulta y dificulta una experiencia uniforme.
+
+La mejora planteada consiste en diseñar una interfaz homogénea y centrada en el viajero, donde las principales acciones se organicen de forma coherente: consultar, planificar, reservar, recibir avisos y gestionar el viaje.
+
+Las carencias anteriores muestran que el problema principal no es la inexistencia de recursos digitales, sino la falta de integración entre ellos. Por ello, la solución propuesta se orienta a reunir en un mismo entorno las acciones principales del viajero: consultar información, interpretar el recorrido, reservar, recibir un ticket electrónico y mantenerse informado ante posibles incidencias. Estas carencias servirán como base para la definición de los requisitos iniciales del sistema.
+
+
+\section{Requisitos iniciales}
+\label{sec:requisitos-iniciales}
+
+El resultado principal del trabajo debe ser un prototipo web de gestión de transporte de autobuses orientado a mejorar la experiencia del viajero. Dicho prototipo debe permitir que el usuario consulte información relevante sobre líneas, rutas, paradas y horarios, y debe presentar dicha información de forma clara y accesible. Además, debe incorporar una visualización mediante mapa interactivo que facilite la comprensión del recorrido y de las paradas asociadas al trayecto.
+
+El sistema debe permitir el \textbf{registro e inicio de sesión de usuarios} mediante un mecanismo de autenticación segura. Esta funcionalidad resulta necesaria para ofrecer una experiencia personalizada y para asociar al usuario aquellas operaciones que requieren identificación, como la realización de reservas, la consulta de tickets electrónicos o la recepción de comunicaciones vinculadas a sus viajes.
+
+El prototipo debe incluir un \textbf{proceso de reserva en línea de billetes de autobús}. Dado el enfoque interurbano del sistema, dicho proceso debe contemplar la selección de asiento, de forma que el usuario pueda escoger una plaza disponible antes de confirmar la reserva. Asimismo, el sistema debe generar un ticket electrónico asociado a la reserva realizada, que sirva como comprobante digital del viaje.
+
+El sistema debe simular \textbf{un proceso de pago digital asociado a la reserva}. Al tratarse de un prototipo académico, este proceso no debe realizar transacciones económicas reales, sino representar el flujo de pago en un entorno controlado o de pruebas. Del mismo modo, el sistema debe contemplar una política de cancelación y reembolso simulada, con el objetivo de reflejar un comportamiento habitual en plataformas de reserva de transporte.
+
+El prototipo debe permitir \textbf{consultar incidencias o cambios relevantes del servicio y debe incorporar un mecanismo de notificación al usuario mediante correo electrónico}. Esta funcionalidad responde a la necesidad de mejorar la comunicación con el viajero ante retrasos, modificaciones o avisos que puedan afectar a la planificación del desplazamiento.
+
+La plataforma debe incluir un \textbf{módulo de preguntas frecuentes y un formulario de contacto}. Estos elementos deben facilitar la resolución de dudas habituales y permitir que el usuario envíe solicitudes o consultas al equipo de atención al viajero. En el alcance inicial del prototipo, este contacto se plantea como un canal de envío de información, sin incluir necesariamente un sistema avanzado de gestión interna de solicitudes.
+
+La interfaz debe ofrecerse en \textbf{castellano e inglés}, de forma que el prototipo pueda ser utilizado por usuarios con distintos perfiles lingüísticos.
+
+Desde el punto de vista de calidad, el prototipo debe presentar una \textbf{interfaz clara, coherente y orientada a las tareas principales del usuario}: consultar información, planificar un trayecto, realizar una reserva, obtener un ticket y recibir avisos. Además, debe respetar principios básicos de seguridad, privacidad y mantenibilidad, especialmente en lo relativo al tratamiento de credenciales, datos personales ficticios y separación de responsabilidades en el diseño del sistema.
+
+El desarrollo debe realizarse \textbf{siguiendo una metodología de Ingeniería del Software}. Dicha metodología debe permitir planificar el trabajo, organizar las tareas, documentar las decisiones tomadas, controlar el avance del proyecto y validar el resultado obtenido mediante pruebas. La memoria debe recoger este proceso de forma ordenada, justificando las decisiones adoptadas y relacionando los objetivos del trabajo con los resultados alcanzados.
+
+Como características deseables, el sistema debería estar diseñado de forma que pueda ampliarse en el futuro con nuevas fuentes de datos, nuevos operadores, métodos adicionales de notificación o funcionalidades avanzadas de administración. Estas posibles ampliaciones no forman parte obligatoria del alcance inicial, pero deberían tenerse en cuenta para evitar un diseño excesivamente cerrado.
+
+En resumen, los requisitos iniciales del trabajo son los siguientes:
+
+\begin{itemize}
+    \item El prototipo debe ser una aplicación web orientada a la gestión de transporte de autobuses.
+    \item El sistema debe mejorar la experiencia del viajero mediante una consulta más clara y centralizada de la información.
+    \item El sistema debe permitir consultar líneas, rutas, paradas y horarios.
+    \item El sistema debe incorporar un mapa interactivo para visualizar recorridos y paradas.
+    \item El sistema debe permitir el registro e inicio de sesión de usuarios.
+    \item El sistema debe permitir realizar reservas en línea con selección de asiento.
+    \item El sistema debe simular un proceso de pago digital.
+    \item El sistema debe generar tickets electrónicos asociados a reservas.
+    \item El sistema debe contemplar cancelaciones y reembolsos simulados.
+    \item El sistema debe permitir consultar incidencias y notificar cambios por correo electrónico.
+    \item El sistema debe incluir preguntas frecuentes y formulario de contacto.
+    \item El sistema debe estar disponible en castellano e inglés.
+    \item El desarrollo debe seguir una metodología de Ingeniería del Software.
+\end{itemize}
+
+Estos requisitos iniciales servirán como referencia para el diseño de la solución y para la validación final del trabajo. La especificación detallada de cada funcionalidad se desarrollará posteriormente en el apartado correspondiente a las especificaciones del sistema.
+
+
+\section{Alcance}
+\label{sec:alcance}
+
+El alcance del presente trabajo comprende el análisis, diseño, desarrollo y validación de un prototipo web de gestión de transporte de autobuses orientado a mejorar la experiencia del viajero. El trabajo incluye tanto la construcción del prototipo software como la documentación asociada al proceso de desarrollo, la planificación del proyecto y la realización de pruebas para comprobar el cumplimiento de los objetivos establecidos.
+
+El resultado principal será una aplicación web en entorno de prototipado que permita al usuario consultar información de transporte, visualizar rutas y paradas mediante un mapa interactivo, realizar reservas con selección de asiento, simular un proceso de pago, obtener tickets electrónicos y recibir notificaciones por correo electrónico ante incidencias o cambios relevantes del servicio. La plataforma también incorporará un módulo de preguntas frecuentes y un formulario de contacto para facilitar la comunicación con el usuario.
+
+El trabajo se centrará principalmente en el entorno de Jaén y en la problemática detectada en el transporte interurbano, especialmente en relación con la dispersión de información, la dificultad para interpretar recorridos y la necesidad de una experiencia digital más integrada. Aunque el prototipo se orienta a este contexto concreto, su diseño se planteará de forma que pueda ser ampliable a otros entornos de transporte en el futuro.
+
+Los entregables del trabajo se agrupan en tres categorías: entregables asociados al producto software, entregables documentales y entregables relacionados con la gestión y control del proyecto.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{2.4cm}|p{3.8cm}|p{7.2cm}|}
+\hline
+\textbf{Tipo} & \textbf{Entregable} & \textbf{Contenido y características} \\ \hline
+Producto software & Prototipo web de gestión de transporte & Aplicación web orientada al viajero, con funcionalidades de consulta de rutas, líneas, paradas, horarios, mapa interactivo, preguntas frecuentes y formulario de contacto. \\ \hline
+Producto software & Módulo de autenticación & Funcionalidad de registro, inicio y cierre de sesión de usuarios, permitiendo el acceso personalizado a reservas, tickets y comunicaciones. \\ \hline
+Producto software & Módulo de consulta y planificación & Consulta de información de transporte, búsqueda de trayectos y visualización del recorrido mediante mapa interactivo. \\ \hline
+Producto software & Módulo de reservas & Selección de trayecto, reserva de billete, selección de asiento disponible y consulta de reservas asociadas al usuario. \\ \hline
+Producto software & Módulo de pago simulado y ticket electrónico & Simulación del proceso de pago digital y generación de un ticket electrónico asociado a la reserva confirmada. \\ \hline
+Producto software & Módulo de cancelación y reembolso simulado & Funcionalidad para cancelar reservas y aplicar una política de reembolso definida dentro del entorno de prototipo. \\ \hline
+Producto software & Sistema de notificaciones por correo electrónico & Envío de avisos o comunicaciones relevantes al usuario, especialmente ante incidencias o modificaciones que puedan afectar al viaje. \\ \hline
+Producto software & Integración con fuentes de datos de transporte & Uso de información estructurada procedente de fuentes externas, como API o datos en formato GTFS, para consultar líneas, paradas, horarios o incidencias cuando estén disponibles. \\ \hline
+Documentación & Memoria del trabajo & Documento final en formato PDF que recoge la especificación del trabajo, objetivos, estado del arte, requisitos, metodología, diseño, implementación, pruebas, conclusiones, bibliografía y anexos. \\ \hline
+Entregable técnico & Código fuente desarrollado & Conjunto de archivos y proyectos necesarios para ejecutar el prototipo, incluyendo estructura del proyecto, configuración básica y dependencias necesarias. \\ \hline
+Documentación & Manual de instalación & Instrucciones para preparar el entorno, instalar dependencias, configurar el sistema y ejecutar el prototipo. \\ \hline
+Documentación & Manual de usuario & Descripción del uso de la aplicación desde el punto de vista del viajero: registro, consulta de rutas y horarios, mapa, reserva, ticket electrónico, cancelación, incidencias, preguntas frecuentes y contacto. \\ \hline
+Validación & Plan de pruebas & Definición de las pruebas previstas para comprobar el funcionamiento del prototipo, incluyendo casos de prueba, resultados esperados, resultados obtenidos y evidencias. \\ \hline
+Gestión y control & Planificación del proyecto & Organización temporal del trabajo, fases o iteraciones previstas, tareas principales y seguimiento del avance. \\ \hline
+Gestión y control & Trazabilidad del trabajo & Relación entre objetivos, requisitos, funcionalidades implementadas y pruebas realizadas, con el fin de facilitar la validación final del proyecto. \\ \hline
+\end{tabular}
+\caption{Entregables previstos del Trabajo Fin de Grado.}
+\label{tab:entregables}
+\end{table}
+
+La definición de estos entregables permite delimitar con claridad el resultado esperado del trabajo. El prototipo software servirá como demostración funcional de la solución propuesta, mientras que la memoria y el resto de documentación permitirán justificar el proceso seguido, las decisiones adoptadas y el grado de cumplimiento de los objetivos. De este modo, el alcance del proyecto queda centrado en la creación de una solución web documentada, verificable y orientada a mejorar la experiencia del usuario en la consulta, planificación y gestión de viajes en autobús.
+
+
+\section{Hipótesis y restricciones}
+\label{sec:hipotesis-restricciones}
+
+Para la elaboración del presente trabajo se han establecido una serie de hipótesis de partida y restricciones que condicionan el alcance, la planificación, el coste, la calidad y la validación del proyecto. Estas condiciones permiten delimitar el trabajo y justificar determinadas decisiones adoptadas durante el análisis, diseño y desarrollo del prototipo.
+
+El trabajo se plantea como un proyecto académico orientado al desarrollo de un prototipo web, por lo que no se persigue la implantación de un sistema real en explotación, sino la validación funcional y técnica de una solución orientada a mejorar la experiencia del viajero en el transporte en autobús. Además, al tratarse de una asignatura de 12 créditos, la duración total estimada del proyecto es de 300 horas, incluyendo las fases de análisis, diseño, implementación, pruebas, documentación y preparación de la memoria.
+
+Las hipótesis de partida son aquellas condiciones que se asumen como válidas para poder desarrollar el trabajo. La Tabla~\ref{tab:hipotesis} recoge las principales hipótesis consideradas y su incidencia en el proyecto.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{6cm}|p{6cm}|}
+\hline
+\textbf{Código} & \textbf{Hipótesis de partida} & \textbf{Incidencia en el trabajo} \\ \hline
+H-01 & Se asume que existen fuentes de información de transporte reutilizables relacionadas con líneas, paradas, horarios, tarifas o incidencias. & Permite plantear el prototipo como una solución que aprovecha datos disponibles para mejorar su presentación al usuario. \\ \hline
+H-02 & Se asume que el entorno de Jaén es un contexto adecuado para estudiar la fragmentación de información de transporte y plantear una solución centralizada. & Justifica que el caso de estudio se oriente principalmente a este ámbito geográfico. \\ \hline
+H-03 & Se asume que los usuarios accederán al sistema mediante un navegador web moderno y conexión a internet. & Permite centrar el desarrollo en una aplicación web, sin necesidad de crear una aplicación móvil nativa. \\ \hline
+H-04 & Se asume que el correo electrónico es un canal suficiente para demostrar la comunicación de incidencias y avisos al usuario. & Permite validar el sistema de notificaciones sin incorporar otros canales más complejos, como SMS o notificaciones \textit{push}. \\ \hline
+H-05 & Se asume que el proceso de reserva, pago y generación de tickets puede validarse en un entorno de prototipado. & Permite comprobar el flujo completo del viaje sin realizar transacciones económicas reales. \\ \hline
+H-06 & Se asume que los datos personales utilizados durante el desarrollo y las pruebas serán ficticios. & Permite evitar el tratamiento de datos personales reales y simplificar la validación del prototipo. \\ \hline
+H-07 & Se asume que una solución web centralizada puede mejorar la experiencia del viajero al reunir consulta, planificación, reserva, ticket y avisos en una misma plataforma. & Sirve como base para justificar el diseño funcional del sistema y su posterior validación. \\ \hline
+\end{tabular}
+\caption{Hipótesis de partida consideradas para el trabajo.}
+\label{tab:hipotesis}
+\end{table}
+
+Las restricciones representan límites o condicionantes que afectan al desarrollo del proyecto. La principal restricción viene determinada por la duración prevista para el proyecto, estimada en 300 horas. Esta limitación obliga a priorizar las funcionalidades principales y a orientar el resultado hacia un prototipo funcional y demostrable.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{6cm}|p{6cm}|}
+\hline
+\textbf{Código} & \textbf{Restricción} & \textbf{Incidencia en el trabajo} \\ \hline
+R-01 & La duración total del proyecto está limitada a 300 horas, correspondientes a un Trabajo Fin de Grado de 12 créditos. & Condiciona la planificación, el alcance del prototipo y la profundidad de cada fase del ciclo de vida. \\ \hline
+R-02 & El trabajo será desarrollado por un único alumno. & El alumno asumirá los roles de analista, diseñador, desarrollador, responsable de pruebas y redactor de la documentación. \\ \hline
+R-03 & El sistema se desarrollará como prototipo académico. & El objetivo será validar la viabilidad funcional y técnica de la solución, no construir un producto final de explotación real. \\ \hline
+R-04 & El proceso de pago se realizará en modo simulado o de pruebas. & No se efectuarán transacciones económicas reales, aunque se representará el flujo funcional de pago asociado a una reserva. \\ \hline
+R-05 & Los datos personales utilizados serán ficticios. & Las pruebas y demostraciones se realizarán sin emplear información real de usuarios. \\ \hline
+R-06 & La aplicación dependerá parcialmente de fuentes externas de información de transporte. & La disponibilidad, estructura y calidad de dichos datos puede condicionar algunas funcionalidades de consulta o planificación. \\ \hline
+R-07 & Las notificaciones al usuario se limitarán inicialmente al correo electrónico. & El sistema podrá demostrar la comunicación proactiva de avisos sin incorporar canales adicionales. \\ \hline
+R-08 & El prototipo se desarrollará como aplicación web. & El diseño y la implementación estarán orientados al uso desde navegador, priorizando la accesibilidad desde distintos dispositivos. \\ \hline
+R-09 & La validación se realizará en un entorno controlado de desarrollo y pruebas. & Los resultados se comprobarán mediante casos de prueba definidos, evidencias y ejecución del prototipo en condiciones controladas. \\ \hline
+R-10 & Se priorizará el uso de herramientas accesibles, gratuitas, libres o con modalidad de prueba. & Esta restricción reduce el coste del proyecto y facilita su reproducibilidad en un contexto académico. \\ \hline
+\end{tabular}
+\caption{Restricciones consideradas en el desarrollo del trabajo.}
+\label{tab:restricciones}
+\end{table}
+
+Estas hipótesis y restricciones condicionan las decisiones adoptadas durante el desarrollo. En particular, justifican que la solución se plantee como un prototipo web, que los pagos se simulen, que las notificaciones se realicen mediante correo electrónico y que la validación se base en pruebas funcionales realizadas en un entorno controlado. De este modo, el proyecto queda ajustado a la duración prevista y a los recursos disponibles.
+
+
+\section{Estudio de alternativas y viabilidad}
+\label{sec:alternativas}
+
+Antes de concretar la solución propuesta, se han valorado distintas formas de abordar el desarrollo del sistema. El objetivo de este apartado es comparar alternativas posibles y justificar la opción seleccionada, teniendo en cuenta el alcance del trabajo, la limitación temporal, los recursos disponibles y los objetivos definidos.
+
+Para valorar las alternativas se han considerado principalmente los siguientes criterios:
+
+\begin{itemize}
+    \item adecuación a los objetivos del trabajo;
+    \item complejidad técnica;
+    \item tiempo necesario para su desarrollo;
+    \item coste de herramientas o servicios;
+    \item posibilidad de validación mediante pruebas;
+    \item capacidad para mejorar la experiencia del viajero.
+\end{itemize}
+
+Las alternativas estudiadas han sido las siguientes:
+
+\subsection{Utilizar únicamente soluciones existentes}
+
+Una primera posibilidad consistiría en no desarrollar una aplicación propia y limitar el trabajo al análisis de portales, aplicaciones o servicios ya disponibles. Esta alternativa tendría un coste técnico reducido, pero no permitiría resolver el problema principal detectado: la información seguiría estando repartida entre distintas fuentes y no se ofrecería una experiencia integrada de consulta, reserva, ticket y notificación.
+
+Por este motivo, se descarta como solución principal, ya que no cumple el objetivo de desarrollar un prototipo web propio.
+
+\subsection{Desarrollar una web informativa básica}
+
+Otra alternativa sería construir una página web centrada únicamente en mostrar líneas, horarios, paradas e información general del servicio. Esta opción sería más sencilla de implementar y reduciría el riesgo técnico, pero resultaría insuficiente para los objetivos planteados.
+
+El trabajo no busca solo presentar información, sino demostrar una mejora más completa en la gestión del viaje. Por tanto, una web exclusivamente informativa no cubriría funcionalidades importantes como la reserva, la selección de asiento, el ticket electrónico o las notificaciones por correo electrónico.
+
+\subsection{Desarrollar una aplicación móvil nativa}
+
+También se ha considerado la posibilidad de desarrollar una aplicación móvil nativa. Esta opción podría resultar adecuada para usuarios que consultan el transporte desde el teléfono, pero incrementaría notablemente la complejidad del proyecto. Además, obligaría a elegir una plataforma concreta o a desarrollar varias versiones, lo que no se ajusta bien a la duración prevista del trabajo.
+
+Por este motivo, se descarta esta alternativa y se opta por una aplicación web, más accesible desde distintos dispositivos y más adecuada para un prototipo académico.
+
+\subsection{Desarrollar un prototipo web con datos ficticios}
+
+Una alternativa viable sería construir el sistema utilizando únicamente datos creados manualmente para la demostración. Esta opción facilitaría el control de la información y evitaría depender de fuentes externas, pero reduciría el realismo del prototipo y su relación con el entorno de Jaén.
+
+Aunque se podrán utilizar datos ficticios para usuarios, reservas, pagos y tickets, no se considera adecuado que toda la información de transporte sea inventada. Siempre que sea posible, el sistema debería apoyarse en datos estructurados o fuentes externas relacionadas con líneas, paradas, horarios e incidencias.
+
+\subsection{Desarrollar un prototipo web apoyado en datos estructurados de transporte}
+
+La alternativa seleccionada consiste en desarrollar un prototipo web propio que aproveche fuentes de información de transporte disponibles, como API o datos en formato GTFS, y añada funcionalidades propias orientadas al viajero. Esta opción permite combinar información existente con servicios específicos del sistema: autenticación, consulta de rutas y horarios, mapa interactivo, reserva con selección de asiento, pago simulado, ticket electrónico, notificaciones por correo, preguntas frecuentes y formulario de contacto.
+
+Esta alternativa es la más adecuada porque responde directamente a las carencias detectadas: reduce la dispersión de información, mejora la comprensión visual del recorrido y agrupa en un mismo entorno las principales acciones del usuario antes y después del viaje.
+
+Desde el punto de vista temporal, la solución es viable siempre que se mantenga el enfoque de prototipo y se prioricen las funcionalidades principales. Desde el punto de vista técnico, permite dividir el desarrollo en módulos y validar cada parte de forma progresiva. En cuanto al coste, puede realizarse con herramientas accesibles, gratuitas o con modalidades de prueba, manteniendo los pagos y reembolsos en modo simulado.
+
+Por todo ello, se selecciona como alternativa final el desarrollo de una aplicación web de prototipado, centrada en el transporte interurbano en el entorno de Jaén, apoyada en datos reutilizables cuando estén disponibles y orientada a mejorar la consulta, planificación y gestión del viaje. La siguiente sección presenta con mayor detalle la solución elegida.
+
+
+\section{Descripción de la solución propuesta}
+\label{sec:solucion-propuesta}
+
+La solución propuesta consiste en el desarrollo de un prototipo web para la gestión de transporte de autobuses, orientado principalmente al transporte interurbano en el entorno de Jaén. La finalidad del sistema es reunir en una misma plataforma las acciones principales que realiza un viajero antes y durante la gestión de un desplazamiento: consultar información del servicio, interpretar el recorrido, realizar una reserva, obtener un ticket electrónico y recibir avisos relevantes.
+
+La propuesta se plantea como una aplicación web accesible desde navegador, lo que facilita su uso desde distintos dispositivos sin necesidad de desarrollar una aplicación móvil nativa. El sistema se apoyará, cuando sea posible, en fuentes de información estructurada sobre transporte, como servicios API o datos en formato GTFS, para consultar líneas, paradas, rutas, horarios e incidencias. A partir de esa información, el prototipo ofrecerá una interfaz más integrada y orientada al usuario final.
+
+Las características más significativas de la solución son las siguientes:
+
+\begin{itemize}
+    \item \textbf{Consulta centralizada de información de transporte:} el usuario podrá acceder a información sobre líneas, rutas, paradas y horarios desde un mismo entorno.
+    \item \textbf{Búsqueda y planificación del trayecto:} la plataforma permitirá orientar la consulta hacia la necesidad real del viajero, especialmente mediante el uso de origen, destino, fecha y hora.
+    \item \textbf{Mapa interactivo:} el sistema incorporará una representación visual de recorridos y paradas, facilitando la comprensión del trayecto.
+    \item \textbf{Autenticación de usuarios:} se incluirá registro e inicio de sesión para asociar reservas, tickets y comunicaciones a cada usuario.
+    \item \textbf{Reserva con selección de asiento:} el prototipo permitirá simular la reserva de billetes con elección de plaza disponible, funcionalidad especialmente relevante en transporte interurbano.
+    \item \textbf{Pago simulado y ticket electrónico:} el proceso de pago se representará en un entorno de pruebas y, una vez confirmada la reserva, se generará un ticket electrónico como justificante digital.
+    \item \textbf{Cancelación y reembolso simulado:} se contemplará una política básica de cancelación y reembolso dentro del entorno de prototipado.
+    \item \textbf{Notificaciones por correo electrónico:} el usuario podrá recibir comunicaciones relacionadas con incidencias o cambios relevantes del servicio.
+    \item \textbf{Preguntas frecuentes y formulario de contacto:} la plataforma incluirá un espacio de ayuda para dudas habituales y un canal de contacto con atención al viajero.
+    \item \textbf{Interfaz en castellano e inglés:} la aplicación ofrecerá soporte en ambos idiomas para mejorar su accesibilidad.
+\end{itemize}
+
+Esta solución se considera adecuada porque responde directamente a las carencias detectadas en apartados anteriores. Frente a una información repartida entre distintos canales, el prototipo propone un entorno único y coherente. Además, permite validar un flujo completo de uso ---consulta, planificación, reserva, ticket y aviso--- sin asumir la complejidad propia de un sistema real en explotación.
+
+
+\section{Tecnologías utilizadas}
+\label{sec:tecnologias}
+
+En este apartado se recogen las tecnologías previstas inicialmente para el desarrollo del prototipo, indicando su función dentro del sistema y la justificación de su elección. La selección se ha realizado teniendo en cuenta la viabilidad del proyecto, la disponibilidad de documentación, la adecuación a una aplicación web, la facilidad de integración entre componentes y la posibilidad de realizar pruebas en un entorno controlado.
+
+Las versiones indicadas corresponden a una propuesta inicial de trabajo. Durante la fase de implementación podrán ajustarse por motivos de compatibilidad, soporte o disponibilidad. En la memoria final y en los ficheros de configuración del proyecto deberán quedar reflejadas las versiones finalmente utilizadas.
+
+La solución se dividirá en varias capas: interfaz web, lógica de servidor, persistencia de datos, integración con fuentes externas de transporte, visualización cartográfica, gestión de reservas, generación de tickets, envío de correos y pruebas.
+
+\subsection{Tecnologías de \textit{frontend}}
+
+Para el desarrollo de la interfaz de usuario se prevé utilizar \textbf{Angular 21} junto con \textit{TypeScript}. Angular se ha elegido por ser un \textit{framework} orientado a la creación de aplicaciones web estructuradas mediante componentes, servicios y rutas. Esta organización resulta adecuada para un prototipo con distintas pantallas, como consulta de trayectos, mapa, reserva, tickets, preguntas frecuentes y formulario de contacto. La versión 21 es una versión actual del \textit{framework}, publicada oficialmente por Angular.
+
+El uso de \textit{TypeScript} permite añadir tipado estático al desarrollo \textit{frontend}, lo que ayuda a reducir errores y facilita el mantenimiento del código. Esta característica resulta útil en una aplicación que manejará datos de transporte, usuarios, reservas y tickets, ya que permite definir modelos y estructuras de datos de forma más clara.
+
+Como entorno de ejecución y gestión de dependencias se prevé utilizar \textbf{Node.js 24 LTS}. Esta versión pertenece a una rama de soporte a largo plazo, lo que aporta estabilidad para instalar dependencias, ejecutar Angular CLI y compilar la aplicación.
+
+Para los componentes visuales se utilizará \textbf{Angular Material 21}, al estar alineado con la versión principal de Angular prevista para el proyecto. Esta librería proporciona componentes ya diseñados para formularios, botones, diálogos, tablas, menús y otros elementos de interfaz. Su uso permite mantener una apariencia más coherente y reducir el tiempo necesario para construir componentes básicos.
+
+La internacionalización de la interfaz se realizará mediante \textit{ngx-translate}, compatible con Angular 16--21 según su documentación. Esta librería permitirá ofrecer la aplicación en castellano e inglés, cargando los textos desde ficheros de traducción y facilitando el cambio de idioma desde la propia interfaz.
+
+\subsection{Tecnologías de \textit{backend}}
+
+Para la parte de servidor se prevé utilizar \textbf{Java 21} y \textbf{Spring Boot 4.0.x}. Java 21 se selecciona por tratarse de una versión de soporte a largo plazo, adecuada para proyectos que buscan estabilidad y continuidad. Spring Boot, por su parte, permite desarrollar aplicaciones \textit{backend} y servicios REST con una configuración inicial reducida y una estructura clara. La página oficial de Spring Boot recoge la línea 4.0.6 como versión actual del proyecto.
+
+Aunque el sistema utilice fuentes externas de información de transporte, el \textit{backend} resulta necesario para gestionar las funcionalidades propias del prototipo: usuarios, autenticación, reservas, selección de asiento, tickets electrónicos, cancelaciones, pagos simulados y notificaciones. De este modo, la aplicación no dependerá únicamente del \textit{frontend} ni de servicios externos, sino que contará con una capa propia de lógica de negocio.
+
+Se utilizará \textbf{Spring Web} para la creación de la API REST del sistema. Esta API permitirá que la interfaz web se comunique con el servidor para consultar datos, registrar usuarios, gestionar reservas o recuperar tickets.
+
+Para la seguridad se prevé emplear \textbf{Spring Security} junto con autenticación basada en \textbf{JWT} (JSON Web Token). Esta combinación permitirá proteger las operaciones que requieren usuario registrado, como consultar reservas, generar tickets o recibir comunicaciones asociadas a un viaje. El uso de tokens facilita una autenticación adecuada para una aplicación web separada en \textit{frontend} y \textit{backend}.
+
+La gestión de dependencias y construcción del \textit{backend} se realizará mediante \textbf{Maven}, por su integración habitual con proyectos Java y Spring Boot. Maven facilitará la organización de librerías, perfiles de ejecución y tareas de compilación.
+
+\subsection{Base de datos y persistencia}
+
+Como sistema gestor de base de datos se prevé utilizar \textbf{PostgreSQL 18.x}. PostgreSQL se ha elegido por ser una base de datos relacional robusta, ampliamente utilizada y adecuada para representar entidades con relaciones claras, como usuarios, viajes, asientos, reservas, pagos simulados, tickets e incidencias. La página oficial de PostgreSQL recoge versiones recientes como PostgreSQL 18.3 y 17.9, por lo que la versión final podrá ajustarse según compatibilidad del entorno de desarrollo.
+
+La persistencia en el \textit{backend} se gestionará mediante \textbf{Spring Data JPA} e \textit{Hibernate}, lo que permitirá trabajar con entidades Java y repositorios en lugar de escribir manualmente todas las consultas SQL. Esta decisión mejora la mantenibilidad del código y facilita la relación entre el modelo de datos y la lógica del sistema.
+
+Durante las pruebas podría utilizarse una base de datos en memoria, como \textbf{H2}, si resulta útil para automatizar casos sencillos. No obstante, la base de datos principal prevista para el desarrollo será PostgreSQL, ya que representa mejor el entorno esperado para el prototipo.
+
+\subsection{Datos de transporte y mapas}
+
+Para la información de transporte se prevé utilizar datos estructurados procedentes de la \textbf{Red de Consorcios de Transporte de Andalucía}, especialmente cuando permitan consultar líneas, paradas, horarios, tarifas o incidencias. El portal de CTAN está orientado a integrar funcionalidades de transporte mediante su API, lo que resulta adecuado para plantear una aplicación apoyada en datos ya publicados.
+
+Además, se tendrá en cuenta el formato \textbf{GTFS} como referencia para estructurar información de transporte público. GTFS permite describir rutas, paradas, viajes, horarios y calendarios de servicio. Su uso o consulta como referencia favorece que el sistema se diseñe con una estructura más mantenible y alineada con estándares habituales en movilidad.
+
+Para la visualización del mapa se prevé utilizar \textit{Leaflet} 1.9.4, una librería JavaScript ligera para crear mapas interactivos. Su versión 1.9.4 aparece indicada como versión estable en la documentación oficial.
+
+Como base cartográfica se utilizará \textit{OpenStreetMap}, al tratarse de una fuente de datos geográficos abierta bajo licencia \textit{ODbL}. Esta elección evita depender inicialmente de servicios comerciales de mapas y permite representar paradas, recorridos y puntos de interés de forma adecuada para el prototipo.
+
+\subsection{Reservas, pagos y tickets electrónicos}
+
+La gestión de reservas se implementará en el \textit{backend} mediante la lógica propia del sistema y se persistirá en la base de datos. Esta parte incluirá la selección de trayecto, selección de asiento disponible, confirmación de reserva y consulta posterior por parte del usuario.
+
+El proceso de pago se planteará inicialmente como \textbf{simulación interna}, sin transacciones reales. Esta decisión es coherente con el carácter académico del trabajo y permite validar el flujo funcional de compra sin incorporar complejidad legal, económica o de integración con pasarelas reales. El usuario podrá completar un proceso de pago ficticio, suficiente para generar una reserva confirmada dentro del entorno de prototipado.
+
+Para la generación de tickets electrónicos se prevé utilizar códigos QR. Como librería de apoyo se considera \textit{ZXing} 3.5.x, una librería open source para el tratamiento de códigos de barras 1D y 2D, incluyendo códigos QR. La familia 3.5.x está disponible en repositorios Maven, con versiones recientes como 3.5.3 y 3.5.4.
+
+\subsection{Notificaciones por correo electrónico}
+
+El envío de notificaciones se realizará desde el \textit{backend} mediante \textbf{Spring Mail}. Esta tecnología permite integrar el envío de correos en una aplicación Spring Boot y resulta adecuada para avisos relacionados con reservas, tickets o incidencias.
+
+Para el entorno de desarrollo se prevé utilizar una herramienta de pruebas de correo, como \textit{Mailpit} o \textit{MailHog}. Estas herramientas permiten comprobar el contenido de los mensajes enviados sin utilizar cuentas reales ni enviar correos a destinatarios externos. De esta forma se puede validar el funcionamiento del sistema de notificaciones en un entorno controlado.
+
+El uso del correo electrónico como canal principal responde a las restricciones iniciales del trabajo y permite demostrar la comunicación proactiva con el usuario sin incorporar canales adicionales, como SMS o notificaciones \textit{push}.
+
+\subsection{Pruebas, documentación y control de versiones}
+
+Para las pruebas del \textit{backend} se prevé utilizar \textbf{JUnit 5}, \textit{Mockito} y \textbf{Spring Boot Test}. JUnit 5 proporciona la base para definir y ejecutar pruebas unitarias en Java, mientras que \textit{Mockito} permite simular dependencias y aislar componentes durante las pruebas. Spring Boot Test facilita la ejecución de pruebas de integración dentro del ecosistema Spring. La documentación oficial de JUnit 5 lo presenta como una plataforma de referencia para la ejecución de pruebas en la JVM, y \textit{Mockito} mantiene su rama principal 5.x como versión actual.
+
+Para probar manualmente la API se podrán utilizar herramientas como \textit{Postman} o \textit{Insomnia}. Estas utilidades permiten enviar peticiones HTTP al \textit{backend}, comprobar respuestas y documentar casos de prueba de forma sencilla.
+
+La documentación gráfica del proyecto se realizará mediante \textbf{diagrams.net / draw.io}, especialmente para diagramas de arquitectura, casos de uso, modelo de datos o flujos principales. La memoria se redactará usando la plantilla oficial en formato editable y se entregará finalmente en PDF.
+
+El control de versiones se llevará a cabo con \textbf{Git}, utilizando un repositorio remoto en \textbf{GitHub}. Esta decisión permitirá mantener un historial de cambios, organizar el desarrollo y facilitar la trazabilidad entre requisitos, implementación y pruebas.
+
+\subsection{Resumen de tecnologías seleccionadas}
+
+En resumen, la selección tecnológica inicial queda formada por:
+
+\begin{itemize}
+    \item \textbf{\textit{Frontend}:} Angular 21, \textit{TypeScript}, Angular Material, \textit{ngx-translate}, HTML5 y SCSS.
+    \item \textbf{Entorno de \textit{frontend}:} Node.js 24 LTS.
+    \item \textbf{\textit{Backend}:} Java 21, Spring Boot 4.0.x, Spring Web, Spring Security, JWT y Maven.
+    \item \textbf{Persistencia:} PostgreSQL 18.x, Spring Data JPA e \textit{Hibernate}.
+    \item \textbf{Datos de transporte:} API de CTAN y GTFS como formato de referencia.
+    \item \textbf{Mapas:} \textit{Leaflet} 1.9.4 y \textit{OpenStreetMap}.
+    \item \textbf{Reservas y tickets:} lógica propia de \textit{backend} y generación de códigos QR mediante \textit{ZXing}.
+    \item \textbf{Pagos:} simulación interna del flujo de pago.
+    \item \textbf{Notificaciones:} Spring Mail y entorno de pruebas con \textit{Mailpit} o \textit{MailHog}.
+    \item \textbf{Pruebas:} JUnit 5, \textit{Mockito}, Spring Boot Test, \textit{Postman} o \textit{Insomnia}.
+    \item \textbf{Documentación y gestión:} plantilla de memoria, PDF, diagrams.net, Git y GitHub.
+\end{itemize}
+
+Esta selección proporciona una base coherente para el desarrollo del prototipo, ya que combina tecnologías actuales, documentación disponible, bajo coste de adopción y capacidad suficiente para implementar las funcionalidades previstas. Al tratarse de una elección inicial, las versiones concretas podrán actualizarse durante la implementación si se detectan incompatibilidades o necesidades específicas del desarrollo.
+
+
+\section{Metodología de desarrollo de software}
+\label{sec:metodologia}
+
+Para el desarrollo del prototipo se empleará una metodología ágil basada en \textbf{Scrum}, adaptada a las características de un proyecto individual. La elección de este enfoque se debe a que el sistema se compone de varios módulos funcionales ---consulta de información, mapa interactivo, autenticación, reservas, tickets electrónicos, notificaciones y contacto--- que pueden desarrollarse y validarse de forma incremental.
+
+Scrum es una metodología ágil orientada a organizar el trabajo en iteraciones cortas, denominadas \textit{sprints}, en las que se planifica, desarrolla, revisa y mejora una parte del producto. Aunque Scrum está pensado originalmente para equipos de trabajo con varios roles diferenciados, en este proyecto se realizará una adaptación, ya que todas las tareas serán asumidas por un único alumno. Por tanto, los roles de análisis, diseño, desarrollo, pruebas y documentación recaerán sobre la misma persona, manteniendo aun así la estructura iterativa y el control del avance.
+
+La elección de una metodología ágil resulta adecuada para este trabajo porque permite avanzar por incrementos funcionales y obtener resultados parciales verificables. En lugar de desarrollar todo el sistema de forma lineal y validar únicamente al final, cada iteración permitirá completar un conjunto reducido de funcionalidades, comprobar su funcionamiento y generar evidencias para la memoria. Este enfoque se ajusta mejor a la naturaleza del prototipo, ya que permite revisar decisiones, ajustar el alcance y detectar problemas durante el desarrollo.
+
+Para aplicar esta metodología se utilizarán varios elementos propios de Scrum, adaptados al contexto del proyecto:
+
+\begin{itemize}
+    \item \textbf{Backlog del producto:} lista priorizada de funcionalidades, tareas y mejoras necesarias para construir el prototipo.
+    \item \textbf{\textit{Sprints}:} periodos de trabajo en los que se abordará un conjunto concreto de tareas.
+    \item \textbf{Planificación de sprint:} selección de las tareas que se desarrollarán en cada iteración.
+    \item \textbf{Revisión de sprint:} comprobación de las funcionalidades implementadas al finalizar cada iteración.
+    \item \textbf{Retrospectiva:} análisis breve de problemas encontrados, decisiones tomadas y mejoras para la siguiente iteración.
+    \item \textbf{Definición de terminado:} criterio utilizado para considerar que una funcionalidad está realmente completada.
+\end{itemize}
+
+En este trabajo, una funcionalidad se considerará terminada cuando haya sido implementada, probada y documentada. Esto implica que no bastará con desarrollar código: también será necesario actualizar la memoria, registrar las decisiones relevantes, añadir evidencias de prueba y mantener la trazabilidad entre objetivos, requisitos, implementación y validación.
+
+La metodología se aplicará siguiendo una organización incremental. En una primera fase se abordará la preparación del proyecto, el análisis inicial y la definición de requisitos. Posteriormente, se desarrollarán los módulos principales del prototipo, comenzando por la estructura base de la aplicación y la autenticación, continuando con la consulta de información de transporte y el mapa interactivo, y avanzando después hacia las reservas, selección de asiento, pago simulado, ticket electrónico, notificaciones, preguntas frecuentes y formulario de contacto. Finalmente, se realizará una fase de integración, pruebas y revisión de la documentación.
+
+La memoria se desarrollará en paralelo al prototipo. Esta decisión es importante, ya que permite documentar el proceso conforme avanza el trabajo y evita concentrar toda la redacción al final. De este modo, cada iteración deberá dejar constancia de los requisitos abordados, las decisiones de diseño tomadas, las pruebas realizadas y los resultados obtenidos.
+
+Frente a una metodología tradicional en cascada, el enfoque ágil permite una mayor flexibilidad ante cambios o dificultades técnicas que puedan surgir durante el desarrollo. Por otro lado, frente a una gestión completamente informal, Scrum adaptado proporciona una estructura clara para organizar tareas, priorizar funcionalidades y controlar el avance del proyecto. Por ello, se considera una metodología adecuada para este trabajo, al equilibrar planificación, flexibilidad y validación continua dentro de las restricciones temporales existentes.
+
+En resumen, la metodología seleccionada permitirá organizar el desarrollo del prototipo mediante iteraciones, priorizar las funcionalidades principales, mantener una documentación continua y verificar progresivamente el cumplimiento de los objetivos definidos.
+
+
+\section{Estimación del tamaño y esfuerzo}
+\label{sec:estimacion}
+
+Para estimar el tamaño y esfuerzo del proyecto se utilizarán métricas sencillas, adecuadas al contexto de un Trabajo Fin de Grado desarrollado por una única persona. En este caso, la restricción principal no es económica, sino temporal: el trabajo tiene una carga estimada de \textbf{300 horas}, correspondientes a una asignatura de 12 créditos. Por tanto, las métricas seleccionadas se orientan a controlar el esfuerzo, la complejidad de las tareas y el avance del desarrollo.
+
+Las métricas consideradas son las siguientes:
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{4cm}|p{3.5cm}|p{7cm}|}
+\hline
+\textbf{Métrica} & \textbf{Unidad} & \textbf{Aplicación en el proyecto} \\ \hline
+Esfuerzo total disponible & Horas & Límite máximo aproximado de 300 horas para análisis, diseño, desarrollo, pruebas y documentación. \\ \hline
+Recursos humanos & Número de personas & El proyecto será realizado por un único alumno, que asumirá todas las tareas del ciclo de vida. \\ \hline
+Esfuerzo por tarea & Horas & Estimación del tiempo necesario para completar cada tarea planificada. \\ \hline
+Puntos de esfuerzo & Escala relativa & Valoración aproximada de la complejidad de cada funcionalidad. \\ \hline
+Avance del proyecto & Porcentaje & Relación entre tareas finalizadas y tareas previstas. \\ \hline
+Casos de prueba & Número de pruebas & Medida de validación funcional del prototipo. \\ \hline
+Evidencias de prueba & Capturas/registros & Soporte documental para comprobar el resultado obtenido. \\ \hline
+\end{tabular}
+\caption{Métricas seleccionadas para la estimación del esfuerzo.}
+\label{tab:metricas}
+\end{table}
+
+Para valorar la complejidad de las funcionalidades se utilizará una escala sencilla de puntos de esfuerzo. Esta escala no pretende sustituir a una estimación detallada en horas, sino servir como apoyo para priorizar tareas y organizar iteraciones.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|c|p{8.5cm}|}
+\hline
+\textbf{Puntos} & \textbf{Complejidad} & \textbf{Descripción} \\ \hline
+1 & Muy baja & Tarea pequeña, bien delimitada y con bajo riesgo técnico. \\ \hline
+2 & Baja & Funcionalidad sencilla con poca integración. \\ \hline
+3 & Media & Tarea con cierta lógica de negocio o integración con otros módulos. \\ \hline
+5 & Alta & Funcionalidad relevante, con varias dependencias o validaciones. \\ \hline
+8 & Muy alta & Funcionalidad compleja que requiere diseño, implementación y pruebas cuidadas. \\ \hline
+\end{tabular}
+\caption{Escala de puntos de esfuerzo aplicada al proyecto.}
+\label{tab:puntos-esfuerzo}
+\end{table}
+
+De forma inicial, los bloques principales del trabajo se estiman según la siguiente distribución de esfuerzo:
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{5cm}|c|p{7cm}|}
+\hline
+\textbf{Bloque de trabajo} & \textbf{Esfuerzo} & \textbf{Justificación} \\ \hline
+Análisis, estado del arte y requisitos & 45 h & Incluye estudio de soluciones existentes, definición inicial del sistema y revisión documental. \\ \hline
+Diseño de la solución & 45 h & Incluye arquitectura, modelo de datos, flujos principales e interfaz. \\ \hline
+Desarrollo del prototipo & 115 h & Incluye autenticación, consulta de transporte, mapa, reservas, pago simulado, tickets y notificaciones. \\ \hline
+Pruebas y validación & 45 h & Incluye pruebas funcionales, evidencias y corrección de incidencias. \\ \hline
+Documentación y memoria & 40 h & Incluye redacción, revisión, maquetación y preparación del documento final. \\ \hline
+Gestión y seguimiento & 10 h & Incluye control de tareas, planificación y trazabilidad. \\ \hline
+\textbf{Total estimado} & \textbf{300 h} & Carga total prevista para el trabajo. \\ \hline
+\end{tabular}
+\caption{Estimación inicial de esfuerzo por bloques de trabajo.}
+\label{tab:esfuerzo}
+\end{table}
+
+
+\section{Planificación temporal}
+\label{sec:planificacion}
+
+El presente trabajo tiene una carga estimada de 300 horas, correspondiente a una asignatura de 12 créditos. La planificación temporal se ha organizado tomando como referencia dicha limitación y distribuyendo el esfuerzo entre las principales fases del proyecto: análisis, diseño, desarrollo, pruebas, documentación y seguimiento.
+
+Dado que la metodología seleccionada es Scrum adaptado, la planificación no debe interpretarse como una secuencia completamente rígida. Las fases de análisis, diseño y documentación se desarrollan de forma progresiva, y la implementación se organiza mediante iteraciones. Por este motivo, el cronograma general presenta la fase de desarrollo como un bloque principal, mientras que el detalle de las iteraciones se documentará posteriormente en los apartados dedicados al desarrollo del prototipo.
+
+\subsection{Cronograma general}
+
+La Tabla~\ref{tab:cronograma} muestra una planificación temporal estimada organizada en diez semanas de trabajo. Esta distribución podrá ajustarse durante la ejecución del proyecto en función de la dificultad real de las tareas, la disponibilidad de datos externos y los resultados obtenidos en cada iteración.
+
+\begin{table}[h!]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|p{3cm}|c|c|c|c|c|c|c|c|c|c|p{3cm}|}
+\hline
+\textbf{Fase} & \textbf{S1} & \textbf{S2} & \textbf{S3} & \textbf{S4} & \textbf{S5} & \textbf{S6} & \textbf{S7} & \textbf{S8} & \textbf{S9} & \textbf{S10} & \textbf{Resultado esperado} \\ \hline
+Especificación del trabajo            & $\blacksquare$ & $\blacksquare$ &                &                &                &                &                &                &                &                & Objetivos, alcance, hipótesis, restricciones y estado del arte inicial \\ \hline
+Requisitos y análisis                 &                & $\blacksquare$ & $\blacksquare$ &                &                &                &                &                &                &                & Requisitos iniciales, actores, casos de uso preliminares \\ \hline
+Diseño de la solución                 &                &                & $\blacksquare$ & $\blacksquare$ &                &                &                &                &                &                & Arquitectura, modelo de datos, flujos principales e interfaz \\ \hline
+Desarrollo del prototipo              &                &                &                & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ &                &                &                & Implementación incremental de funcionalidades principales \\ \hline
+Pruebas y validación                  &                &                &                &                &                &                & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ &                & Casos de prueba, evidencias y corrección de incidencias \\ \hline
+Documentación y memoria               & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ & Memoria actualizada durante todo el proyecto \\ \hline
+Revisión final y entrega              &                &                &                &                &                &                &                &                & $\blacksquare$ & $\blacksquare$ & Revisión, maquetación, conclusiones y preparación de entrega \\ \hline
+\end{tabular}
+\caption{Cronograma general estimado del proyecto (10 semanas).}
+\label{tab:cronograma}
+\end{table}
+
+\subsection{Distribución estimada del esfuerzo}
+
+La Tabla~\ref{tab:distribucion-esfuerzo} recoge una distribución aproximada de las 300 horas disponibles. Esta estimación servirá como base para controlar el avance del trabajo y para elaborar posteriormente el presupuesto.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{6cm}|c|c|}
+\hline
+\textbf{Bloque de trabajo} & \textbf{Horas} & \textbf{Porcentaje} \\ \hline
+Análisis, estado del arte y requisitos & 45 h & 15 \% \\ \hline
+Diseño de la solución                  & 45 h & 15 \% \\ \hline
+Desarrollo del prototipo               & 115 h & 38 \% \\ \hline
+Pruebas y validación                   & 45 h & 15 \% \\ \hline
+Documentación y memoria                & 40 h & 13 \% \\ \hline
+Gestión y seguimiento                  & 10 h & 4 \% \\ \hline
+\textbf{Total}                         & \textbf{300 h} & \textbf{100 \%} \\ \hline
+\end{tabular}
+\caption{Distribución estimada del esfuerzo por bloques.}
+\label{tab:distribucion-esfuerzo}
+\end{table}
+
+La mayor parte del esfuerzo se concentra en el desarrollo del prototipo, al tratarse del resultado técnico principal del trabajo. No obstante, se reserva una parte importante del tiempo a las fases de análisis, diseño, pruebas y documentación, ya que son necesarias para justificar la solución y validar adecuadamente el resultado obtenido.
+
+\subsection{Hitos principales}
+
+Para controlar el avance del proyecto se han definido una serie de hitos intermedios. Cada hito representa un punto de control asociado a un resultado parcial verificable.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{5cm}|c|p{7cm}|}
+\hline
+\textbf{Hito} & \textbf{Momento} & \textbf{Resultado asociado} \\ \hline
+H1. Cierre de la especificación inicial & Semana 2 & Objetivos, alcance, hipótesis, restricciones, estado del arte y requisitos iniciales definidos. \\ \hline
+H2. Diseño base del sistema              & Semana 4 & Arquitectura inicial, modelo de datos, flujos principales y diseño preliminar de interfaces. \\ \hline
+H3. Primera versión funcional            & Semana 6 & Autenticación, consulta básica de información de transporte y primera visualización en mapa. \\ \hline
+H4. Flujo principal de reserva           & Semana 7 & Reserva con selección de asiento, pago simulado y ticket electrónico. \\ \hline
+H5. Validación del prototipo             & Semana 9 & Pruebas funcionales, evidencias, revisión de incidencias y ajustes principales. \\ \hline
+H6. Entrega final                        & Semana 10 & Memoria revisada, código fuente preparado y documentación final lista para entrega. \\ \hline
+\end{tabular}
+\caption{Hitos principales del proyecto.}
+\label{tab:hitos}
+\end{table}
+
+\subsection{Organización de la fase de desarrollo}
+
+La fase de desarrollo se organizará mediante iteraciones, siguiendo la metodología Scrum adaptada descrita anteriormente. Cada iteración tendrá un objetivo concreto y deberá generar un resultado parcial que pueda revisarse y probarse.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{2.5cm}|p{5cm}|p{7cm}|}
+\hline
+\textbf{Iteración} & \textbf{Objetivo principal} & \textbf{Resultado esperado} \\ \hline
+Iteración 1 & Preparación del proyecto y autenticación & Estructura base del prototipo, registro, inicio y cierre de sesión. \\ \hline
+Iteración 2 & Consulta de transporte y mapa            & Consulta de líneas, rutas, paradas y visualización inicial en mapa. \\ \hline
+Iteración 3 & Reservas y selección de asiento          & Flujo de reserva de billete y selección de plaza disponible. \\ \hline
+Iteración 4 & Pago simulado y ticket electrónico       & Confirmación de reserva, simulación del pago y generación del ticket. \\ \hline
+Iteración 5 & Incidencias, correo, FAQ y contacto      & Avisos por correo electrónico, preguntas frecuentes y formulario de contacto. \\ \hline
+Iteración 6 & Integración y pruebas finales            & Corrección de incidencias, validación general y recopilación de evidencias. \\ \hline
+\end{tabular}
+\caption{Organización por iteraciones de la fase de desarrollo.}
+\label{tab:iteraciones}
+\end{table}
+
+Cada iteración deberá dejar constancia de las funcionalidades abordadas, las decisiones relevantes tomadas, las pruebas realizadas y las evidencias obtenidas. De esta forma, la planificación temporal no solo servirá para organizar el desarrollo, sino también para mantener la trazabilidad entre objetivos, requisitos, implementación y validación.
+
+En conclusión, la planificación propuesta permite distribuir el trabajo de forma equilibrada dentro de la limitación de 300 horas. El cronograma general ofrece una visión global del proyecto, mientras que la organización por iteraciones permite desarrollar el prototipo de forma incremental y revisar los resultados a medida que avanza el trabajo.
+
+
+\section{Presupuesto}
+\label{sec:presupuesto}
+
+El presupuesto tiene como finalidad estimar el coste económico asociado a la elaboración del proyecto. Aunque este trabajo se desarrolla en un contexto académico y no supone una contratación real, toda actividad de análisis, diseño, desarrollo, pruebas y documentación tiene un coste asociado. Por este motivo, se realiza una valoración aproximada del esfuerzo y de los recursos necesarios para llevar a cabo el prototipo.
+
+La estimación se ha elaborado tomando como base la planificación temporal definida anteriormente. El trabajo tiene una carga total prevista de 300 horas, correspondiente a una asignatura de 12 créditos. Para valorar el coste de personal se ha utilizado una tarifa estimada de 18~\euro/hora, tomando como referencia un perfil técnico junior que realiza tareas de análisis, desarrollo, pruebas y documentación. Esta cantidad se utiliza únicamente como criterio de valoración académica del esfuerzo.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{6cm}|p{8cm}|}
+\hline
+\textbf{Concepto} & \textbf{Criterio utilizado} \\ \hline
+Duración total estimada & 300 h asociadas a un TFG de 12 créditos. \\ \hline
+Coste/hora del personal & 18~\euro/h (perfil técnico junior). \\ \hline
+Amortización del equipo & Proporcional al tiempo de uso del proyecto. \\ \hline
+Costes indirectos       & 10~\% sobre los costes directos. \\ \hline
+\end{tabular}
+\caption{Bases utilizadas para la elaboración del presupuesto.}
+\label{tab:bases-presupuesto}
+\end{table}
+
+El coste de personal se calcula multiplicando las horas previstas por la tarifa indicada. Como se trata de un único trabajador, todo el esfuerzo se concentra en un mismo perfil técnico.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{5cm}|c|c|c|}
+\hline
+\textbf{Bloque} & \textbf{Horas} & \textbf{Tarifa} & \textbf{Coste} \\ \hline
+Análisis, estado del arte y requisitos & 45 h  & 18~\euro/h & 810,00~\euro \\ \hline
+Diseño de la solución                  & 45 h  & 18~\euro/h & 810,00~\euro \\ \hline
+Desarrollo del prototipo               & 115 h & 18~\euro/h & 2.070,00~\euro \\ \hline
+Pruebas y validación                   & 45 h  & 18~\euro/h & 810,00~\euro \\ \hline
+Documentación y memoria                & 40 h  & 18~\euro/h & 720,00~\euro \\ \hline
+Gestión y seguimiento                  & 10 h  & 18~\euro/h & 180,00~\euro \\ \hline
+\textbf{Total}                         & \textbf{300 h} &  & \textbf{5.400,00~\euro} \\ \hline
+\end{tabular}
+\caption{Coste de personal por bloque de trabajo.}
+\label{tab:coste-personal}
+\end{table}
+
+Para el desarrollo se utilizará un equipo personal. Como no se adquiere un ordenador específicamente para este proyecto, se imputa únicamente la parte proporcional correspondiente al tiempo de uso durante la elaboración del trabajo. La amortización parcial se calcula mediante la fórmula:
+\[
+\text{Coste imputable} = \frac{\text{coste del equipo}}{\text{vida útil estimada (meses)}} \times \text{meses de uso}
+\]
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{4cm}|c|c|c|c|}
+\hline
+\textbf{Recurso} & \textbf{Coste} & \textbf{Vida útil} & \textbf{Tiempo imputado} & \textbf{Coste imputable} \\ \hline
+Ordenador portátil de desarrollo & 900,00~\euro & 48 meses & 2,5 meses & 46,88~\euro \\ \hline
+\textbf{Total hardware}          &              &          &           & \textbf{46,88~\euro} \\ \hline
+\end{tabular}
+\caption{Coste de hardware imputable al proyecto.}
+\label{tab:coste-hardware}
+\end{table}
+
+Los costes indirectos agrupan gastos generales asociados al uso del espacio de trabajo, electricidad, conexión a internet, material auxiliar y otros recursos de apoyo. Para simplificar la estimación, se aplica un 10~\% sobre los costes directos del proyecto.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{7cm}|r|}
+\hline
+\textbf{Concepto} & \textbf{Importe} \\ \hline
+Coste de personal               & 5.400,00~\euro \\ \hline
+Coste de hardware imputable     & 46,88~\euro \\ \hline
+Coste de software y servicios   & 0,00~\euro \\ \hline
+\textbf{Subtotal de costes directos} & \textbf{5.446,88~\euro} \\ \hline
+Costes indirectos (10~\%)       & 544,69~\euro \\ \hline
+\textbf{Total estimado del proyecto} & \textbf{5.991,57~\euro} \\ \hline
+\end{tabular}
+\caption{Presupuesto total estimado del proyecto.}
+\label{tab:presupuesto-total}
+\end{table}
