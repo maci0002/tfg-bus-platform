@@ -8,12 +8,13 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 
 import { routes } from './app.routes';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { authErrorInterceptor } from './core/interceptors/auth-error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    provideHttpClient(withInterceptors([jwtInterceptor])),
+    provideHttpClient(withInterceptors([jwtInterceptor, authErrorInterceptor])),
     provideAnimationsAsync(),
     provideTranslateService({
       loader: provideTranslateHttpLoader({

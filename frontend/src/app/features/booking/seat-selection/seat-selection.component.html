@@ -1,0 +1,154 @@
+<div class="seats-page page-padding">
+  <div class="container">
+
+    <button mat-button class="seats-page__back" (click)="back()">
+      <mat-icon>arrow_back</mat-icon> {{ 'booking.back' | translate }}
+    </button>
+
+    @if (loading()) {
+      <div class="seats-page__loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (error() || !seatMap()) {
+      <div class="seats-page__empty">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error() ?? 'booking.notFound' | translate }}</p>
+      </div>
+    } @else {
+
+      <!-- Cabecera del trayecto -->
+      <header class="trip-summary" [style.--line-color]="bookingFlow.selectedTrip()!.lineColor">
+        <div class="trip-summary__line">
+          <span class="trip-summary__badge" [style.background]="bookingFlow.selectedTrip()!.lineColor">
+            {{ seatMap()!.lineCode }}
+          </span>
+          <span class="trip-summary__name">{{ seatMap()!.lineName }}</span>
+        </div>
+        <div class="trip-summary__route">
+          <div>
+            <span class="trip-summary__hour">{{ seatMap()!.departureTime }}</span>
+            <span class="trip-summary__stop">{{ seatMap()!.originStop }}</span>
+          </div>
+          <div class="trip-summary__sep">
+            <mat-icon>arrow_forward</mat-icon>
+            <span>{{ formatDuration(seatMap()!.durationMinutes) }}</span>
+          </div>
+          <div class="trip-summary__right">
+            <span class="trip-summary__hour">{{ seatMap()!.arrivalTime }}</span>
+            <span class="trip-summary__stop">{{ seatMap()!.destinationStop }}</span>
+          </div>
+        </div>
+        <div class="trip-summary__date">
+          <mat-icon>event</mat-icon>
+          {{ seatMap()!.travelDate }}
+        </div>
+      </header>
+
+      <div class="seats-page__grid">
+
+        <!-- Mapa del autobús -->
+        <section class="bus-card">
+          <h2><mat-icon>event_seat</mat-icon> {{ 'booking.selectSeat' | translate }}</h2>
+
+          <div class="bus">
+            <div class="bus__nose">
+              <mat-icon>directions_bus</mat-icon>
+              <span>{{ 'booking.driver' | translate }}</span>
+            </div>
+
+            <div class="bus__cabin">
+              @for (row of rows(); track row.row) {
+                <div class="bus__row">
+                  <span class="bus__row-num">{{ row.row }}</span>
+                  <div class="bus__side">
+                    @for (s of row.left; track s.code) {
+                      <button class="seat"
+                              [class.seat--occupied]="s.occupied"
+                              [class.seat--selected]="isSelected(s)"
+                              [disabled]="s.occupied"
+                              type="button"
+                              (click)="selectSeat(s)"
+                              [attr.aria-label]="'Asiento ' + s.code">
+                        {{ s.column }}
+                      </button>
+                    }
+                  </div>
+                  <div class="bus__aisle"></div>
+                  <div class="bus__side">
+                    @for (s of row.right; track s.code) {
+                      <button class="seat"
+                              [class.seat--occupied]="s.occupied"
+                              [class.seat--selected]="isSelected(s)"
+                              [disabled]="s.occupied"
+                              type="button"
+                              (click)="selectSeat(s)"
+                              [attr.aria-label]="'Asiento ' + s.code">
+                        {{ s.column }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Leyenda -->
+          <div class="legend">
+            <span class="legend__item">
+              <span class="legend__chip legend__chip--free"></span>
+              {{ 'booking.legend.free' | translate }}
+            </span>
+            <span class="legend__item">
+              <span class="legend__chip legend__chip--selected"></span>
+              {{ 'booking.legend.selected' | translate }}
+            </span>
+            <span class="legend__item">
+              <span class="legend__chip legend__chip--occupied"></span>
+              {{ 'booking.legend.occupied' | translate }}
+            </span>
+          </div>
+        </section>
+
+        <!-- Panel lateral con resumen y CTA -->
+        <aside class="summary-card">
+          <h3>{{ 'booking.summary' | translate }}</h3>
+
+          <dl class="summary-card__list">
+            <div>
+              <dt>{{ 'booking.seat' | translate }}</dt>
+              <dd>
+                @if (selectedSeat()) {
+                  <span class="summary-card__seat">{{ selectedSeat() }}</span>
+                } @else {
+                  <span class="summary-card__placeholder">{{ 'booking.noSeat' | translate }}</span>
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>{{ 'booking.available' | translate }}</dt>
+              <dd>{{ availableCount() }} / {{ seatMap()!.seats.length }}</dd>
+            </div>
+            <div class="summary-card__price">
+              <dt>{{ 'booking.totalPrice' | translate }}</dt>
+              <dd>{{ seatMap()!.price | number:'1.2-2' }} €</dd>
+            </div>
+          </dl>
+
+          <button mat-raised-button color="primary"
+                  class="summary-card__cta"
+                  type="button"
+                  [disabled]="!selectedSeat()"
+                  (click)="continueToConfirm()">
+            {{ 'booking.continue' | translate }}
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+
+          <p class="summary-card__note">
+            <mat-icon>info</mat-icon>
+            {{ 'booking.prototypeNote' | translate }}
+          </p>
+        </aside>
+      </div>
+    }
+  </div>
+</div>

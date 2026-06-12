@@ -1,0 +1,53 @@
+\chapter{¿Cómo puedes añadir y referenciar una imagen ?}
+Para añadir una \textbf{figura} en latex debes incluir el siguiente código:
+%Con {verbatim} añadimos textualmente lo que escribimos, sin que latex lo procese
+\begin{verbatim}
+\begin{figure}[1*]
+	\centering
+   \includegraphics[width=2*\textwidth]{3*}
+  \caption{4*}
+  \label{5*}
+\end{figure}
+\end{verbatim}
+1* -> sustituir el 1 por:
+
+\begin{itemize}
+    \item h:	Establece la posición del elemento flotante «aquí». Ésto es, aproximadamente en el mismo punto donde aparece en el código (sin embargo, no siempre es exacto el posicionamiento)
+    \item t:	Inserta la figura al inicio de la página.
+    \item b:	Inserta la figura al final de la página.
+    \item p:	Inserta los elementos flotantes en una página por separado, que sólo contiene figuras.
+    \item !:	Sobrescribe los parámetros que LATEX usa para determinar una «buena» posición para la imagen.
+\end{itemize}
+
+Nota: Se pueden combinar varias opciones.
+\\
+2* -> Sustituir el 2 por:\\
+\\
+El valor 1 si queremos que el ancho de la imagen se corresponda con el ancho del texto, valores por debajo de 1 harán la imagen mas pequeña y valores por encima de 1 harán la figura mas grande que el ancho del texto.\\
+\\
+3* -> Sustituir el 3 por:\\
+\\
+La ruta de la imagen, si se ha añadido correctamente la imagen la ruta será \begin{verbatim}
+Imagenes/nombre_imagen.
+\end{verbatim}
+4* -> Sustituir el 4 por:\\
+\\
+La explicación de la imagen, es decir, si la imagen muestra a Homer Simpson sustituimos el 4 por retrato de Homer Simpson.\\
+\\
+5* -> Sustituir el 5 por:\\
+\\
+La etiqueta de la imagen, sera el ID de la imagen que nos servirá para referenciarla.\\
+\\
+%Ejemplo de inclusión de una imagen
+\begin{figure}[!htb]
+	\centering
+   \includegraphics[width=0.3\textwidth]{Imagenes/homer.jpg}
+  \caption{Retrato de Homer}
+  \label{fig:Homer}
+\end{figure}
+\\
+Para referenciar una imagen o cualquier elemento con un label usamos el comando \begin{verbatim}\ref{nombre_etiqueta}\end{verbatim} de esta forma la figura de Homer se referencia como la figura \ref{fig:Homer}. Por cierto, que se ha configurado para se coloque en línea. En caso de no caber, intentará colocarla al principio de la página y ,si tampoco cupiera, en la parte de abajo.
+
+
+
+

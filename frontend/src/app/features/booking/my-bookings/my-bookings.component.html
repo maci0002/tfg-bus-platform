@@ -1,0 +1,72 @@
+<div class="bookings-page page-padding">
+  <div class="container">
+
+    <header class="bookings-page__header">
+      <div>
+        <h1>{{ 'myBookings.title' | translate }}</h1>
+        <p>{{ 'myBookings.subtitle' | translate }}</p>
+      </div>
+      <a mat-raised-button color="primary" routerLink="/">
+        <mat-icon>add</mat-icon>
+        {{ 'myBookings.newBooking' | translate }}
+      </a>
+    </header>
+
+    @if (loading()) {
+      <div class="bookings-page__loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (reservations().length === 0) {
+      <div class="bookings-page__empty">
+        <mat-icon>confirmation_number</mat-icon>
+        <h2>{{ 'myBookings.empty.title' | translate }}</h2>
+        <p>{{ 'myBookings.empty.subtitle' | translate }}</p>
+        <a mat-raised-button color="primary" routerLink="/">
+          {{ 'myBookings.empty.action' | translate }}
+        </a>
+      </div>
+    } @else {
+      <div class="bookings-list">
+        @for (r of reservations(); track r.id) {
+          <a class="booking-row"
+             [routerLink]="['/bookings', r.id]"
+             [style.--line-color]="r.lineColor">
+
+            <div class="booking-row__col booking-row__col--line">
+              <span class="booking-row__badge" [style.background]="r.lineColor">
+                {{ r.lineCode }}
+              </span>
+              <span class="booking-row__code">{{ r.code }}</span>
+            </div>
+
+            <div class="booking-row__col booking-row__col--route">
+              <div class="booking-row__route">
+                <strong>{{ r.originStop }}</strong>
+                <mat-icon>arrow_forward</mat-icon>
+                <strong>{{ r.destinationStop }}</strong>
+              </div>
+              <span class="booking-row__date">
+                {{ r.travelDate }} · {{ r.departureTime }} → {{ r.arrivalTime }}
+                <span class="booking-row__duration">({{ formatDuration(r.durationMinutes) }})</span>
+              </span>
+            </div>
+
+            <div class="booking-row__col booking-row__col--seat">
+              <span class="booking-row__seat-label">{{ 'booking.seat' | translate }}</span>
+              <span class="booking-row__seat">{{ r.seatCode }}</span>
+            </div>
+
+            <div class="booking-row__col booking-row__col--status">
+              <span class="status-chip" [class]="statusClass(r.status)">
+                {{ statusLabel(r.status) | translate }}
+              </span>
+              <span class="booking-row__price">{{ r.price | number:'1.2-2' }} €</span>
+            </div>
+
+            <mat-icon class="booking-row__chevron">chevron_right</mat-icon>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>

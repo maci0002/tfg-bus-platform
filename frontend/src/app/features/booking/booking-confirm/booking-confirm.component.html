@@ -1,0 +1,93 @@
+<div class="confirm-page page-padding">
+  <div class="container container--narrow">
+
+    <button mat-button class="confirm-page__back" (click)="back()" type="button">
+      <mat-icon>arrow_back</mat-icon> {{ 'booking.changeSeat' | translate }}
+    </button>
+
+    <header class="confirm-page__header">
+      <h1>{{ 'booking.confirmTitle' | translate }}</h1>
+      <p>{{ 'booking.confirmSubtitle' | translate }}</p>
+    </header>
+
+    @if (trip && seat) {
+      <article class="confirm-card" [style.--line-color]="trip.lineColor">
+
+        <header class="confirm-card__header">
+          <span class="confirm-card__badge" [style.background]="trip.lineColor">
+            {{ trip.lineCode }}
+          </span>
+          <div>
+            <h2>{{ trip.lineName }}</h2>
+            <span class="confirm-card__date">
+              <mat-icon>event</mat-icon> {{ trip.travelDate }}
+            </span>
+          </div>
+        </header>
+
+        <!-- Tramo -->
+        <div class="confirm-card__route">
+          <div>
+            <span class="confirm-card__hour">{{ trip.departureTime }}</span>
+            <span class="confirm-card__stop">{{ trip.originStopName }}</span>
+          </div>
+          <div class="confirm-card__sep">
+            <mat-icon>arrow_forward</mat-icon>
+            <span>{{ formatDuration(trip.durationMinutes) }}</span>
+          </div>
+          <div class="confirm-card__right">
+            <span class="confirm-card__hour">{{ trip.arrivalTime }}</span>
+            <span class="confirm-card__stop">{{ trip.destinationStopName }}</span>
+          </div>
+        </div>
+
+        <!-- Asiento + precio -->
+        <dl class="confirm-card__details">
+          <div>
+            <dt><mat-icon>event_seat</mat-icon> {{ 'booking.seat' | translate }}</dt>
+            <dd class="confirm-card__seat-chip">{{ seat }}</dd>
+          </div>
+          <div>
+            <dt><mat-icon>person</mat-icon> {{ 'booking.passenger' | translate }}</dt>
+            <dd>
+              @if (auth.isLoggedIn()) {
+                {{ auth.userName() }}
+              } @else {
+                <em>{{ 'booking.notLogged' | translate }}</em>
+              }
+            </dd>
+          </div>
+          <div class="confirm-card__total">
+            <dt>{{ 'booking.totalPrice' | translate }}</dt>
+            <dd>{{ price | number:'1.2-2' }} €</dd>
+          </div>
+        </dl>
+
+        @if (!auth.isLoggedIn()) {
+          <div class="confirm-card__login-warn">
+            <mat-icon>login</mat-icon>
+            <span>{{ 'booking.loginRequired' | translate }}</span>
+          </div>
+        }
+
+        <button mat-raised-button color="primary"
+                class="confirm-card__cta"
+                type="button"
+                [disabled]="submitting()"
+                (click)="confirm()">
+          @if (submitting()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>check_circle</mat-icon>
+            {{ 'booking.confirmReservation' | translate }}
+          }
+        </button>
+
+        <p class="confirm-card__legal">
+          <mat-icon>info</mat-icon>
+          {{ 'booking.pendingPaymentInfo' | translate }}
+        </p>
+      </article>
+    }
+  </div>
+</div>

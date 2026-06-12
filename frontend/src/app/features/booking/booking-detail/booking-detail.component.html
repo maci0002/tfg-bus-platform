@@ -1,0 +1,104 @@
+<div class="detail-page page-padding">
+  <div class="container container--narrow">
+
+    <a class="detail-page__back" routerLink="/my-bookings">
+      <mat-icon>arrow_back</mat-icon> {{ 'bookingDetail.back' | translate }}
+    </a>
+
+    @if (loading()) {
+      <div class="detail-page__loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (!reservation()) {
+      <div class="detail-page__empty">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ 'bookingDetail.notFound' | translate }}</p>
+      </div>
+    } @else {
+
+      <article class="ticket" [style.--line-color]="reservation()!.lineColor">
+
+        <!-- Header con código de reserva -->
+        <header class="ticket__top">
+          <div>
+            <span class="ticket__label">{{ 'bookingDetail.reservationCode' | translate }}</span>
+            <h1 class="ticket__code">{{ reservation()!.code }}</h1>
+          </div>
+          <span class="status-chip" [class]="statusClass(reservation()!.status)">
+            {{ statusLabel(reservation()!.status) | translate }}
+          </span>
+        </header>
+
+        <!-- Línea -->
+        <div class="ticket__line">
+          <span class="ticket__badge" [style.background]="reservation()!.lineColor">
+            {{ reservation()!.lineCode }}
+          </span>
+          <span class="ticket__line-name">{{ reservation()!.lineName }}</span>
+        </div>
+
+        <!-- Tramo y horarios -->
+        <div class="ticket__route">
+          <div>
+            <span class="ticket__hour">{{ reservation()!.departureTime }}</span>
+            <span class="ticket__stop">{{ reservation()!.originStop }}</span>
+          </div>
+          <div class="ticket__sep">
+            <div class="ticket__dotted"></div>
+            <mat-icon>directions_bus</mat-icon>
+            <span class="ticket__duration">{{ formatDuration(reservation()!.durationMinutes) }}</span>
+            <div class="ticket__dotted"></div>
+          </div>
+          <div class="ticket__right">
+            <span class="ticket__hour">{{ reservation()!.arrivalTime }}</span>
+            <span class="ticket__stop">{{ reservation()!.destinationStop }}</span>
+          </div>
+        </div>
+
+        <!-- Detalles secundarios -->
+        <dl class="ticket__details">
+          <div>
+            <dt><mat-icon>event</mat-icon> {{ 'bookingDetail.date' | translate }}</dt>
+            <dd>{{ reservation()!.travelDate }}</dd>
+          </div>
+          <div>
+            <dt><mat-icon>event_seat</mat-icon> {{ 'booking.seat' | translate }}</dt>
+            <dd class="ticket__seat">{{ reservation()!.seatCode }}</dd>
+          </div>
+          <div>
+            <dt><mat-icon>payments</mat-icon> {{ 'bookingDetail.totalPaid' | translate }}</dt>
+            <dd class="ticket__price">{{ reservation()!.price | number:'1.2-2' }} €</dd>
+          </div>
+        </dl>
+
+        <!-- Aviso pendiente de pago -->
+        @if (reservation()!.status === 'PENDING_PAYMENT') {
+          <div class="ticket__pending">
+            <mat-icon>info</mat-icon>
+            <span>{{ 'bookingDetail.pendingPaymentNote' | translate }}</span>
+          </div>
+        }
+
+        @if (reservation()!.status === 'CONFIRMED') {
+          <div class="ticket__qr-placeholder">
+            <mat-icon>qr_code_2</mat-icon>
+            <span>{{ 'bookingDetail.qrComingSoon' | translate }}</span>
+          </div>
+        }
+
+        <!-- Acciones -->
+        @if (reservation()!.status !== 'CANCELLED') {
+          <div class="ticket__actions">
+            <button mat-stroked-button color="warn"
+                    type="button"
+                    [disabled]="cancelling()"
+                    (click)="cancelReservation()">
+              <mat-icon>cancel</mat-icon>
+              {{ 'bookingDetail.cancel' | translate }}
+            </button>
+          </div>
+        }
+      </article>
+    }
+  </div>
+</div>

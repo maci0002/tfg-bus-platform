@@ -1,0 +1,78 @@
+\documentclass[a4paper,12pt,twoside,hidelinks,openany]{report}
+
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8x]{inputenc}
+
+% ==== Introducir aquí el nombre del estudiante
+\def\Estudiante{Miguel Ángel Carrasco Infante}
+
+% ==== Introducir aquí el título de completo y abreviado (para las cabeceras) del TFG
+\def\TituloTFT{Desarrollo de un prototipo web de gestión de transporte de autobuses}
+\def\TituloAbreviado{Prototipo web de gestión de transporte de autobuses}
+
+% ==== Introducir aquí la fecha de presentación del TFG en el formato día/mes/año
+\def\Fecha{31/07/2026}
+
+
+\input{config.tex}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		PORTADA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}
+% Se pueden utilizar las macros tfgPortada (TFG) o tfmPortada (TFM)
+
+\tfgPortada
+{TFG} %opciones: TFG o TFM
+{Escuela Politécnica Superior de Jaén} %Facultad o Escuela
+{\TituloTFT} %El título debe coincidir con el de la propuesta
+{Autor: \Estudiante}
+{Grado: Ingeniería Informática}
+{Director: Prof. D. José Ignacio Gómez Espinola} %Director o directores
+{Departamento del director: Informática}
+{Fecha: \Fecha}
+{CC-BY-NC-SA} %opciones: CC-BY, CC-BY-SA, CC-BY-NC, CC-BY-NC-ND, CC-BY-ND, CC-BY-NC-SA
+
+\thispagestyle{empty}
+\cleardoublepage
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		Agradecimientos, Ficha e Índice
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\thispagestyle{empty}
+\input{Capitulos/Agradecimientos}
+\thispagestyle{empty}
+\cleardoublepage
+\newpage
+\thispagestyle{empty}
+\input{Capitulos/FichaNormas}
+\thispagestyle{empty}
+\cleardoublepage
+\renewcommand{\contentsname}{Índice}
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		Capítulos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{page}{1}
+\input{Capitulos/Cap1_Especificacion.tex}
+\input{Capitulos/Cap2_DisenoInicial.tex}
+\input{Capitulos/Cap3_Desarrollo.tex}
+\input{Capitulos/Cap4_ExperimentacionResultados.tex}
+\input{Capitulos/Cap5_ModeloNegocio.tex}
+\input{Capitulos/Cap6_Conclusiones.tex}
+\input{Capitulos/Cap7_Apendices.tex}
+\input{Capitulos/Cap8_DefinicionesAbreviaturas.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		BIBLIOGRAFÍA Y REFERENCIAS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{unsrt}
+\bibliography{Bibliografia}
+\nocite{*} 
+\end{document}

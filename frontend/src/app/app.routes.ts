@@ -26,6 +26,27 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
   },
+
+  // ── Flujo de reserva ──────────────────────────────────────────────────────
+  {
+    path: 'booking/seats',
+    loadComponent: () => import('./features/booking/seat-selection/seat-selection.component').then(m => m.SeatSelectionComponent),
+  },
+  {
+    path: 'booking/confirm',
+    loadComponent: () => import('./features/booking/booking-confirm/booking-confirm.component').then(m => m.BookingConfirmComponent),
+  },
+  {
+    path: 'my-bookings',
+    loadComponent: () => import('./features/booking/my-bookings/my-bookings.component').then(m => m.MyBookingsComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'bookings/:id',
+    loadComponent: () => import('./features/booking/booking-detail/booking-detail.component').then(m => m.BookingDetailComponent),
+    canActivate: [authGuard],
+  },
+
   {
     path: 'dashboard',
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
