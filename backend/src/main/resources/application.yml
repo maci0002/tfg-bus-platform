@@ -27,3 +27,14 @@ app:
     expiration-ms: 86400000
   cors:
     allowed-origins: http://localhost:4200
+
+# Integración con la API abierta de la Red de Consorcios de Transporte de Andalucía (CTAN).
+# El área de Jaén corresponde al consorcio nº 7 (CTJA).
+ctan:
+  enabled: true
+  base-url: http://api.ctan.es/v1
+  consorcio-id: 7
+  connect-timeout-ms: 5000
+  read-timeout-ms: 15000
+  average-speed-kmh: 45
+  max-lines: 0   # 0 = todas las líneas; valores > 0 limitan la carga (útil en desarrollo)

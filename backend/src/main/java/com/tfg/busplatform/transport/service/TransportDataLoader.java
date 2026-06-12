@@ -1,5 +1,7 @@
 package com.tfg.busplatform.transport.service;
 
+import com.tfg.busplatform.transport.ctan.CtanProperties;
+import com.tfg.busplatform.transport.ctan.CtanSyncService;
 import com.tfg.busplatform.transport.model.Line;
 import com.tfg.busplatform.transport.model.LineStop;
 import com.tfg.busplatform.transport.model.Stop;
@@ -27,14 +29,42 @@ import java.util.Map;
 public class TransportDataLoader {
 
     @Bean
-    ApplicationRunner seedTransportData(StopRepository stopRepository, LineRepository lineRepository) {
+    ApplicationRunner seedTransportData(StopRepository stopRepository, LineRepository lineRepository,
+                                        CtanProperties ctanProperties, CtanSyncService ctanSyncService) {
         return args -> {
             if (lineRepository.count() > 0) {
-                log.info("Datos de transporte ya cargados, omitiendo seed.");
+                log.info("Datos de transporte ya cargados, omitiendo carga inicial.");
                 return;
             }
 
-            log.info("Cargando datos de transporte iniciales (entorno de Jaén)...");
+            // Origen primario de datos: API abierta de CTAN (consorcio de Jaén).
+            if (ctanProperties.isEnabled()) {
+                try {
+                    CtanSyncService.SyncResult result = ctanSyncService.sync();
+                    if (result.lines() > 0) {
+                        log.info("Datos cargados desde la API de CTAN: {} líneas y {} paradas.",
+                                result.lines(), result.stops());
+                        return;
+                    }
+                    log.warn("La sincronización con CTAN no devolvió líneas. Se usa el seed local de respaldo.");
+                } catch (Exception e) {
+                    log.warn("Fallo al sincronizar con CTAN ({}). Se usa el seed local de respaldo.",
+                            e.getMessage());
+                }
+            }
+
+            // Respaldo: datos locales aproximados del entorno de Jaén.
+            seedLocalData(stopRepository, lineRepository);
+        };
+    }
+
+    /**
+     * Carga un conjunto de datos locales aproximados del entorno de Jaén.
+     * Se utiliza cuando la integración con CTAN está deshabilitada o no responde,
+     * de modo que el prototipo siempre disponga de datos para funcionar.
+     */
+    private void seedLocalData(StopRepository stopRepository, LineRepository lineRepository) {
+            log.info("Cargando datos de transporte locales de respaldo (entorno de Jaén)...");
 
             // ── Paradas (ciudades del área de Jaén) ─────────────────────────
             Map<String, Stop> stops = new HashMap<>();
@@ -135,7 +165,6 @@ public class TransportDataLoader {
 
             log.info("Seed completado: {} paradas y {} líneas creadas.",
                     stopRepository.count(), lineRepository.count());
-        };
     }
 
     private Stop save(StopRepository repo, String code, String name, double lat, double lng) {
