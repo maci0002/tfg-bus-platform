@@ -1,0 +1,89 @@
+\chapter{Añadir una Tabla}
+Para añadir una tabla en latex debes incluir el siguiente código:
+%Con {verbatim} añadimos textualmente lo que escribimos, sin que latex lo procese
+\begin{verbatim}
+\begin{table}[1*]
+  \centering
+  \begin{tabular}{2*}
+\hline \hline
+3* & 4*\\
+\hline
+5* & 6*\\
+7* & 8*\\
+\hline \hline
+  \end{tabular}
+  \caption{9*}
+  \label{10*}
+\end{table}
+\end{verbatim}
+1* -> sustituir el 1 por:\\
+\\
+h:	Establece la posición del elemento flotante «aquí». Ésto es, aproximadamente en el mismo punto donde aparece en el código (sin embargo, no siempre es exacto el posicionamiento)\\
+\\
+t:	Inserta la figura al inicio de la página.\\
+\\
+b:	Inserta la figura al final de la página.\\
+\\
+p:	Inserta los elementos flotantes en una página por separado, que sólo contiene figuras.\\
+\\
+!:	Sobrescribe los parámetros que LATEX usa para determinar una «buena» posición para la imagen.\\
+\\
+Nota: Se pueden combinar varias opciones.\\
+\\
+2* -> Sustituir el 2 por:\\
+\\
+l,c,r. Debemos añadir tantas letras como columnas tengamos, significando l alineación a la izquierda, c alineación centrada y r alineación a la derecha.\\
+\\
+3*,4* -> Sustituir el 3 y 4 por:\\
+\\
+Título columna 1, título columna 2. \\
+\\
+5*, 6*, 7*, 8* -> Sustituir el 5, 6, 7 y 8 por:\\
+\\
+Dato [1][1], dato[1][2], dato[2][1], dato[2][2]\\
+\\
+9* -> Sustituir el 9 por:\\
+\\
+Texto descriptivo de la tabla\\
+\\
+10* -> Sustituir el 10 por:\\
+\\
+La etiqueta de la tabla, sera el ID de la tabla que nos servirá para referenciarla.\\
+\\
+%Ejemplo de inclusión de una tabla, este formato es un ejemplo se puede modificar el aspecto de la tabla a conveniencia.
+\begin{table}[!h]
+  \centering
+  \begin{tabular}{lc}
+  %Doble linea de la parte superior de la tabla.
+\hline \hline
+Tit col 1 & tit col 2*\\
+%Linea de separación entre tittulos de columna y datos.
+\hline
+1,1 & 1,2\\
+2,1 & 2,2\\
+%Doble linea final de tabla.
+\hline \hline
+  \end{tabular}
+  \caption{Tabla de ejemplo}
+  \label{TabEjem}
+\end{table}\\
+Para referenciar una tabla o cualquier elemento con un label usamos el comando \begin{verbatim}\ref{nombre_etiqueta}\end{verbatim}. De esta forma la tabla \textbf{ejemplo }se referencia como \ref{TabEjem}.\\
+
+Para citar una referencia bibliográfica se hace de la siguiente forma: \begin{verbatim}   \cite{nombre_etiqueta}\end{verbatim} Por ejemplo para citar el libro de Knuth, que puede verse al final de este documento, se escribiría: \begin{verbatim}\cite{Discriminador1}\end{verbatim} y se mostraría \cite{Discriminador1}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

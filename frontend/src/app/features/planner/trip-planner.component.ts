@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { map, Observable, startWith } from 'rxjs';
 import { TransportService } from '../../core/services/transport.service';
 import { Stop, TripSearchResult } from '../../core/models/transport.model';
+import { BookingFlowService } from '../../core/services/booking-flow.service';
 
 @Component({
   selector: 'app-trip-planner',
@@ -36,8 +37,10 @@ import { Stop, TripSearchResult } from '../../core/models/transport.model';
   styleUrl: './trip-planner.component.scss',
 })
 export class TripPlannerComponent {
-  private fb        = inject(FormBuilder);
-  private transport = inject(TransportService);
+  private fb           = inject(FormBuilder);
+  private transport    = inject(TransportService);
+  private bookingFlow  = inject(BookingFlowService);
+  private router       = inject(Router);
 
   stops = signal<Stop[]>([]);
   results = signal<TripSearchResult[]>([]);
@@ -110,5 +113,40 @@ export class TripPlannerComponent {
     const h = Math.floor(m / 60);
     const min = m % 60;
     return min === 0 ? `${h} h` : `${h} h ${min} min`;
+  }
+
+  /** Guarda el trayecto en el flujo de reserva y navega a la selección de asiento. */
+  reserve(trip: TripSearchResult): void {
+    const stops = trip.stops;
+    const originStopCode      = stops[0]?.code ?? '';
+    const destinationStopCode = stops[stops.length - 1]?.code ?? '';
+    const date: Date = this.form.value.date instanceof Date
+      ? this.form.value.date
+      : new Date(this.form.value.date);
+    const travelDate = this.toISODate(date);
+
+    this.bookingFlow.selectTrip({
+      lineId: trip.lineId,
+      lineCode: trip.lineCode,
+      lineName: trip.lineName,
+      lineColor: trip.lineColor,
+      originStopName: trip.originStop,
+      originStopCode,
+      destinationStopName: trip.destinationStop,
+      destinationStopCode,
+      travelDate,
+      departureTime: trip.departureTime,
+      arrivalTime: trip.arrivalTime,
+      durationMinutes: trip.durationMinutes,
+    });
+
+    this.router.navigate(['/booking/seats']);
+  }
+
+  private toISODate(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 }
