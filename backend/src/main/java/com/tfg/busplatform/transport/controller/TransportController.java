@@ -1,7 +1,5 @@
 package com.tfg.busplatform.transport.controller;
 
-import com.tfg.busplatform.transport.ctan.CtanProperties;
-import com.tfg.busplatform.transport.ctan.CtanSyncService;
 import com.tfg.busplatform.transport.dto.LineDetailDto;
 import com.tfg.busplatform.transport.dto.LineSummaryDto;
 import com.tfg.busplatform.transport.dto.StopDto;
@@ -21,8 +19,6 @@ import java.util.List;
 public class TransportController {
 
     private final TransportService transportService;
-    private final CtanSyncService ctanSyncService;
-    private final CtanProperties ctanProperties;
 
     @GetMapping("/lines")
     public ResponseEntity<List<LineSummaryDto>> getAllLines() {
@@ -50,17 +46,5 @@ public class TransportController {
         // `date` se acepta para futura compatibilidad pero no afecta al prototipo
         // (los horarios son los mismos cada día).
         return ResponseEntity.ok(transportService.searchTrips(origin, destination, time));
-    }
-
-    /**
-     * Re-sincroniza bajo demanda los datos de transporte desde la API de CTAN.
-     * Requiere autenticación. Devuelve 409 si la integración está deshabilitada.
-     */
-    @PostMapping("/sync")
-    public ResponseEntity<CtanSyncService.SyncResult> syncFromCtan() {
-        if (!ctanProperties.isEnabled()) {
-            return ResponseEntity.status(409).build();
-        }
-        return ResponseEntity.ok(ctanSyncService.sync());
     }
 }
