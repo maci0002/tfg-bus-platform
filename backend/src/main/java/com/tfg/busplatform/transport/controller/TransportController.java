@@ -35,6 +35,12 @@ public class TransportController {
         return ResponseEntity.ok(transportService.getAllStops());
     }
 
+    /** Paradas alcanzables como destino desde un origen dado (búsqueda dependiente). */
+    @GetMapping("/destinations")
+    public ResponseEntity<List<StopDto>> getReachableDestinations(@RequestParam String origin) {
+        return ResponseEntity.ok(transportService.getReachableDestinations(origin));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<TripSearchResultDto>> searchTrips(
             @RequestParam String origin,

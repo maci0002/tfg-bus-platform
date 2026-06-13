@@ -1,7 +1,10 @@
 package com.tfg.busplatform.transport.service;
 
+import com.tfg.busplatform.transport.ctan.CtanClient;
 import com.tfg.busplatform.transport.ctan.CtanProperties;
 import com.tfg.busplatform.transport.ctan.CtanSyncService;
+import com.tfg.busplatform.transport.ctan.CtanTextNormalizer;
+import com.tfg.busplatform.transport.ctan.dto.CtanParadasResponse.CtanParada;
 import com.tfg.busplatform.transport.gtfs.CuratedLinesSeeder;
 import com.tfg.busplatform.transport.gtfs.GtfsProperties;
 import com.tfg.busplatform.transport.gtfs.GtfsSyncService;
@@ -35,7 +38,7 @@ public class TransportDataLoader {
     ApplicationRunner seedTransportData(StopRepository stopRepository, LineRepository lineRepository,
                                         GtfsProperties gtfsProperties, GtfsSyncService gtfsSyncService,
                                         CtanProperties ctanProperties, CtanSyncService ctanSyncService,
-                                        CuratedLinesSeeder curatedLinesSeeder) {
+                                        CtanClient ctanClient, CuratedLinesSeeder curatedLinesSeeder) {
         return args -> {
             if (lineRepository.count() > 0) {
                 log.info("Datos de transporte ya cargados, omitiendo carga inicial.");
@@ -89,7 +92,51 @@ public class TransportDataLoader {
             } catch (Exception e) {
                 log.warn("No se pudieron cargar las líneas rurales curadas: {}", e.getMessage());
             }
+
+            // 5. Enriquecimiento: municipio de cada parada desde la API de CTAN.
+            //    Funciona con cualquier fuente, pues GTFS y CTAN comparten el código
+            //    "CTAN-<idParada>". Las paradas curadas/locales (otros códigos) no se ven
+            //    afectadas y conservan su municipio nulo.
+            if (ctanProperties.isEnabled()) {
+                enrichMunicipalities(stopRepository, ctanClient);
+            }
         };
+    }
+
+    /**
+     * Asigna a cada parada su municipio consultando el listado de paradas de CTAN
+     * y casando por el código {@code CTAN-<idParada>}. El nombre del municipio se
+     * normaliza (title-case + acentos) con {@link CtanTextNormalizer}.
+     */
+    private void enrichMunicipalities(StopRepository stopRepository, CtanClient ctanClient) {
+        List<CtanParada> paradas;
+        try {
+            paradas = ctanClient.getParadas();
+        } catch (Exception e) {
+            log.warn("No se pudieron obtener los municipios desde CTAN: {}", e.getMessage());
+            return;
+        }
+        if (paradas.isEmpty()) {
+            return;
+        }
+
+        Map<String, String> municipioByCode = new HashMap<>();
+        for (CtanParada p : paradas) {
+            if (p.idParada() != null && p.municipio() != null && !p.municipio().isBlank()) {
+                municipioByCode.put("CTAN-" + p.idParada(), CtanTextNormalizer.stopName(p.municipio()));
+            }
+        }
+
+        int updated = 0;
+        for (Stop s : stopRepository.findAll()) {
+            String municipio = municipioByCode.get(s.getCode());
+            if (municipio != null && !municipio.equalsIgnoreCase(s.getMunicipality())) {
+                s.setMunicipality(municipio);
+                stopRepository.save(s);
+                updated++;
+            }
+        }
+        log.info("Municipios enriquecidos desde CTAN: {} paradas actualizadas.", updated);
     }
 
     /**

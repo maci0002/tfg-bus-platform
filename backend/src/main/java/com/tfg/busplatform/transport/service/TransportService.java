@@ -15,7 +15,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -46,6 +48,31 @@ public class TransportService {
 
     public List<StopDto> getAllStops() {
         return stopRepository.findAll().stream()
+                .map(this::toStopDto)
+                .sorted(Comparator.comparing(StopDto::getName))
+                .toList();
+    }
+
+    /**
+     * Devuelve solo las paradas alcanzables como destino desde el origen dado:
+     * aquellas que, en alguna línea que pase por el origen, están aguas abajo
+     * (secuencia mayor). Permite que el planificador ofrezca destinos coherentes.
+     */
+    public List<StopDto> getReachableDestinations(String origin) {
+        if (origin == null || origin.isBlank()) return getAllStops();
+
+        Map<Long, Stop> reachable = new LinkedHashMap<>();
+        for (Line line : lineRepository.findAll()) {
+            Optional<LineStop> originStop = findStopByQuery(line, origin);
+            if (originStop.isEmpty()) continue;
+
+            int originSeq = originStop.get().getSequence();
+            line.getStops().stream()
+                    .filter(ls -> ls.getSequence() > originSeq)
+                    .forEach(ls -> reachable.putIfAbsent(ls.getStop().getId(), ls.getStop()));
+        }
+
+        return reachable.values().stream()
                 .map(this::toStopDto)
                 .sorted(Comparator.comparing(StopDto::getName))
                 .toList();
@@ -180,6 +207,7 @@ public class TransportService {
                 .id(s.getId())
                 .code(s.getCode())
                 .name(s.getName())
+                .municipality(s.getMunicipality())
                 .latitude(s.getLatitude())
                 .longitude(s.getLongitude())
                 .build();

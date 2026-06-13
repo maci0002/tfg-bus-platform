@@ -97,6 +97,7 @@
     "originPlaceholder": "Ej. Jaén",
     "destination": "Destino",
     "destinationPlaceholder": "Ej. Úbeda",
+    "selectOriginFirst": "Selecciona primero un origen",
     "date": "Fecha",
     "time": "Hora",
     "search": "Buscar",

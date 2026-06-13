@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,7 +12,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { map, Observable, startWith } from 'rxjs';
+import { combineLatest, debounceTime, distinctUntilChanged, map, Observable, startWith } from 'rxjs';
 import { TransportService } from '../../core/services/transport.service';
 import { Stop, TripSearchResult } from '../../core/models/transport.model';
 import { BookingFlowService } from '../../core/services/booking-flow.service';
@@ -48,9 +49,18 @@ export class TripPlannerComponent {
   searched = signal(false);
   error = signal<string | null>(null);
 
+  /**
+   * Destinos alcanzables desde el origen seleccionado.
+   *  - `null`  → todavía no hay un origen válido elegido (destino deshabilitado).
+   *  - `Stop[]`→ lista filtrada que se ofrece en el autocompletado de destino.
+   */
+  reachableDestinations = signal<Stop[] | null>(null);
+  private reachable$ = toObservable(this.reachableDestinations);
+
   form: FormGroup = this.fb.group({
     origin: ['', Validators.required],
-    destination: ['', Validators.required],
+    // El destino arranca deshabilitado hasta elegir un origen válido.
+    destination: [{ value: '', disabled: true }, Validators.required],
     date: [new Date()],
     time: ['08:00'],
   });
@@ -66,36 +76,89 @@ export class TripPlannerComponent {
   }
 
   private setupAutocomplete(): void {
-    this.filteredOrigin = this.form.controls['origin'].valueChanges.pipe(
+    const originCtrl = this.form.controls['origin'];
+    const destCtrl   = this.form.controls['destination'];
+
+    // Origen: autocompletado contra todas las paradas.
+    this.filteredOrigin = originCtrl.valueChanges.pipe(
       startWith(''),
-      map(value => this.filterStops(value ?? '')),
+      map(value => this.filterStops(this.stops(), value ?? '')),
     );
-    this.filteredDestination = this.form.controls['destination'].valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterStops(value ?? '')),
+
+    // Destino: autocompletado contra los destinos alcanzables (o todas las
+    // paradas mientras no haya origen). Se recombina cuando cambia cualquiera
+    // de las dos fuentes (texto tecleado o nueva lista de destinos).
+    this.filteredDestination = combineLatest([
+      destCtrl.valueChanges.pipe(startWith('')),
+      this.reachable$,
+    ]).pipe(
+      map(([value, pool]) => this.filterStops(pool ?? this.stops(), value ?? '')),
     );
+
+    // Al cambiar el origen, recalculamos los destinos posibles.
+    originCtrl.valueChanges.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+    ).subscribe(value => this.updateDestinations(value ?? ''));
   }
 
-  private filterStops(query: string): Stop[] {
+  /** Recalcula los destinos alcanzables según el origen tecleado/seleccionado. */
+  private updateDestinations(originValue: string): void {
+    const destCtrl = this.form.controls['destination'];
+    const match = this.stops().find(
+      s => s.name.toLowerCase() === originValue.toLowerCase().trim(),
+    );
+
+    if (!match) {
+      // Origen aún no válido: se bloquea y se vacía el destino.
+      this.reachableDestinations.set(null);
+      destCtrl.reset({ value: '', disabled: true });
+      return;
+    }
+
+    this.transport.getDestinations(match.name).subscribe(destinations => {
+      this.reachableDestinations.set(destinations);
+      destCtrl.enable({ emitEvent: false });
+
+      // Si el destino actual ya no es alcanzable desde el nuevo origen, se limpia.
+      const current = (destCtrl.value ?? '').toLowerCase().trim();
+      if (current && !destinations.some(d => d.name.toLowerCase() === current)) {
+        destCtrl.setValue('', { emitEvent: false });
+      }
+    });
+  }
+
+  /**
+   * Indica si conviene mostrar el municipio junto al nombre de la parada.
+   * Se omite cuando no hay municipio o cuando el nombre ya lo contiene
+   * (evita redundancias del tipo "Úbeda · Úbeda").
+   */
+  showMunicipality(s: Stop): boolean {
+    if (!s.municipality) return false;
+    return !s.name.toLowerCase().includes(s.municipality.toLowerCase());
+  }
+
+  private filterStops(pool: Stop[], query: string): Stop[] {
     const q = query.toLowerCase().trim();
-    if (!q) return this.stops();
-    return this.stops().filter(s => s.name.toLowerCase().includes(q));
+    if (!q) return pool;
+    return pool.filter(s => s.name.toLowerCase().includes(q));
   }
 
   swap(): void {
-    const o = this.form.value.origin;
-    const d = this.form.value.destination;
-    this.form.patchValue({ origin: d, destination: o });
+    const { origin, destination } = this.form.getRawValue();
+    // Al fijar primero el origen, updateDestinations recalcula y habilita el destino.
+    this.form.patchValue({ origin: destination });
+    this.form.controls['destination'].setValue(origin);
   }
 
   search(): void {
-    if (this.form.invalid) return;
+    const { origin, destination, time } = this.form.getRawValue();
+    if (!origin || !destination) return;
 
     this.loading.set(true);
     this.error.set(null);
     this.searched.set(true);
 
-    const { origin, destination, time } = this.form.value;
     this.transport.searchTrips({ origin, destination, time }).subscribe({
       next: trips => {
         this.results.set(trips);

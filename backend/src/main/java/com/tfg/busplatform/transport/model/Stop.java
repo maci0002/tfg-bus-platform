@@ -24,6 +24,10 @@ public class Stop {
     @Column(nullable = false)
     private String name;
 
+    /** Municipio al que pertenece la parada (enriquecido desde CTAN). Puede ser null. */
+    @Column(name = "municipality")
+    private String municipality;
+
     @Column(nullable = false)
     private Double latitude;
 

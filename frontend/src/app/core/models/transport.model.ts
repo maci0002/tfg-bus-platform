@@ -2,6 +2,7 @@ export interface Stop {
   id: number;
   code: string;
   name: string;
+  municipality?: string;
   latitude: number;
   longitude: number;
 }

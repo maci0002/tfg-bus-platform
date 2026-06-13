@@ -12,7 +12,12 @@
                [placeholder]="'planner.originPlaceholder' | translate">
         <mat-autocomplete #autoOrigin="matAutocomplete">
           @for (s of filteredOrigin | async; track s.id) {
-            <mat-option [value]="s.name">{{ s.name }}</mat-option>
+            <mat-option [value]="s.name">
+              <span class="planner__opt-name">{{ s.name }}</span>
+              @if (showMunicipality(s)) {
+                <span class="planner__opt-muni">{{ s.municipality }}</span>
+              }
+            </mat-option>
           }
         </mat-autocomplete>
       </mat-form-field>
@@ -27,10 +32,15 @@
         <mat-icon matPrefix>place</mat-icon>
         <input matInput type="text" formControlName="destination"
                [matAutocomplete]="autoDest"
-               [placeholder]="'planner.destinationPlaceholder' | translate">
+               [placeholder]="(reachableDestinations() ? 'planner.destinationPlaceholder' : 'planner.selectOriginFirst') | translate">
         <mat-autocomplete #autoDest="matAutocomplete">
           @for (s of filteredDestination | async; track s.id) {
-            <mat-option [value]="s.name">{{ s.name }}</mat-option>
+            <mat-option [value]="s.name">
+              <span class="planner__opt-name">{{ s.name }}</span>
+              @if (showMunicipality(s)) {
+                <span class="planner__opt-muni">{{ s.municipality }}</span>
+              }
+            </mat-option>
           }
         </mat-autocomplete>
       </mat-form-field>

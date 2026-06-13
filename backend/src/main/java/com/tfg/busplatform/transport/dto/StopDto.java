@@ -13,6 +13,7 @@ public class StopDto {
     private Long id;
     private String code;
     private String name;
+    private String municipality;
     private Double latitude;
     private Double longitude;
 }

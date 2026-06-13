@@ -28,6 +28,12 @@ export class TransportService {
     return this.http.get<Stop[]>(`${this.baseUrl}/stops`);
   }
 
+  /** Paradas alcanzables como destino desde el origen indicado (búsqueda dependiente). */
+  getDestinations(origin: string): Observable<Stop[]> {
+    const params = new HttpParams().set('origin', origin);
+    return this.http.get<Stop[]>(`${this.baseUrl}/destinations`, { params });
+  }
+
   searchTrips(params: TripSearchParams): Observable<TripSearchResult[]> {
     let httpParams = new HttpParams()
       .set('origin', params.origin)
