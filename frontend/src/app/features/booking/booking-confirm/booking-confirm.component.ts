@@ -78,8 +78,8 @@ export class BookingConfirmComponent {
     }).subscribe({
       next: reservation => {
         this.bookingFlow.clear();
-        this.snack.open('Reserva creada correctamente', 'Cerrar', { duration: 3500 });
-        this.router.navigate(['/bookings', reservation.id]);
+        this.snack.open('Reserva creada. Completa el pago para emitir tu ticket.', 'Cerrar', { duration: 3500 });
+        this.router.navigate(['/bookings', reservation.id, 'pay']);
       },
       error: err => {
         this.submitting.set(false);

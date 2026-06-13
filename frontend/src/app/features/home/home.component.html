@@ -2,18 +2,21 @@
 <section class="hero">
   <div class="container hero__inner">
     <div class="hero__content fade-in-up">
-      <span class="hero__badge">🚌 {{ 'home.hero.badge' | translate }}</span>
+      <span class="hero__badge">
+        <mat-icon>directions_bus</mat-icon>
+        {{ 'home.hero.badge' | translate }}
+      </span>
       <h1 class="hero__title">{{ 'home.hero.title' | translate }}</h1>
       <p class="hero__subtitle">{{ 'home.hero.subtitle' | translate }}</p>
 
       <div class="hero__stats">
         <div class="hero__stat">
-          <span class="hero__stat-number">7</span>
+          <span class="hero__stat-number">{{ lineCount() ?? '—' }}</span>
           <span class="hero__stat-label">{{ 'home.hero.statLines' | translate }}</span>
         </div>
         <div class="hero__stat-divider"></div>
         <div class="hero__stat">
-          <span class="hero__stat-number">16</span>
+          <span class="hero__stat-number">{{ stopCount() ?? '—' }}</span>
           <span class="hero__stat-label">{{ 'home.hero.statStops' | translate }}</span>
         </div>
         <div class="hero__stat-divider"></div>

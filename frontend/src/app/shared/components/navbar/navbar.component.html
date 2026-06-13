@@ -3,7 +3,7 @@
 
     <!-- Logo -->
     <a class="navbar__logo" routerLink="/">
-      <span class="navbar__logo-icon">🚌</span>
+      <span class="navbar__logo-icon"><mat-icon>directions_bus</mat-icon></span>
       <span class="navbar__logo-text">BusJaén</span>
     </a>
 
@@ -23,12 +23,13 @@
     <div class="navbar__spacer"></div>
 
     <!-- Language switcher -->
-    <button mat-icon-button [matMenuTriggerFor]="langMenu" class="navbar__lang-btn" title="Idioma">
-      <span class="lang-flag">{{ currentLang === 'es' ? '🇪🇸' : '🇬🇧' }}</span>
+    <button mat-button [matMenuTriggerFor]="langMenu" class="navbar__lang-btn" title="Idioma">
+      <mat-icon>language</mat-icon>
+      <span class="lang-code">{{ currentLang === 'es' ? 'ES' : 'EN' }}</span>
     </button>
     <mat-menu #langMenu="matMenu">
-      <button mat-menu-item (click)="switchLang('es')">🇪🇸 Español</button>
-      <button mat-menu-item (click)="switchLang('en')">🇬🇧 English</button>
+      <button mat-menu-item (click)="switchLang('es')">Español</button>
+      <button mat-menu-item (click)="switchLang('en')">English</button>
     </mat-menu>
 
     <!-- Auth actions -->

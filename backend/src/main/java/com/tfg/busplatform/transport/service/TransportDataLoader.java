@@ -2,6 +2,9 @@ package com.tfg.busplatform.transport.service;
 
 import com.tfg.busplatform.transport.ctan.CtanProperties;
 import com.tfg.busplatform.transport.ctan.CtanSyncService;
+import com.tfg.busplatform.transport.gtfs.CuratedLinesSeeder;
+import com.tfg.busplatform.transport.gtfs.GtfsProperties;
+import com.tfg.busplatform.transport.gtfs.GtfsSyncService;
 import com.tfg.busplatform.transport.model.Line;
 import com.tfg.busplatform.transport.model.LineStop;
 import com.tfg.busplatform.transport.model.Stop;
@@ -30,31 +33,62 @@ public class TransportDataLoader {
 
     @Bean
     ApplicationRunner seedTransportData(StopRepository stopRepository, LineRepository lineRepository,
-                                        CtanProperties ctanProperties, CtanSyncService ctanSyncService) {
+                                        GtfsProperties gtfsProperties, GtfsSyncService gtfsSyncService,
+                                        CtanProperties ctanProperties, CtanSyncService ctanSyncService,
+                                        CuratedLinesSeeder curatedLinesSeeder) {
         return args -> {
             if (lineRepository.count() > 0) {
                 log.info("Datos de transporte ya cargados, omitiendo carga inicial.");
                 return;
             }
 
-            // Origen primario de datos: API abierta de CTAN (consorcio de Jaén).
-            if (ctanProperties.isEnabled()) {
+            boolean loaded = false;
+
+            // 1. Origen primario: feed GTFS de CTAN (horarios y colores reales).
+            if (gtfsProperties.isEnabled()) {
+                try {
+                    GtfsSyncService.SyncResult result = gtfsSyncService.sync();
+                    if (result.lines() > 0) {
+                        log.info("Datos cargados desde el GTFS de CTAN: {} líneas y {} paradas.",
+                                result.lines(), result.stops());
+                        loaded = true;
+                    } else {
+                        log.warn("El GTFS no devolvió líneas. Se intenta la API REST de CTAN.");
+                    }
+                } catch (Exception e) {
+                    log.warn("Fallo al importar el GTFS ({}). Se intenta la API REST de CTAN.",
+                            e.getMessage());
+                }
+            }
+
+            // 2. Respaldo: API REST de CTAN (consorcio de Jaén).
+            if (!loaded && ctanProperties.isEnabled()) {
                 try {
                     CtanSyncService.SyncResult result = ctanSyncService.sync();
                     if (result.lines() > 0) {
-                        log.info("Datos cargados desde la API de CTAN: {} líneas y {} paradas.",
+                        log.info("Datos cargados desde la API REST de CTAN: {} líneas y {} paradas.",
                                 result.lines(), result.stops());
-                        return;
+                        loaded = true;
+                    } else {
+                        log.warn("La API REST de CTAN no devolvió líneas. Se usa el seed local de respaldo.");
                     }
-                    log.warn("La sincronización con CTAN no devolvió líneas. Se usa el seed local de respaldo.");
                 } catch (Exception e) {
                     log.warn("Fallo al sincronizar con CTAN ({}). Se usa el seed local de respaldo.",
                             e.getMessage());
                 }
             }
 
-            // Respaldo: datos locales aproximados del entorno de Jaén.
-            seedLocalData(stopRepository, lineRepository);
+            // 3. Último recurso: datos locales aproximados del entorno de Jaén.
+            if (!loaded) {
+                seedLocalData(stopRepository, lineRepository);
+            }
+
+            // 4. Complemento provincial: líneas rurales curadas (no cubiertas por CTAN).
+            try {
+                curatedLinesSeeder.seed();
+            } catch (Exception e) {
+                log.warn("No se pudieron cargar las líneas rurales curadas: {}", e.getMessage());
+            }
         };
     }
 

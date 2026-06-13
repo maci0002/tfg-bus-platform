@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,16 +27,19 @@ import { Reservation } from '../../../core/models/booking.model';
   templateUrl: './booking-detail.component.html',
   styleUrl: './booking-detail.component.scss',
 })
-export class BookingDetailComponent {
+export class BookingDetailComponent implements OnDestroy {
   private route       = inject(ActivatedRoute);
   private router      = inject(Router);
   private booking     = inject(BookingService);
   private snack       = inject(MatSnackBar);
   private translate   = inject(TranslateService);
+  private sanitizer   = inject(DomSanitizer);
 
   reservation = signal<Reservation | null>(null);
   loading = signal(true);
   cancelling = signal(false);
+  qrUrl = signal<SafeUrl | null>(null);
+  private qrObjectUrl: string | null = null;
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -44,9 +48,33 @@ export class BookingDetailComponent {
       return;
     }
     this.booking.getById(id).subscribe({
-      next: r => { this.reservation.set(r); this.loading.set(false); },
+      next: r => {
+        this.reservation.set(r);
+        this.loading.set(false);
+        if (r.status === 'CONFIRMED') this.loadQr(r.id);
+      },
       error: () => { this.loading.set(false); },
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.qrObjectUrl) URL.revokeObjectURL(this.qrObjectUrl);
+  }
+
+  /** Descarga el PNG del QR (endpoint autenticado) y lo expone como object URL seguro. */
+  private loadQr(id: number): void {
+    this.booking.getQr(id).subscribe({
+      next: blob => {
+        this.qrObjectUrl = URL.createObjectURL(blob);
+        this.qrUrl.set(this.sanitizer.bypassSecurityTrustUrl(this.qrObjectUrl));
+      },
+      error: () => { /* el ticket se muestra sin QR si falla la descarga */ },
+    });
+  }
+
+  goToPayment(): void {
+    const r = this.reservation();
+    if (r) this.router.navigate(['/bookings', r.id, 'pay']);
   }
 
   formatDuration(m: number): string {

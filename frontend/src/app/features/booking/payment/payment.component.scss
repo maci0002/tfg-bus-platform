@@ -1,0 +1,205 @@
+.container--narrow {
+  max-width: 560px !important;
+}
+
+.payment-page {
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    color: var(--color-primary, #1565C0);
+    font-weight: 500;
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 4rem 0;
+  }
+
+  &__header {
+    margin-bottom: 1.5rem;
+
+    h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--color-text-primary, #1A1A2E);
+      margin-bottom: .35rem;
+    }
+
+    p {
+      color: var(--color-text-muted, #718096);
+      font-size: .95rem;
+    }
+  }
+}
+
+.pay-summary {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #E2E8F0);
+  border-left: 5px solid var(--line-color, var(--color-primary, #1565C0));
+  border-radius: var(--radius-md, 12px);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-md, 0 4px 10px rgba(0,0,0,.05));
+  margin-bottom: 1.5rem;
+
+  &__line {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    margin-bottom: .75rem;
+  }
+
+  &__badge {
+    color: #fff;
+    font-weight: 700;
+    font-size: .95rem;
+    padding: .35rem .7rem;
+    border-radius: 6px;
+  }
+
+  &__name {
+    font-weight: 600;
+    color: var(--color-text-primary, #1A1A2E);
+  }
+
+  &__route {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    color: var(--color-text-secondary, #4A5568);
+    font-size: .9rem;
+    margin-bottom: .65rem;
+
+    mat-icon {
+      font-size: 1.05rem;
+      width: 1.05rem;
+      height: 1.05rem;
+      color: var(--color-text-muted, #718096);
+    }
+  }
+
+  &__meta {
+    display: flex;
+    gap: 1.25rem;
+    color: var(--color-text-muted, #718096);
+    font-size: .85rem;
+    margin-bottom: 1rem;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+  }
+
+  &__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border, #E2E8F0);
+
+    span { color: var(--color-text-secondary, #4A5568); font-weight: 500; }
+    strong {
+      font-size: 1.5rem;
+      color: var(--color-primary, #1565C0);
+    }
+  }
+}
+
+.pay-form {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #E2E8F0);
+  border-radius: var(--radius-md, 12px);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md, 0 4px 10px rgba(0,0,0,.05));
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    margin-bottom: 1rem;
+    flex: 1;
+
+    label {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--color-text-secondary, #4A5568);
+    }
+
+    input {
+      height: 44px;
+      padding: 0 .85rem;
+      border: 1px solid var(--color-border, #E2E8F0);
+      border-radius: var(--radius-sm, 6px);
+      font-size: .95rem;
+      color: var(--color-text-primary, #1A1A2E);
+      background: #fff;
+      transition: border-color .15s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary, #1565C0);
+        box-shadow: 0 0 0 3px rgba(21, 101, 192, .1);
+      }
+
+      &.ng-invalid.ng-touched {
+        border-color: #DC2626;
+      }
+    }
+  }
+
+  &__row {
+    display: flex;
+    gap: 1rem;
+  }
+
+  &__cta {
+    width: 100%;
+    height: 52px !important;
+    margin-top: .5rem;
+    border-radius: var(--radius-sm, 6px) !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+
+    mat-spinner { margin: 0 auto; }
+  }
+
+  &__cta-content {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  &__legal {
+    display: flex;
+    align-items: flex-start;
+    gap: .4rem;
+    margin: 1.25rem 0 0;
+    padding: .85rem 1rem;
+    background: rgba(21, 101, 192, .05);
+    border-radius: var(--radius-sm, 6px);
+    font-size: .8rem;
+    color: var(--color-text-secondary, #4A5568);
+    line-height: 1.5;
+
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+      color: var(--color-primary, #1565C0);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+  }
+}

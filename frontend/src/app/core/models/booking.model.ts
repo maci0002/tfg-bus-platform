@@ -48,7 +48,33 @@ export interface Reservation {
   seatCode: string;
   status: ReservationStatus;
   price: number;
+  paidAt?: string | null;
+  cardLast4?: string | null;
   createdAt: string;
+}
+
+/** Datos del pago simulado de una reserva. */
+export interface PaymentRequest {
+  cardHolder: string;
+  cardNumber: string;
+  expiryMonth: number;
+  expiryYear: number;
+  cvv: string;
+}
+
+/** Resultado de la verificación pública de un ticket (contenido del QR). */
+export interface TicketVerification {
+  valid: boolean;
+  reason?: string;
+  code?: string;
+  status?: string;
+  lineCode?: string;
+  lineName?: string;
+  originStop?: string;
+  destinationStop?: string;
+  travelDate?: string;
+  departureTime?: string;
+  seatCode?: string;
 }
 
 /** Datos del trayecto seleccionado en el planificador, almacenados en BookingFlowService. */

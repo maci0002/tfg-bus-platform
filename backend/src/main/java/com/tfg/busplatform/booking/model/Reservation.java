@@ -74,6 +74,18 @@ public class Reservation {
     @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal price;
 
+    /** Momento en que se confirmó el pago simulado (null mientras está pendiente). */
+    @Column(name = "paid_at")
+    private LocalDateTime paidAt;
+
+    /** Últimos 4 dígitos de la tarjeta usada en el pago simulado (nunca se guarda el PAN completo). */
+    @Column(name = "card_last4", length = 4)
+    private String cardLast4;
+
+    /** Token aleatorio que viaja dentro del QR para validar el ticket sin exponer datos sensibles. */
+    @Column(name = "qr_token", length = 36)
+    private String qrToken;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

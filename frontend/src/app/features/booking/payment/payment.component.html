@@ -1,0 +1,92 @@
+<div class="payment-page page-padding">
+  <div class="container container--narrow">
+
+    <a class="payment-page__back" (click)="back()">
+      <mat-icon>arrow_back</mat-icon> {{ 'payment.back' | translate }}
+    </a>
+
+    @if (loading()) {
+      <div class="payment-page__loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (reservation()) {
+
+      <header class="payment-page__header">
+        <h1>{{ 'payment.title' | translate }}</h1>
+        <p>{{ 'payment.subtitle' | translate }}</p>
+      </header>
+
+      <!-- Resumen de la reserva -->
+      <div class="pay-summary" [style.--line-color]="reservation()!.lineColor">
+        <div class="pay-summary__line">
+          <span class="pay-summary__badge" [style.background]="reservation()!.lineColor">
+            {{ reservation()!.lineCode }}
+          </span>
+          <span class="pay-summary__name">{{ reservation()!.lineName }}</span>
+        </div>
+        <div class="pay-summary__route">
+          <span>{{ reservation()!.departureTime }} · {{ reservation()!.originStop }}</span>
+          <mat-icon>arrow_forward</mat-icon>
+          <span>{{ reservation()!.arrivalTime }} · {{ reservation()!.destinationStop }}</span>
+        </div>
+        <div class="pay-summary__meta">
+          <span><mat-icon>event</mat-icon> {{ reservation()!.travelDate }}</span>
+          <span><mat-icon>event_seat</mat-icon> {{ reservation()!.seatCode }}</span>
+        </div>
+        <div class="pay-summary__total">
+          <span>{{ 'payment.amount' | translate }}</span>
+          <strong>{{ reservation()!.price | number:'1.2-2' }} €</strong>
+        </div>
+      </div>
+
+      <!-- Formulario de tarjeta (pago simulado) -->
+      <form class="pay-form" [formGroup]="form" (ngSubmit)="pay()">
+
+        <div class="pay-form__field">
+          <label for="cardHolder">{{ 'payment.cardHolder' | translate }}</label>
+          <input id="cardHolder" type="text" formControlName="cardHolder" autocomplete="cc-name">
+        </div>
+
+        <div class="pay-form__field">
+          <label for="cardNumber">{{ 'payment.cardNumber' | translate }}</label>
+          <input id="cardNumber" type="text" inputmode="numeric" formControlName="cardNumber"
+                 autocomplete="cc-number" maxlength="23">
+        </div>
+
+        <div class="pay-form__row">
+          <div class="pay-form__field">
+            <label for="expiryMonth">{{ 'payment.expiryMonth' | translate }}</label>
+            <input id="expiryMonth" type="number" min="1" max="12" formControlName="expiryMonth">
+          </div>
+          <div class="pay-form__field">
+            <label for="expiryYear">{{ 'payment.expiryYear' | translate }}</label>
+            <input id="expiryYear" type="number" min="2024" max="2099" formControlName="expiryYear">
+          </div>
+          <div class="pay-form__field">
+            <label for="cvv">{{ 'payment.cvv' | translate }}</label>
+            <input id="cvv" type="text" inputmode="numeric" formControlName="cvv"
+                   autocomplete="cc-csc" maxlength="4">
+          </div>
+        </div>
+
+        <button mat-flat-button color="primary" type="submit"
+                class="pay-form__cta" [disabled]="paying()">
+          @if (paying()) {
+            <mat-spinner diameter="22"></mat-spinner>
+          } @else {
+            <span class="pay-form__cta-content">
+              <mat-icon>lock</mat-icon>
+              {{ 'payment.pay' | translate }} · {{ reservation()!.price | number:'1.2-2' }} €
+            </span>
+          }
+        </button>
+
+        <p class="pay-form__legal">
+          <mat-icon>info</mat-icon>
+          {{ 'payment.simulationNote' | translate }}
+        </p>
+      </form>
+
+    }
+  </div>
+</div>

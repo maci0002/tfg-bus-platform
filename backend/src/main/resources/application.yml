@@ -27,6 +27,9 @@ app:
     expiration-ms: 86400000
   cors:
     allowed-origins: http://localhost:4200
+  # Ticket electrónico: URL pública de verificación que se codifica dentro del QR.
+  ticket:
+    verify-base-url: http://localhost:8080/api/bookings/verify
 
 # Integración con la API abierta de la Red de Consorcios de Transporte de Andalucía (CTAN).
 # El área de Jaén corresponde al consorcio nº 7 (CTJA).
@@ -38,3 +41,15 @@ ctan:
   read-timeout-ms: 15000
   average-speed-kmh: 45
   max-lines: 0   # 0 = todas las líneas; valores > 0 limitan la carga (útil en desarrollo)
+  min-stops: 3   # descarta líneas con menos paradas (recorridos degenerados de la API)
+
+# Ingesta del feed GTFS de CTAN. Es la fuente primaria (horarios y colores reales);
+# la API REST anterior queda como respaldo. El feed unificado trae los 9 consorcios
+# y se filtra por la agencia de Jaén (CTJA).
+gtfs:
+  enabled: true
+  url: https://api.ctan.es/v1/datos/UNIFICADO/gtfs.zip
+  agency-id: CTJA
+  connect-timeout-ms: 10000
+  read-timeout-ms: 60000
+  min-stops: 3

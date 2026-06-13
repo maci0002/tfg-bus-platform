@@ -1,12 +1,16 @@
 package com.tfg.busplatform.booking.controller;
 
 import com.tfg.busplatform.booking.dto.CreateReservationRequest;
+import com.tfg.busplatform.booking.dto.PaymentRequest;
 import com.tfg.busplatform.booking.dto.ReservationDto;
 import com.tfg.busplatform.booking.dto.SeatMapDto;
+import com.tfg.busplatform.booking.dto.TicketVerificationDto;
 import com.tfg.busplatform.booking.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -68,5 +72,37 @@ public class ReservationController {
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         return ResponseEntity.ok(reservationService.cancel(id, userDetails.getUsername()));
+    }
+
+    /** Pago simulado de una reserva pendiente (solo el dueño). */
+    @PostMapping("/{id}/pay")
+    public ResponseEntity<ReservationDto> pay(
+            @PathVariable Long id,
+            @Valid @RequestBody PaymentRequest request,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return ResponseEntity.ok(reservationService.pay(id, request, userDetails.getUsername()));
+    }
+
+    /** Imagen PNG del código QR del ticket (solo reservas confirmadas del dueño). */
+    @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> qr(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        byte[] png = reservationService.getQrPng(id, userDetails.getUsername());
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .cacheControl(CacheControl.noStore())
+                .body(png);
+    }
+
+    /** Verificación pública del ticket a partir del contenido del QR (código + token). */
+    @GetMapping("/verify")
+    public ResponseEntity<TicketVerificationDto> verify(
+            @RequestParam String code,
+            @RequestParam String token
+    ) {
+        return ResponseEntity.ok(reservationService.verify(code, token));
     }
 }

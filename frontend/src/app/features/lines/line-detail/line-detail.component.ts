@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,11 +22,13 @@ import { LineDetail } from '../../../core/models/transport.model';
   templateUrl: './line-detail.component.html',
   styleUrl: './line-detail.component.scss',
 })
-export class LineDetailComponent implements AfterViewInit {
+export class LineDetailComponent {
   private route     = inject(ActivatedRoute);
   private transport = inject(TransportService);
 
-  @ViewChild('mapEl') mapEl!: ElementRef<HTMLDivElement>;
+  // Consulta reactiva: el div solo existe cuando loading() es false (bloque @if),
+  // por lo que la señal se actualiza justo cuando el elemento entra en el DOM.
+  mapEl = viewChild<ElementRef<HTMLDivElement>>('mapEl');
 
   line = signal<LineDetail | null>(null);
   loading = signal(true);
@@ -46,30 +48,29 @@ export class LineDetailComponent implements AfterViewInit {
       next: line => {
         this.line.set(line);
         this.loading.set(false);
-        queueMicrotask(() => this.tryRenderMap());
       },
       error: () => {
         this.error.set(true);
         this.loading.set(false);
       },
     });
+
+    // Renderiza el mapa cuando coinciden datos y elemento del DOM.
+    effect(() => {
+      const el = this.mapEl();
+      const line = this.line();
+      if (el && line && !this.mapInitialized && line.stops.length > 0) {
+        this.mapInitialized = true;
+        this.renderMap(el.nativeElement, line);
+      }
+    });
   }
 
-  ngAfterViewInit(): void {
-    this.tryRenderMap();
-  }
-
-  private async tryRenderMap(): Promise<void> {
-    if (this.mapInitialized) return;
-    const line = this.line();
-    if (!line || !this.mapEl?.nativeElement || line.stops.length === 0) return;
-
-    this.mapInitialized = true;
-
+  private async renderMap(host: HTMLDivElement, line: LineDetail): Promise<void> {
     const L = await import('leaflet');
     const coords: [number, number][] = line.stops.map(s => [s.latitude, s.longitude]);
 
-    const map = L.map(this.mapEl.nativeElement, {
+    const map = L.map(host, {
       scrollWheelZoom: false,
       preferCanvas: true,
     });
@@ -123,6 +124,13 @@ export class LineDetailComponent implements AfterViewInit {
 
     // Forzar recálculo de dimensiones tras el render
     setTimeout(() => map.invalidateSize(), 100);
+  }
+
+  /** Normaliza "07:00:00" → "07:00" para una presentación más limpia. */
+  formatTime(time: string): string {
+    if (!time) return time;
+    const parts = time.split(':');
+    return parts.length >= 2 ? `${parts[0]}:${parts[1]}` : time;
   }
 
   formatDuration(minutes: number): string {

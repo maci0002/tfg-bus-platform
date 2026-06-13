@@ -40,5 +40,10 @@ public class ReservationDto {
     private String status;
     private BigDecimal price;
 
+    /** Momento del pago confirmado (null si sigue pendiente). */
+    private LocalDateTime paidAt;
+    /** Últimos 4 dígitos de la tarjeta del pago simulado (null si sigue pendiente). */
+    private String cardLast4;
+
     private LocalDateTime createdAt;
 }

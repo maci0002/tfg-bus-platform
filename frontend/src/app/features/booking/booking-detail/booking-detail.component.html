@@ -71,19 +71,37 @@
           </div>
         </dl>
 
-        <!-- Aviso pendiente de pago -->
+        <!-- Aviso pendiente de pago + CTA de pago -->
         @if (reservation()!.status === 'PENDING_PAYMENT') {
           <div class="ticket__pending">
             <mat-icon>info</mat-icon>
             <span>{{ 'bookingDetail.pendingPaymentNote' | translate }}</span>
           </div>
+          <button mat-flat-button color="primary"
+                  type="button"
+                  class="ticket__pay"
+                  (click)="goToPayment()">
+            <mat-icon>credit_card</mat-icon>
+            {{ 'bookingDetail.payNow' | translate }}
+          </button>
         }
 
+        <!-- Ticket electrónico con QR (reserva confirmada) -->
         @if (reservation()!.status === 'CONFIRMED') {
-          <div class="ticket__qr-placeholder">
-            <mat-icon>qr_code_2</mat-icon>
-            <span>{{ 'bookingDetail.qrComingSoon' | translate }}</span>
+          <div class="ticket__qr">
+            @if (qrUrl()) {
+              <img [src]="qrUrl()" alt="QR" class="ticket__qr-img">
+              <span class="ticket__qr-hint">{{ 'bookingDetail.qrHint' | translate }}</span>
+            } @else {
+              <mat-spinner diameter="32"></mat-spinner>
+            }
           </div>
+          @if (reservation()!.cardLast4) {
+            <p class="ticket__paid-with">
+              <mat-icon>credit_card</mat-icon>
+              {{ 'bookingDetail.paidWith' | translate }} •••• {{ reservation()!.cardLast4 }}
+            </p>
+          }
         }
 
         <!-- Acciones -->

@@ -145,7 +145,7 @@ public class CtanSyncService {
                 orderedStops.add(s);
             }
         }
-        if (orderedStops.size() < 2) {
+        if (orderedStops.size() < Math.max(2, props.getMinStops())) {
             return false;
         }
 
@@ -156,7 +156,9 @@ public class CtanSyncService {
         }
 
         String code = uniqueCode(l.codigo(), l.idLinea(), usedCodes);
-        String name = (l.nombre() != null && !l.nombre().isBlank()) ? l.nombre().trim() : code;
+        String name = (l.nombre() != null && !l.nombre().isBlank())
+                ? CtanTextNormalizer.lineName(l.nombre())
+                : code;
 
         Optional<Line> existing = lineRepository.findByCode(code);
         Line line;
@@ -200,7 +202,7 @@ public class CtanSyncService {
         String code = "CTAN-" + idParada;
         Stop stop = stopRepository.findByCode(code).orElseGet(Stop::new);
         stop.setCode(code);
-        stop.setName(nombre.trim());
+        stop.setName(CtanTextNormalizer.stopName(nombre));
         stop.setLatitude(lat);
         stop.setLongitude(lng);
         return stopRepository.save(stop);

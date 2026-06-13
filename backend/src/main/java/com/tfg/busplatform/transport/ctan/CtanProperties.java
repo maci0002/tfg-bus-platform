@@ -41,4 +41,11 @@ public class CtanProperties {
      * en desarrollo, donde la base de datos H2 es en memoria.
      */
     private int maxLines = 0;
+
+    /**
+     * Número mínimo de paradas que debe tener el recorrido de una línea para
+     * cargarla. Descarta líneas degeneradas que la API expone con muy pocas
+     * paradas de núcleo y que no aportan un recorrido presentable.
+     */
+    private int minStops = 3;
 }

@@ -1,9 +1,11 @@
 package com.tfg.busplatform.booking.service;
 
 import com.tfg.busplatform.booking.dto.CreateReservationRequest;
+import com.tfg.busplatform.booking.dto.PaymentRequest;
 import com.tfg.busplatform.booking.dto.ReservationDto;
 import com.tfg.busplatform.booking.dto.SeatDto;
 import com.tfg.busplatform.booking.dto.SeatMapDto;
+import com.tfg.busplatform.booking.dto.TicketVerificationDto;
 import com.tfg.busplatform.booking.model.Reservation;
 import com.tfg.busplatform.booking.model.ReservationStatus;
 import com.tfg.busplatform.booking.model.SeatLayout;
@@ -22,11 +24,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +39,13 @@ public class ReservationService {
 
     private static final DateTimeFormatter HHMM = DateTimeFormatter.ofPattern("HH:mm");
 
-    private final ReservationRepository reservationRepository;
-    private final LineRepository        lineRepository;
-    private final StopRepository        stopRepository;
-    private final UserRepository        userRepository;
-    private final PricingService        pricingService;
+    private final ReservationRepository    reservationRepository;
+    private final LineRepository           lineRepository;
+    private final StopRepository           stopRepository;
+    private final UserRepository           userRepository;
+    private final PricingService           pricingService;
+    private final SimulatedPaymentGateway  paymentGateway;
+    private final QrCodeService            qrCodeService;
 
     // ── Mapa de asientos para un viaje concreto ──────────────────────────────
 
@@ -174,6 +180,81 @@ public class ReservationService {
         return toDto(r);
     }
 
+    // ── Pago simulado ────────────────────────────────────────────────────────
+
+    /**
+     * Procesa el pago simulado de una reserva pendiente. Si la pasarela autoriza
+     * el cargo, la reserva pasa a CONFIRMED, se registran el momento del pago y los
+     * últimos 4 dígitos de la tarjeta, y se genera el token del ticket (QR).
+     */
+    public ReservationDto pay(Long id, PaymentRequest req, String userEmail) {
+        Reservation r = reservationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada"));
+        ensureOwnership(r, userEmail);
+
+        if (r.getStatus() == ReservationStatus.CANCELLED) {
+            throw new IllegalStateException("No se puede pagar una reserva cancelada");
+        }
+        if (r.getStatus() == ReservationStatus.CONFIRMED) {
+            throw new IllegalStateException("La reserva ya estaba pagada");
+        }
+
+        SimulatedPaymentGateway.PaymentResult result = paymentGateway.authorize(req);
+        if (!result.approved()) {
+            throw new IllegalStateException(result.declineReason());
+        }
+
+        r.setStatus(ReservationStatus.CONFIRMED);
+        r.setPaidAt(LocalDateTime.now());
+        r.setCardLast4(result.cardLast4());
+        r.setQrToken(UUID.randomUUID().toString());
+        return toDto(r);
+    }
+
+    // ── Ticket electrónico (QR) ──────────────────────────────────────────────
+
+    /** Devuelve el PNG del QR del ticket; solo para reservas confirmadas y del propio dueño. */
+    @Transactional(readOnly = true)
+    public byte[] getQrPng(Long id, String userEmail) {
+        Reservation r = reservationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada"));
+        ensureOwnership(r, userEmail);
+        if (r.getStatus() != ReservationStatus.CONFIRMED || r.getQrToken() == null) {
+            throw new IllegalStateException("El ticket aún no está disponible: la reserva no está pagada");
+        }
+        return qrCodeService.pngFor(r);
+    }
+
+    /** Verificación pública de un ticket a partir del código y el token del QR. */
+    @Transactional(readOnly = true)
+    public TicketVerificationDto verify(String code, String token) {
+        Reservation r = reservationRepository.findByCode(code).orElse(null);
+        if (r == null) {
+            return TicketVerificationDto.builder().valid(false).reason("Ticket no encontrado").build();
+        }
+        if (r.getStatus() != ReservationStatus.CONFIRMED || r.getQrToken() == null
+                || !r.getQrToken().equals(token)) {
+            String reason = r.getStatus() == ReservationStatus.CANCELLED
+                    ? "Ticket cancelado"
+                    : (r.getStatus() != ReservationStatus.CONFIRMED ? "Ticket no pagado" : "Token no válido");
+            return TicketVerificationDto.builder()
+                    .valid(false).reason(reason).code(r.getCode()).status(r.getStatus().name())
+                    .build();
+        }
+        return TicketVerificationDto.builder()
+                .valid(true)
+                .code(r.getCode())
+                .status(r.getStatus().name())
+                .lineCode(r.getLine().getCode())
+                .lineName(r.getLine().getName())
+                .originStop(r.getOriginStop().getName())
+                .destinationStop(r.getDestinationStop().getName())
+                .travelDate(r.getTravelDate())
+                .departureTime(r.getDepartureTime().format(HHMM))
+                .seatCode(r.getSeatCode())
+                .build();
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private void ensureOwnership(Reservation r, String userEmail) {
@@ -246,6 +327,8 @@ public class ReservationService {
                 .seatCode(r.getSeatCode())
                 .status(r.getStatus().name())
                 .price(r.getPrice())
+                .paidAt(r.getPaidAt())
+                .cardLast4(r.getCardLast4())
                 .createdAt(r.getCreatedAt())
                 .build();
     }

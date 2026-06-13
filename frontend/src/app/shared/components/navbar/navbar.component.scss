@@ -22,7 +22,17 @@
     text-decoration: none;
     margin-right: 1rem;
 
-    &-icon { font-size: 1.5rem; }
+    &-icon {
+      display: inline-flex;
+      align-items: center;
+      color: var(--color-primary);
+
+      mat-icon {
+        font-size: 1.6rem;
+        width: 1.6rem;
+        height: 1.6rem;
+      }
+    }
 
     &-text {
       font-size: 1.25rem;
@@ -55,8 +65,14 @@
   &__spacer { flex: 1; }
 
   &__lang-btn {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
     color: var(--color-text-secondary) !important;
-    .lang-flag { font-size: 1.1rem; }
+    font-weight: 600;
+
+    .lang-code { font-size: .85rem; letter-spacing: .5px; }
+    mat-icon { font-size: 1.2rem; width: 1.2rem; height: 1.2rem; }
   }
 
   &__user-btn {

@@ -60,7 +60,7 @@
           <h2><mat-icon>schedule</mat-icon> {{ 'lineDetail.departures' | translate }}</h2>
           <div class="departure-grid">
             @for (time of line()!.departureTimes; track time) {
-              <span class="departure-grid__chip">{{ time }}</span>
+              <span class="departure-grid__chip">{{ formatTime(time) }}</span>
             }
           </div>
         </section>

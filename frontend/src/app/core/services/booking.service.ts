@@ -4,8 +4,10 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CreateReservationRequest,
+  PaymentRequest,
   Reservation,
   SeatMap,
+  TicketVerification,
 } from '../models/booking.model';
 
 @Injectable({ providedIn: 'root' })
@@ -39,5 +41,21 @@ export class BookingService {
 
   cancel(id: number): Observable<Reservation> {
     return this.http.delete<Reservation>(`${this.baseUrl}/${id}`);
+  }
+
+  /** Pago simulado de una reserva pendiente. */
+  pay(id: number, request: PaymentRequest): Observable<Reservation> {
+    return this.http.post<Reservation>(`${this.baseUrl}/${id}/pay`, request);
+  }
+
+  /** Descarga el PNG del QR del ticket (endpoint autenticado → se obtiene como blob). */
+  getQr(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${id}/qr`, { responseType: 'blob' });
+  }
+
+  /** Verificación pública de un ticket a partir del contenido del QR. */
+  verify(code: string, token: string): Observable<TicketVerification> {
+    const params = new HttpParams().set('code', code).set('token', token);
+    return this.http.get<TicketVerification>(`${this.baseUrl}/verify`, { params });
   }
 }

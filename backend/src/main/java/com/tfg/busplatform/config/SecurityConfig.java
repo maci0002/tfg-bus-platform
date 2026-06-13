@@ -53,6 +53,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/transport/**").permitAll()
                         // Mapa de asientos público (para previsualizar antes de logarse)
                         .requestMatchers(HttpMethod.GET, "/bookings/seats").permitAll()
+                        // Verificación pública del ticket a partir del QR (código + token)
+                        .requestMatchers(HttpMethod.GET, "/bookings/verify").permitAll()
                         // Resto de operaciones de reserva: requieren autenticación
                         .requestMatchers("/bookings/**").authenticated()
                         .anyRequest().authenticated()
