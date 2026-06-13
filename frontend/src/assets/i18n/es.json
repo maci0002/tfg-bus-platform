@@ -3,6 +3,8 @@
     "home": "Inicio",
     "lines": "Líneas",
     "map": "Mapa",
+    "faq": "Preguntas frecuentes",
+    "contact": "Contacto",
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "dashboard": "Mi panel",
@@ -209,5 +211,44 @@
       "contact": "Contacto"
     },
     "prototypeBanner": "Entorno de prototipo académico. Los pagos y datos de usuarios son ficticios."
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "subtitle": "Resolvemos las dudas más habituales sobre BusJaén.",
+    "q1": "¿Cómo compro un billete?",
+    "a1": "Busca tu trayecto en la página de inicio indicando origen, destino y fecha, elige una salida, selecciona un asiento y confirma. Después realiza el pago simulado y recibirás tu billete con código QR.",
+    "q2": "¿Necesito una cuenta para reservar?",
+    "a2": "Puedes consultar líneas, horarios y disponibilidad de asientos sin registrarte, pero para confirmar una reserva y pagar es necesario iniciar sesión.",
+    "q3": "¿Cómo recibo mi billete?",
+    "a3": "Tras pagar, el billete con su código QR aparece en el detalle de la reserva y, además, te enviamos una copia por correo electrónico.",
+    "q4": "¿Puedo cancelar una reserva?",
+    "a4": "Sí. Desde «Mis reservas» puedes abrir cualquier reserva y cancelarla. Al tratarse de un prototipo académico, no se aplican cargos ni reembolsos reales.",
+    "q5": "¿El pago es real?",
+    "a5": "No. El pago está simulado con fines académicos: puedes usar la tarjeta de prueba precargada. No se procesan cobros reales ni se almacena el número completo de la tarjeta.",
+    "q6": "¿De dónde proceden los horarios y las paradas?",
+    "a6": "Los datos de líneas, paradas y horarios provienen de la información abierta del Consorcio de Transporte Metropolitano del Área de Jaén (CTAN).",
+    "stillNeedHelp": "¿No encuentras lo que buscas?",
+    "contactUs": "Contáctanos"
+  },
+  "contact": {
+    "title": "Contacto",
+    "subtitle": "¿Tienes una duda o sugerencia? Escríbenos y te responderemos lo antes posible.",
+    "addressLabel": "Dirección",
+    "addressValue": "Estación de autobuses, Jaén",
+    "emailLabel": "Correo",
+    "hoursLabel": "Horario de atención",
+    "hoursValue": "Lunes a viernes, 8:00 - 20:00",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "subject": "Asunto",
+    "message": "Mensaje",
+    "send": "Enviar mensaje",
+    "nameError": "Indica tu nombre",
+    "emailError": "Introduce un correo válido",
+    "subjectError": "Indica el asunto",
+    "messageError": "El mensaje debe tener al menos 10 caracteres",
+    "success": "¡Mensaje enviado! Te responderemos pronto.",
+    "error": "No se pudo enviar el mensaje. Inténtalo de nuevo.",
+    "close": "Cerrar"
   }
 }

@@ -30,6 +30,13 @@ app:
   # Ticket electrónico: URL pública de verificación que se codifica dentro del QR.
   ticket:
     verify-base-url: http://localhost:8080/api/bookings/verify
+  # Notificaciones por correo. En desarrollo se usa Mailpit (SMTP en localhost:1025,
+  # interfaz web en http://localhost:8025). Si `enabled` es false o el servidor SMTP
+  # no responde, el envío se omite sin romper el flujo de reserva ni el contacto.
+  mail:
+    enabled: true
+    from: "BusJaén <noreply@busjaen.local>"
+    support-inbox: soporte@busjaen.local
 
 # Integración con la API abierta de la Red de Consorcios de Transporte de Andalucía (CTAN).
 # El área de Jaén corresponde al consorcio nº 7 (CTJA).

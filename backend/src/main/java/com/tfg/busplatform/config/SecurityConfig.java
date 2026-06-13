@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/contact").permitAll()
                         .requestMatchers(HttpMethod.GET, "/transport/**").permitAll()
                         // Mapa de asientos público (para previsualizar antes de logarse)
                         .requestMatchers(HttpMethod.GET, "/bookings/seats").permitAll()

@@ -11,6 +11,7 @@ import com.tfg.busplatform.booking.model.ReservationStatus;
 import com.tfg.busplatform.booking.model.SeatLayout;
 import com.tfg.busplatform.booking.repository.ReservationRepository;
 import com.tfg.busplatform.model.User;
+import com.tfg.busplatform.notification.EmailService;
 import com.tfg.busplatform.repository.UserRepository;
 import com.tfg.busplatform.transport.model.Line;
 import com.tfg.busplatform.transport.model.LineStop;
@@ -46,6 +47,7 @@ public class ReservationService {
     private final PricingService           pricingService;
     private final SimulatedPaymentGateway  paymentGateway;
     private final QrCodeService            qrCodeService;
+    private final EmailService             emailService;
 
     // ── Mapa de asientos para un viaje concreto ──────────────────────────────
 
@@ -208,6 +210,11 @@ public class ReservationService {
         r.setPaidAt(LocalDateTime.now());
         r.setCardLast4(result.cardLast4());
         r.setQrToken(UUID.randomUUID().toString());
+
+        // Notificación de confirmación con el billete (QR). Tolerante a fallos:
+        // si el correo no se puede enviar, el pago ya está registrado igualmente.
+        emailService.sendBookingConfirmation(r, qrCodeService.pngFor(r));
+
         return toDto(r);
     }
 

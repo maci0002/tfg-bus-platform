@@ -3,6 +3,8 @@
     "home": "Home",
     "lines": "Lines",
     "map": "Map",
+    "faq": "FAQ",
+    "contact": "Contact",
     "login": "Log in",
     "register": "Sign up",
     "dashboard": "My dashboard",
@@ -209,5 +211,44 @@
       "contact": "Contact"
     },
     "prototypeBanner": "Academic prototype environment. Payments and user data are fictional."
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "subtitle": "Answers to the most common questions about BusJaén.",
+    "q1": "How do I buy a ticket?",
+    "a1": "Search for your journey on the home page by entering origin, destination and date, choose a departure, pick a seat and confirm. Then complete the simulated payment and you will get your ticket with a QR code.",
+    "q2": "Do I need an account to book?",
+    "a2": "You can browse lines, schedules and seat availability without signing up, but you must log in to confirm a booking and pay.",
+    "q3": "How do I get my ticket?",
+    "a3": "After paying, the ticket with its QR code appears in the booking detail and we also send you a copy by email.",
+    "q4": "Can I cancel a booking?",
+    "a4": "Yes. From \"My bookings\" you can open any booking and cancel it. As this is an academic prototype, no real charges or refunds apply.",
+    "q5": "Is the payment real?",
+    "a5": "No. The payment is simulated for academic purposes: you can use the pre-filled test card. No real charges are processed and the full card number is never stored.",
+    "q6": "Where does the schedule and stop data come from?",
+    "a6": "Line, stop and timetable data come from the open data of the Jaén Area Metropolitan Transport Consortium (CTAN).",
+    "stillNeedHelp": "Can't find what you're looking for?",
+    "contactUs": "Contact us"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Have a question or suggestion? Write to us and we'll reply as soon as possible.",
+    "addressLabel": "Address",
+    "addressValue": "Bus station, Jaén",
+    "emailLabel": "Email",
+    "hoursLabel": "Opening hours",
+    "hoursValue": "Monday to Friday, 8:00 - 20:00",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send message",
+    "nameError": "Please enter your name",
+    "emailError": "Enter a valid email",
+    "subjectError": "Please enter a subject",
+    "messageError": "The message must be at least 10 characters long",
+    "success": "Message sent! We'll get back to you soon.",
+    "error": "The message could not be sent. Please try again.",
+    "close": "Close"
   }
 }
