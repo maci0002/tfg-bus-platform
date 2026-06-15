@@ -21,6 +21,14 @@
 \usepackage{lscape}
 \usepackage{setspace}
 \usepackage{svg}
+% Tectonic/XeTeX no dispone de Inkscape ni shell-escape para rasterizar SVG.
+% Se redefine \includesvg para usar \includegraphics (firmas compatibles),
+% de modo que resuelva la versión PNG del distintivo de licencia.
+\renewcommand{\includesvg}[2][]{\includegraphics[#1]{#2}}
+% Comillas angulares (guillemets) — \og y \fg no están definidos por babel
+% español; se proveen aquí para uso de citas entrecomilladas.
+\providecommand{\og}{\guillemotleft}
+\providecommand{\fg}{\guillemotright}
 \usepackage{ifthen}
 \usepackage{emptypage}
 \usepackage{eurosym} % Símbolo del euro (\euro) usado en el presupuesto
@@ -104,3 +112,8 @@ Licencia: #9  \\ %Licencia
 \includepdf[pages={1}]{PDF/PortadaTFM.pdf}
 }
 }
+
+% Enlaces e hipervínculos (proporciona \url, usado por la bibliografía).
+% Se carga al final del preámbulo, como recomienda hyperref. La opción
+% global [hidelinks] del documento evita los recuadros de color en enlaces.
+\usepackage{hyperref}

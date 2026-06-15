@@ -1,34 +1,97 @@
 \chapter{Apéndices}
 \label{cap:apendices}
 
-\textit{[Pendiente. Documentación adicional que pueda resultar de utilidad para comprender correctamente el proyecto.]}
+Este capítulo recoge documentación complementaria que facilita la comprensión, la instalación y el uso del prototipo, así como las consideraciones legales aplicables al proyecto.
+
 
 \section{Guía original del Trabajo Fin de Título}
 \label{sec:apendice-guia}
 
-\textit{[Pendiente. Propuesta o guía original del TFG publicada en la web de la EPS en el momento de la convocatoria, junto con el histórico de modificaciones que haya podido tener dicha propuesta (título, objetivos, etc.).]}
+La propuesta original del Trabajo Fin de Grado, con su título, objetivos y descripción, fue publicada en la convocatoria correspondiente de la Escuela Politécnica Superior de Jaén. Los datos esenciales de la propuesta (titulación, especialidad de Ingeniería del Software, director, fecha de asignación y descripción) se recogen en la ficha del trabajo incluida al inicio de esta memoria. Durante el desarrollo no se han producido modificaciones sustanciales en el título ni en los objetivos respecto a la propuesta original.
+
 
 \section{Documentación de entrada}
 \label{sec:apendice-entrada}
 
-\textit{[Opcional. Documentación previa de la que se dispone antes de realizar el trabajo: \textit{datasets}, fuentes externas, documentos técnicos, etc.]}
+El proyecto se ha apoyado en fuentes de datos abiertas de transporte como documentación de entrada principal:
+
+\begin{itemize}
+  \item \textbf{API abierta de CTAN}, la Red de Consorcios de Transporte de Andalucía, que expone líneas, paradas, recorridos y horarios de los consorcios andaluces. Se ha utilizado el consorcio de Jaén en modo solo lectura.
+  \item \textbf{Especificación GTFS} (\textit{General Transit Feed Specification}) y el \textit{feed} GTFS unificado de CTAN, que aportan horarios y colores de línea reales.
+  \item \textbf{Cartografía de OpenStreetMap}, empleada como capa base del mapa interactivo.
+\end{itemize}
+
+Estas fuentes se describen con más detalle en el estado del arte del Capítulo~\ref{cap:especificacion} y en la integración documentada en el Capítulo~\ref{cap:desarrollo}.
+
 
 \section{Instalación y configuración del sistema}
 \label{sec:apendice-instalacion}
 
-\textit{[Pendiente. Instrucciones para descargar, instalar, configurar y ejecutar el prototipo. Referencia al README del repositorio y a los manuales de despliegue para frontend (Angular) y backend (Spring Boot).]}
+El prototipo se compone de dos proyectos independientes: el \textit{backend} (Spring Boot) y el \textit{frontend} (Angular). A continuación se resumen los requisitos y los pasos básicos para su puesta en marcha en un entorno de desarrollo.
+
+\subsection{Requisitos previos}
+
+\begin{itemize}
+  \item Java Development Kit (JDK) 21 para el \textit{backend}.
+  \item Node.js y npm para el \textit{frontend} (Angular 21).
+  \item Opcionalmente, PostgreSQL para el perfil de persistencia \texttt{postgres}, y un servidor SMTP de pruebas (Mailpit) para verificar el envío de correos.
+\end{itemize}
+
+\subsection{Puesta en marcha del \textit{backend}}
+
+El servidor se ejecuta con Maven mediante el \textit{wrapper} incluido. Por defecto utiliza el perfil \texttt{dev}, que arranca con una base de datos H2 en memoria, sin necesidad de instalar PostgreSQL:
+
+\begin{verbatim}
+cd backend
+./mvnw clean compile        # compilar
+./mvnw spring-boot:run      # arrancar (perfil dev, H2)
+\end{verbatim}
+
+Para ejecutar con PostgreSQL se activa el perfil correspondiente antes de arrancar (variable de entorno \texttt{SPRING\_PROFILES\_ACTIVE=postgres}). La API queda disponible bajo la ruta \texttt{/api} (por ejemplo, \texttt{http://localhost:8080/api}).
+
+\subsection{Puesta en marcha del \textit{frontend}}
+
+El cliente Angular se instala y se ejecuta con npm:
+
+\begin{verbatim}
+cd frontend
+npm install                 # instalar dependencias (primera vez)
+npm start                   # arrancar el servidor de desarrollo
+\end{verbatim}
+
+La aplicación queda accesible en el navegador (por defecto en \texttt{http://localhost:4200}). En el primer arranque, el \textit{backend} sincroniza automáticamente el catálogo de transporte desde las fuentes externas, con respaldo a datos locales si no hay conexión.
+
 
 \section{Manuales de usuario}
 \label{sec:apendice-manuales}
 
-\textit{[Pendiente. Instrucciones de uso del prototipo desde el punto de vista del viajero: registro, consulta de rutas y horarios, mapa, reserva, ticket electrónico, cancelación, incidencias, FAQ y contacto.]}
+Esta sección resume el uso del prototipo desde el punto de vista del viajero. La aplicación está disponible en español e inglés, conmutables desde la barra de navegación.
+
+\begin{itemize}
+  \item \textbf{Registro e inicio de sesión.} Desde las opciones de la barra de navegación, el visitante puede registrarse con su nombre, correo y contraseña, e iniciar sesión posteriormente. La sesión se mantiene mientras el \textit{token} sea válido.
+  \item \textbf{Consulta y planificación.} En la página de inicio, el planificador permite seleccionar el origen (con autocompletado), elegir entre los destinos alcanzables, indicar fecha y hora, y obtener los trayectos disponibles. Las secciones de líneas y de detalle muestran el catálogo y los horarios.
+  \item \textbf{Mapa interactivo.} La vista de mapa representa líneas y paradas; al seleccionar una línea, se resalta su recorrido.
+  \item \textbf{Reserva y selección de asiento.} Desde un trayecto, el usuario accede al mapa de asientos, selecciona una plaza disponible y confirma la reserva, que queda pendiente de pago.
+  \item \textbf{Pago y ticket.} El usuario completa el pago simulado; al confirmarse, obtiene el ticket electrónico con su código QR y recibe un correo de confirmación.
+  \item \textbf{Mis reservas y cancelación.} El área de reservas permite consultar las reservas propias, ver su detalle estilo billete y cancelarlas.
+  \item \textbf{Verificación del ticket.} El personal de control puede verificar la validez de un ticket a partir de su código QR, sin necesidad de iniciar sesión.
+  \item \textbf{FAQ y contacto.} La sección de preguntas frecuentes resuelve dudas habituales y el formulario de contacto permite enviar un mensaje al soporte.
+\end{itemize}
+
 
 \section{Publicaciones científicas}
 \label{sec:apendice-publicaciones}
 
-\textit{[Opcional. Artículos científicos derivados del trabajo, tanto publicados como sometidos a revisión.]}
+No se han derivado publicaciones científicas de este trabajo.
+
 
 \section{Estudios con entidad propia}
 \label{sec:apendice-estudios}
 
-\textit{[Opcional. Estudios necesarios para adecuar el proyecto a exigencias legales no recogidas en apartados anteriores: protección de datos, propiedad intelectual e industrial, prevención de riesgos laborales, impacto ambiental, etc.]}
+\subsection{Protección de datos}
+
+El prototipo se ha desarrollado y validado utilizando exclusivamente datos personales ficticios, conforme a las restricciones del proyecto, por lo que no se ha realizado tratamiento de datos personales reales. En una hipótesis de explotación real, sería necesario adecuar el sistema al Reglamento General de Protección de Datos, incorporando información sobre el tratamiento, la base jurídica, el consentimiento y los derechos de los usuarios, así como medidas de seguridad sobre los datos almacenados.
+
+\subsection{Propiedad intelectual e industrial}
+
+La memoria se distribuye bajo licencia Creative Commons (CC-BY-NC-SA), según se indica en la portada. Los datos de transporte proceden de fuentes abiertas (CTAN, GTFS) y se utilizan en modo solo lectura, respetando sus condiciones de uso. La cartografía base procede de OpenStreetMap, cuyos términos de atribución se respetan en la aplicación. Las bibliotecas y \textit{frameworks} empleados (Angular, Spring Boot, Leaflet, ZXing, entre otros) son de código abierto y se usan conforme a sus respectivas licencias.

@@ -1,38 +1,318 @@
 \chapter{Diseño inicial}
 \label{cap:diseno-inicial}
 
-\textit{[Pendiente de redacción. Capítulo dedicado a la arquitectura del sistema propuesto y los modelos de diseño correspondientes a la funcionalidad, interfaces y datos. Al utilizar una metodología ágil (Scrum adaptado), este capítulo describirá el diseño global previo a la primera iteración. Los cambios en el diseño producidos en cada iteración se presentarán posteriormente en sus correspondientes apartados del capítulo de Desarrollo.]}
+Este capítulo recoge el diseño global del sistema previo al inicio del desarrollo iterativo. Su objetivo es establecer, a partir de los objetivos y requisitos iniciales presentados en el capítulo anterior, una especificación más detallada del comportamiento esperado del prototipo, así como los modelos de análisis y diseño que sirven de base para su construcción.
+
+Dado que el proyecto se aborda mediante una metodología ágil (Scrum adaptado a un único desarrollador), no se pretende producir un diseño cerrado e inmutable antes de programar, sino una visión de conjunto suficientemente sólida como para guiar la primera iteración y mantener la coherencia arquitectónica a lo largo del trabajo. Por este motivo, el presente capítulo describe el diseño inicial del sistema, mientras que los refinamientos y cambios introducidos en cada iteración se documentan en sus correspondientes apartados del capítulo de Desarrollo (Capítulo~\ref{cap:desarrollo}).
+
+El capítulo se organiza en dos grandes bloques. En primer lugar, las \textit{especificaciones del sistema} (Sección~\ref{sec:especificaciones-sistema}) detallan los requisitos funcionales y no funcionales, las historias de usuario que componen la pila de producto y los casos de uso principales. En segundo lugar, el \textit{análisis y diseño del sistema} (Sección~\ref{sec:analisis-diseno}) presenta los modelos de arquitectura, datos, clases, casos de uso, secuencia e interfaz que materializan dichas especificaciones.
+
 
 \section{Especificaciones del sistema}
 \label{sec:especificaciones-sistema}
 
-\textit{[Pendiente. Especificación detallada de los requisitos (funcionales y no funcionales) y/o historias de usuario iniciales, así como los casos de uso. Servirá de base para el análisis y diseño del sistema.]}
+En esta sección se concretan los requisitos iniciales enunciados de forma general en el Capítulo~\ref{cap:especificacion}. Los requisitos se clasifican en funcionales, que describen lo que el sistema debe hacer, y no funcionales, que describen cómo debe comportarse en términos de calidad. Posteriormente, se reformulan las funcionalidades como historias de usuario, que constituyen la unidad de planificación del enfoque ágil adoptado, y se detallan los casos de uso más relevantes.
+
+
+\subsection{Requisitos funcionales}
+\label{sec:requisitos-funcionales}
+
+Los requisitos funcionales se han agrupado por módulos funcionales para facilitar su trazabilidad con los entregables del producto definidos en el Capítulo~\ref{cap:especificacion} y con las iteraciones de desarrollo. Cada requisito se identifica mediante un código \textbf{RF-XX}, una descripción y una prioridad (Alta, Media o Baja), que orienta el orden de implementación dentro del plan iterativo.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{10.5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Requisito funcional --- Autenticación y usuarios} & \textbf{Prioridad} \\ \hline
+RF-01 & El sistema permitirá a un visitante registrarse proporcionando nombre, correo electrónico y contraseña. & Alta \\ \hline
+RF-02 & El sistema permitirá a un usuario registrado iniciar sesión mediante correo electrónico y contraseña. & Alta \\ \hline
+RF-03 & El sistema almacenará las contraseñas cifradas y nunca en texto plano. & Alta \\ \hline
+RF-04 & El sistema emitirá un \textit{token} de sesión (JWT) tras una autenticación correcta y lo exigirá para acceder a las funcionalidades protegidas. & Alta \\ \hline
+RF-05 & El sistema permitirá al usuario cerrar la sesión, invalidando el acceso a las áreas privadas. & Media \\ \hline
+\end{tabular}
+\caption{Requisitos funcionales del módulo de autenticación y usuarios.}
+\label{tab:rf-auth}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{10.5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Requisito funcional --- Consulta y planificación} & \textbf{Prioridad} \\ \hline
+RF-06 & El sistema permitirá consultar el catálogo de líneas, paradas y horarios disponibles. & Alta \\ \hline
+RF-07 & El sistema permitirá buscar trayectos indicando origen, destino, fecha y hora. & Alta \\ \hline
+RF-08 & El sistema ofrecerá, al seleccionar un origen, únicamente los destinos alcanzables aguas abajo en las líneas que pasan por dicho origen. & Media \\ \hline
+RF-09 & El sistema mostrará, junto al nombre de cada parada, el municipio al que pertenece cuando aporte información adicional. & Baja \\ \hline
+RF-10 & El sistema representará líneas, paradas y recorridos sobre un mapa interactivo. & Media \\ \hline
+\end{tabular}
+\caption{Requisitos funcionales del módulo de consulta y planificación.}
+\label{tab:rf-consulta}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{10.5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Requisito funcional --- Reservas, pago y ticket} & \textbf{Prioridad} \\ \hline
+RF-11 & El sistema permitirá a un usuario autenticado reservar un billete sobre un trayecto seleccionado. & Alta \\ \hline
+RF-12 & El sistema mostrará un mapa de asientos y permitirá seleccionar una plaza disponible. & Alta \\ \hline
+RF-13 & El sistema impedirá reservar una plaza ya ocupada por otra reserva. & Alta \\ \hline
+RF-14 & El sistema simulará el pago de una reserva y registrará su confirmación. & Alta \\ \hline
+RF-15 & El sistema generará un ticket electrónico con un código QR asociado a la reserva confirmada. & Alta \\ \hline
+RF-16 & El sistema permitirá consultar las reservas asociadas al usuario autenticado. & Media \\ \hline
+RF-17 & El sistema permitirá cancelar una reserva conforme a la política de reembolso simulado definida. & Media \\ \hline
+RF-18 & El sistema permitirá verificar públicamente la validez de un ticket a partir de su código QR. & Media \\ \hline
+\end{tabular}
+\caption{Requisitos funcionales del módulo de reservas, pago y ticket electrónico.}
+\label{tab:rf-reservas}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{10.5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Requisito funcional --- Comunicación e integración} & \textbf{Prioridad} \\ \hline
+RF-19 & El sistema enviará al usuario un correo electrónico de confirmación tras el pago de una reserva, incluyendo el ticket con el código QR. & Media \\ \hline
+RF-20 & El sistema ofrecerá una sección de preguntas frecuentes (FAQ). & Baja \\ \hline
+RF-21 & El sistema dispondrá de un formulario de contacto que remitirá el mensaje al buzón de soporte. & Baja \\ \hline
+RF-22 & El sistema integrará información de transporte procedente de fuentes externas (GTFS y API de CTAN) para alimentar el catálogo de líneas y paradas. & Media \\ \hline
+RF-23 & El sistema dispondrá de un proceso de sincronización de datos de transporte ejecutable durante el arranque o de forma programada. & Baja \\ \hline
+\end{tabular}
+\caption{Requisitos funcionales del módulo de comunicación e integración de datos.}
+\label{tab:rf-comunicacion}
+\end{table}
+
+
+\subsection{Requisitos no funcionales}
+\label{sec:requisitos-no-funcionales}
+
+Los requisitos no funcionales establecen las condiciones de calidad que el prototipo debe satisfacer. Se identifican mediante el código \textbf{RNF-XX} y se relacionan con atributos como la usabilidad, el rendimiento, la seguridad, la portabilidad o la mantenibilidad.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{4cm}|p{7.5cm}|}
+\hline
+\textbf{Código} & \textbf{Atributo} & \textbf{Requisito no funcional} \\ \hline
+RNF-01 & Usabilidad & La interfaz será web, responsiva y utilizable desde navegadores modernos en distintos tamaños de pantalla. \\ \hline
+RNF-02 & Internacionalización & La interfaz estará disponible al menos en español e inglés, con conmutación de idioma en tiempo de ejecución. \\ \hline
+RNF-03 & Seguridad & El acceso a las funcionalidades privadas estará protegido mediante autenticación basada en \textit{token} (JWT) y las contraseñas se almacenarán cifradas con BCrypt. \\ \hline
+RNF-04 & Seguridad & La comunicación entre el cliente y el servidor se realizará a través de una API REST sin estado (\textit{stateless}). \\ \hline
+RNF-05 & Rendimiento & Las consultas habituales de líneas, paradas y trayectos responderán en un tiempo razonable para una interacción fluida en el entorno de prototipo. \\ \hline
+RNF-06 & Tolerancia a fallos & El envío de correos no bloqueará ni provocará el fallo de las operaciones principales (pago o contacto) si el servicio de correo no está disponible. \\ \hline
+RNF-07 & Portabilidad & El sistema podrá ejecutarse con una base de datos en memoria (H2) en desarrollo y con PostgreSQL en un entorno más cercano a producción. \\ \hline
+RNF-08 & Mantenibilidad & El código se organizará por capas y módulos funcionales, con separación clara entre presentación, lógica de negocio y acceso a datos. \\ \hline
+RNF-09 & Reproducibilidad & El entorno de desarrollo y pruebas se apoyará en herramientas gratuitas, libres o con modalidad de prueba para facilitar su reproducción. \\ \hline
+\end{tabular}
+\caption{Requisitos no funcionales del prototipo.}
+\label{tab:rnf}
+\end{table}
+
+
+\subsection{Historias de usuario}
+\label{sec:historias-usuario}
+
+Coherentemente con la metodología ágil adoptada, las funcionalidades se han reformulado como historias de usuario, expresadas desde el punto de vista de quien obtiene el valor. Cada historia se identifica con el código \textbf{HU-XX} y se asocia a la iteración en la que se aborda, según la planificación presentada en la Tabla~\ref{tab:iteraciones} del capítulo anterior. Este conjunto constituye la pila de producto (\textit{product backlog}) inicial del proyecto.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{10cm}|c|}
+\hline
+\textbf{Código} & \textbf{Historia de usuario} & \textbf{Iter.} \\ \hline
+HU-01 & Como visitante, quiero registrarme con mis datos para poder acceder a las funcionalidades personalizadas. & 1 \\ \hline
+HU-02 & Como usuario, quiero iniciar y cerrar sesión de forma segura para proteger mi cuenta. & 1 \\ \hline
+HU-03 & Como viajero, quiero consultar las líneas, paradas y horarios disponibles para conocer la oferta de transporte. & 2 \\ \hline
+HU-04 & Como viajero, quiero buscar un trayecto indicando origen, destino y hora para planificar mi viaje. & 2 \\ \hline
+HU-05 & Como viajero, quiero ver el recorrido y las paradas sobre un mapa interactivo para entender mejor la ruta. & 2 \\ \hline
+HU-06 & Como viajero, quiero que al elegir el origen solo se me ofrezcan destinos realmente alcanzables para evitar errores. & 2 \\ \hline
+HU-07 & Como usuario, quiero reservar un billete y elegir mi asiento en un mapa de plazas para asegurar mi sitio. & 3 \\ \hline
+HU-08 & Como usuario, quiero consultar mis reservas para revisar mis viajes. & 3 \\ \hline
+HU-09 & Como usuario, quiero pagar mi reserva de forma simulada para confirmar el billete. & 4 \\ \hline
+HU-10 & Como usuario, quiero obtener un ticket electrónico con un código QR para presentarlo durante el viaje. & 4 \\ \hline
+HU-11 & Como personal de verificación, quiero comprobar la validez de un ticket escaneando su QR para controlar el acceso. & 4 \\ \hline
+HU-12 & Como usuario, quiero cancelar una reserva y conocer el reembolso aplicable para gestionar cambios de planes. & 4 \\ \hline
+HU-13 & Como usuario, quiero recibir por correo la confirmación de mi reserva con el ticket para tener una copia. & 5 \\ \hline
+HU-14 & Como visitante, quiero consultar una sección de preguntas frecuentes para resolver dudas habituales. & 5 \\ \hline
+HU-15 & Como visitante, quiero enviar un mensaje mediante un formulario de contacto para comunicarme con el soporte. & 5 \\ \hline
+HU-16 & Como responsable del sistema, quiero que el catálogo de transporte se alimente de fuentes externas reales para ofrecer datos verosímiles. & 2 \\ \hline
+\end{tabular}
+\caption{Pila de producto inicial: historias de usuario y su asignación a iteraciones.}
+\label{tab:historias-usuario}
+\end{table}
+
+
+\subsection{Casos de uso}
+\label{sec:casos-uso-spec}
+
+A partir de los requisitos y las historias de usuario se identifican los casos de uso del sistema, que describen las interacciones entre los actores y el prototipo. Se distinguen tres actores principales:
+
+\begin{itemize}
+  \item \textbf{Visitante anónimo}: usuario no autenticado que puede consultar información de transporte, utilizar el planificador, ver el mapa, consultar la FAQ, enviar el formulario de contacto y verificar un ticket a partir de su QR.
+  \item \textbf{Usuario registrado}: hereda las capacidades del visitante y, además, puede reservar billetes, seleccionar asiento, pagar de forma simulada, obtener el ticket electrónico, consultar sus reservas y cancelarlas.
+  \item \textbf{Servicios externos (CTAN / SMTP)}: actores no humanos que intervienen en la sincronización de datos de transporte y en el envío de notificaciones por correo electrónico.
+\end{itemize}
+
+El diagrama de casos de uso completo se presenta más adelante en la Subsección~\ref{sec:dca}. A modo de ejemplo, la Tabla~\ref{tab:cu-reserva} detalla la ficha del caso de uso de reserva y pago, por ser uno de los flujos centrales del sistema.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{3cm}|p{11cm}|}
+\hline
+\multicolumn{2}{|l|}{\textbf{CU-07 --- Reservar y pagar un billete}} \\ \hline
+\textbf{Actor} & Usuario registrado. \\ \hline
+\textbf{Precondición} & El usuario ha iniciado sesión y ha seleccionado un trayecto. \\ \hline
+\textbf{Flujo principal} & 1. El usuario consulta el mapa de asientos del trayecto. \newline 2. El usuario selecciona una plaza disponible. \newline 3. El sistema crea la reserva en estado pendiente de pago. \newline 4. El usuario introduce los datos de pago (simulado). \newline 5. El sistema autoriza el pago y confirma la reserva. \newline 6. El sistema genera el ticket con código QR. \newline 7. El sistema envía el correo de confirmación con el ticket. \\ \hline
+\textbf{Flujos alternativos} & 2a. Si la plaza ya está ocupada, el sistema lo notifica y solicita otra selección. \newline 5a. Si el pago es rechazado, la reserva permanece pendiente y se informa al usuario. \\ \hline
+\textbf{Postcondición} & La reserva queda confirmada, con ticket emitido y notificación enviada. \\ \hline
+\end{tabular}
+\caption{Ficha del caso de uso de reserva y pago de un billete.}
+\label{tab:cu-reserva}
+\end{table}
+
 
 \section{Análisis y diseño del sistema}
 \label{sec:analisis-diseno}
 
-\textit{[Pendiente. Documentos de análisis y diseño organizados como subsecciones siguientes.]}
+Una vez establecidas las especificaciones, esta sección presenta los modelos de análisis y diseño que dan forma a la solución. Se abordan, sucesivamente, el diseño arquitectónico, el diseño de la base de datos, los diagramas de clases, el diagrama de casos de uso, los diagramas de secuencia de los flujos principales y, por último, el diseño de la interfaz y los \textit{storyboards}.
+
 
 \subsection{Diseño arquitectónico del sistema}
+\label{sec:diseno-arquitectonico}
 
-\textit{[Pendiente.]}
+El sistema se ha diseñado siguiendo una arquitectura cliente-servidor desacoplada. El cliente es una aplicación de página única (SPA) desarrollada con Angular, que se comunica con el servidor exclusivamente mediante una API REST sin estado. El servidor es una aplicación Spring Boot estructurada en capas (controladores, servicios y repositorios), responsable de la lógica de negocio y del acceso a datos. La persistencia se apoya en una base de datos relacional, mientras que la información de transporte se nutre de fuentes externas (GTFS y la API de CTAN) y las notificaciones se canalizan a través de un servidor SMTP.
+
+La Figura~\ref{fig:componentes} muestra el diagrama de componentes, en el que se aprecia la separación entre la capa de presentación, la API REST con sus distintos módulos, el subsistema de ingesta de datos y los servicios externos. La Figura~\ref{fig:despliegue} presenta el diagrama de despliegue, que sitúa cada componente en su nodo de ejecución.
+
+El subsistema de ingesta de datos se diseñó con una estrategia de respaldo entre varias fuentes, de modo que el sistema siempre disponga de un catálogo de transporte aunque alguna no esté disponible. Por orden de prioridad, estas fuentes son: el \textit{feed} GTFS unificado de CTAN (fuente principal, que aporta horarios y colores de línea reales), la API REST abierta de CTAN (respaldo, consumida en modo solo lectura para el consorcio de Jaén), un conjunto curado de líneas rurales de la provincia y, como último recurso, un cargador de datos locales que garantiza el arranque del prototipo sin conexión. Este diseño desacopla la lógica de negocio de la procedencia concreta de los datos y permite alternar entre fuentes mediante configuración.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{Imagenes/Diagramas/componentes.png}
+\caption{Diagrama de componentes del prototipo.}
+\label{fig:componentes}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{Imagenes/Diagramas/despliegue.png}
+\caption{Diagrama de despliegue del prototipo.}
+\label{fig:despliegue}
+\end{figure}
+
+Esta separación en capas favorece la mantenibilidad (RNF-08) y permite evolucionar de forma independiente el cliente y el servidor. Asimismo, el carácter sin estado de la API (RNF-04) simplifica la gestión de la sesión, que recae en el \textit{token} JWT transmitido en cada petición protegida.
+
 
 \subsection{Diseño de bases de datos}
+\label{sec:diseno-bd}
 
-\textit{[Pendiente.]}
+El modelo de datos se ha diseñado a partir de las entidades del dominio. Las entidades principales son el usuario (\texttt{User}) con su rol, la parada (\texttt{Stop}), la línea (\texttt{Line}), la relación línea-parada con su orden de recorrido (\texttt{LineStop}) y la reserva (\texttt{Reservation}), que registra el asiento, el estado y los datos de pago. La Figura~\ref{fig:modelo-dominio} representa el modelo de dominio, que sirve simultáneamente como base del modelo entidad-relación de la base de datos y del diagrama de clases de entidad.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{Imagenes/Diagramas/modelo_dominio.png}
+\caption{Modelo de dominio y entidad-relación del sistema.}
+\label{fig:modelo-dominio}
+\end{figure}
+
+La Tabla~\ref{tab:entidades} resume las principales entidades del modelo y su finalidad.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{3cm}|p{11cm}|}
+\hline
+\textbf{Entidad} & \textbf{Descripción y atributos clave} \\ \hline
+User & Usuario del sistema, con nombre, correo (único), contraseña cifrada y rol. Implementa la interfaz de detalles de usuario del marco de seguridad. \\ \hline
+Stop & Parada de transporte, con código estable, nombre, municipio y coordenadas geográficas (latitud y longitud). \\ \hline
+Line & Línea de transporte, identificada por código y nombre, con color y la lista de horas de salida diarias. \\ \hline
+LineStop & Asociación entre una línea y una parada, con el orden de la parada en el recorrido (\textit{sequence}) y los minutos acumulados desde el origen (\textit{minutesFromStart}). \\ \hline
+Reservation & Reserva de un viajero, con código legible, tramo (línea, parada origen y destino), fecha, horas de salida y llegada, asiento, precio, estado, instante de pago, últimos dígitos de la tarjeta y \textit{token} del QR. \\ \hline
+ReservationStatus & Estado de la reserva (pendiente de pago, confirmada o cancelada). \\ \hline
+\end{tabular}
+\caption{Entidades principales del modelo de datos.}
+\label{tab:entidades}
+\end{table}
+
+El código de parada se diseña como clave estable según su procedencia (por ejemplo, con prefijo del consorcio para las paradas importadas de CTAN o un prefijo provincial para las líneas rurales curadas), lo que permite reimportar los datos de forma idempotente sin duplicar registros. La tabla intermedia \texttt{LineStop} hace posible que una misma parada pertenezca a varias líneas conservando su orden y sus tiempos en cada una.
+
+La entidad \texttt{Reservation} incorpora dos garantías de integridad relevantes para el dominio. En primer lugar, su código sigue un formato legible \texttt{BK-AAAA-NNNNN} que facilita su identificación por parte del usuario. En segundo lugar, una restricción de unicidad sobre la combinación de línea, fecha, hora de salida y asiento impide que una misma plaza se reserve dos veces en el mismo viaje; esta condición se valida tanto en la capa de servicio como a nivel de base de datos, ofreciendo una doble protección frente a reservas concurrentes. El precio de la reserva no se almacena de forma arbitraria, sino que lo calcula un servicio de tarificación a partir de un precio base y un coste por minuto de trayecto, manteniendo así una política de precios coherente en todo el sistema.
+
+En el entorno de desarrollo se emplea una base de datos en memoria (H2), que se inicializa en cada arranque, mientras que para un entorno más realista se contempla PostgreSQL, conforme al requisito de portabilidad RNF-07.
+
 
 \subsection{Diagramas de clases}
+\label{sec:diagramas-clases}
 
-\textit{[Pendiente.]}
+El diseño de clases distingue entre las clases de entidad, ya representadas en el modelo de dominio de la Figura~\ref{fig:modelo-dominio}, y las clases de servicio que implementan la lógica de negocio. La Figura~\ref{fig:clases-servicios} muestra estas últimas, junto con sus dependencias hacia los repositorios de acceso a datos.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{Imagenes/Diagramas/clases_servicios.png}
+\caption{Diagrama de clases de los servicios de negocio.}
+\label{fig:clases-servicios}
+\end{figure}
+
+Entre las clases de servicio destacan \texttt{TransportService}, que resuelve la consulta de líneas, paradas y la búsqueda de trayectos; \texttt{ReservationService}, que orquesta la reserva, el pago, la generación del ticket y el envío de la confirmación; \texttt{PricingService}, que calcula el importe; \texttt{SimulatedPaymentGateway}, que simula la pasarela de pago; \texttt{QrCodeService}, que genera el código QR del ticket; y \texttt{EmailService}, responsable de las notificaciones por correo. Esta organización refleja el principio de responsabilidad única y facilita las pruebas de cada componente de forma aislada.
+
 
 \subsection{Diagramas de casos de uso}
+\label{sec:dca}
 
-\textit{[Pendiente.]}
+El diagrama de casos de uso de la Figura~\ref{fig:casos-uso} sintetiza las interacciones entre los actores y el sistema descritas en la Subsección~\ref{sec:casos-uso-spec}. Se observa cómo el usuario registrado amplía las capacidades del visitante anónimo y cómo los servicios externos participan en la sincronización de datos y en el envío de notificaciones. Las relaciones \texttt{<<include>>} reflejan dependencias entre casos de uso, como la inclusión de la selección de asiento dentro de la reserva o el envío de notificaciones dentro del pago.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{Imagenes/Diagramas/casos_uso.png}
+\caption{Diagrama de casos de uso del prototipo.}
+\label{fig:casos-uso}
+\end{figure}
+
 
 \subsection{Diagramas de secuencia}
+\label{sec:diagramas-secuencia}
 
-\textit{[Pendiente.]}
+Para describir el comportamiento dinámico del sistema se han elaborado diagramas de secuencia de los flujos más representativos. La Figura~\ref{fig:seq-autenticacion} muestra el proceso de autenticación con emisión de JWT; la Figura~\ref{fig:seq-busqueda}, la búsqueda de trayectos con destinos dependientes del origen; la Figura~\ref{fig:seq-reserva}, la reserva, el pago simulado, la confirmación y el envío del correo con el QR; y la Figura~\ref{fig:seq-verificacion}, la verificación pública de un ticket a partir de su código QR.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{Imagenes/Diagramas/seq_autenticacion.png}
+\caption{Diagrama de secuencia de la autenticación con JWT.}
+\label{fig:seq-autenticacion}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{Imagenes/Diagramas/seq_busqueda.png}
+\caption{Diagrama de secuencia de la búsqueda de trayectos.}
+\label{fig:seq-busqueda}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{Imagenes/Diagramas/seq_reserva_pago.png}
+\caption{Diagrama de secuencia de la reserva, el pago y la confirmación.}
+\label{fig:seq-reserva}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/Diagramas/seq_verificacion.png}
+\caption{Diagrama de secuencia de la verificación de un ticket.}
+\label{fig:seq-verificacion}
+\end{figure}
+
 
 \subsection{Diseño de la interfaz y \textit{storyboards}}
+\label{sec:diseno-interfaz}
 
-\textit{[Pendiente.]}
+El diseño de la interfaz parte de un mapa de navegación organizado en torno a las áreas funcionales del prototipo. Desde la página de inicio, el usuario accede al planificador de trayectos, al mapa interactivo, a las secciones públicas (FAQ y contacto) y, una vez autenticado, a sus reservas y al flujo de reserva, pago y ticket. La barra de navegación superior actúa como elemento de orientación constante y permite, además, conmutar el idioma de la interfaz (RNF-02).
+
+El diseño visual sigue un enfoque sobrio y responsivo, basado en componentes de Angular Material, con una paleta coherente y prioridad en la legibilidad y la accesibilidad desde distintos dispositivos (RNF-01). Las pantallas clave previstas son: el planificador con autocompletado de paradas y destinos dependientes del origen, el listado de resultados de trayectos, el mapa interactivo de líneas y paradas, el mapa de selección de asiento, la pasarela de pago simulado, el ticket electrónico con el código QR, el área de reservas del usuario y los formularios de autenticación y de contacto.
+
+Dado que el prototipo se ha construido de forma incremental, los \textit{storyboards} iniciales se han materializado directamente en la aplicación. Por ello, las capturas reales de cada pantalla y la descripción detallada de su comportamiento se presentan en el capítulo de Desarrollo (Capítulo~\ref{cap:desarrollo}), donde se documenta la evolución de la interfaz a lo largo de las distintas iteraciones.

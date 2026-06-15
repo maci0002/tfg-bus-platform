@@ -1,14 +1,53 @@
 \chapter{Experimentación, resultados y discusión}
 \label{cap:experimentacion}
 
-\textit{[Pendiente. Capítulo orientado a documentar la experimentación realizada, enumerar los resultados más relevantes y presentar una discusión sobre los mismos. Tal y como indica la plantilla EPSJ, este capítulo es opcional y está pensado para estudios técnicos o proyectos teóricos/experimentales, por lo que se adaptará al perfil de prototipado del presente TFG.]}
+Aunque la plantilla de la EPSJ plantea este capítulo como opcional y orientado a estudios teóricos o experimentales, en el presente trabajo se aprovecha para documentar las pruebas realizadas sobre el prototipo ya construido, presentar los resultados más relevantes —en particular los derivados de su integración con datos reales de transporte— y discutir su alcance y limitaciones. De este modo, el capítulo complementa las pruebas internas de cada iteración recogidas en el Capítulo~\ref{cap:desarrollo} con una visión global del comportamiento del sistema.
+
 
 \section{Experimentaciones y pruebas}
 \label{sec:experimentaciones}
 
-\textit{[Pendiente.]}
+\subsection{Entorno de pruebas}
+
+Las pruebas se realizaron en un entorno de desarrollo controlado, con el servidor Spring Boot ejecutándose con el perfil \texttt{dev} (base de datos H2 en memoria) y el cliente Angular servido en local. Para la validación del envío de correos se empleó un servidor SMTP de pruebas (Mailpit), que captura los mensajes salientes y permite inspeccionarlos sin enviarlos a destinatarios reales. La interacción con la interfaz se comprobó desde un navegador moderno, verificando además su comportamiento responsivo a distintos tamaños de pantalla.
+
+\subsection{Prueba de integración con datos reales}
+
+La experimentación más significativa consistió en alimentar el catálogo de transporte con datos reales del consorcio de Jaén a partir de la API abierta de CTAN y del \textit{feed} GTFS, sustituyendo los datos locales aproximados utilizados en las primeras iteraciones. Se ejecutó el proceso de sincronización durante el arranque del servidor y se comprobó el catálogo resultante a través de la propia API del prototipo, validando que las líneas, las paradas, los recorridos ordenados y los horarios obtenidos se correspondían con datos verosímiles del área metropolitana de Jaén.
+
+\subsection{Prueba del flujo de extremo a extremo}
+
+Se validó el recorrido completo del viajero como prueba de integración del conjunto del sistema: registro de un usuario, inicio de sesión, búsqueda de un trayecto sobre datos reales, selección de asiento, creación de la reserva, pago simulado, confirmación con emisión del ticket y código QR, recepción del correo de confirmación en Mailpit y, finalmente, verificación pública del ticket a partir de su código. Se comprobaron asimismo los caminos alternativos: intento de reserva de un asiento ya ocupado, pago rechazado, verificación de un ticket cancelado y comportamiento del sistema ante un \textit{token} de sesión caducado.
+
 
 \section{Resultados y discusión}
 \label{sec:resultados-discusion}
 
-\textit{[Pendiente.]}
+\subsection{Resultados obtenidos}
+
+El resultado principal es un prototipo web funcional que cubre el ciclo completo del viaje y que, a diferencia de su estado inicial, opera sobre datos reales de transporte. La Tabla~\ref{tab:resultados-cuant} resume algunos resultados cuantitativos de la integración con las fuentes de datos del consorcio de Jaén.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{8cm}|p{5.5cm}|}
+\hline
+\textbf{Indicador} & \textbf{Resultado} \\ \hline
+Consorcio integrado & Jaén (CTJA, \textit{idConsorcio} = 7) \\ \hline
+Líneas sincronizadas desde CTAN & 43 \\ \hline
+Paradas sincronizadas desde CTAN & 78 \\ \hline
+Líneas rurales curadas añadidas & 8 \\ \hline
+Idempotencia de la carga & Sí (no duplica al re-sincronizar) \\ \hline
+Respaldo \textit{offline} & Sí (datos locales si falla la fuente) \\ \hline
+\end{tabular}
+\caption{Resultados cuantitativos de la integración con datos reales.}
+\label{tab:resultados-cuant}
+\end{table}
+
+Respecto a la cobertura funcional, las pruebas de cada iteración y las pruebas finales (Sección~\ref{sec:pruebas-finales}) confirman que las historias de usuario de la pila de producto (Tabla~\ref{tab:historias-usuario}) quedan satisfechas y que cada requisito funcional cuenta con, al menos, una prueba asociada. El flujo de extremo a extremo se completó con éxito, incluidos sus caminos alternativos, y el sistema mostró la robustez prevista ante situaciones de error, gracias a decisiones como el envío de correo tolerante a fallos o el tratamiento coherente de las sesiones caducadas.
+
+\subsection{Discusión}
+
+Los resultados confirman la viabilidad de la solución propuesta: es posible construir, dentro de las restricciones de un Trabajo Fin de Grado, un prototipo web que unifique consulta, planificación, reserva, pago simulado, ticket electrónico y comunicación con el usuario, apoyándose en datos públicos de transporte. La integración con CTAN y GTFS resultó especialmente relevante, pues aporta verosimilitud al prototipo y demuestra la utilidad de los datos abiertos en este dominio.
+
+No obstante, conviene situar estos resultados en el contexto de un prototipo académico y reconocer sus limitaciones. En primer lugar, dado que la API de CTAN no expone los tiempos acumulados por parada, estos se estiman mediante distancia geográfica y una velocidad media, por lo que las duraciones son aproximadas y no reflejan condiciones reales de tráfico. En segundo lugar, los horarios se tratan de forma estática y el pago es simulado, sin pasarela real ni transacciones económicas, conforme a las restricciones del proyecto. Por último, la validación se ha realizado en un entorno controlado y con datos personales ficticios, por lo que no constituye una prueba de explotación real. Estas limitaciones no comprometen los objetivos del trabajo, orientados a la validación funcional y técnica de la solución, y se retoman como líneas de mejora en el Capítulo~\ref{cap:conclusiones}.

@@ -1,51 +1,332 @@
 \chapter{Desarrollo}
 \label{cap:desarrollo}
 
-\textit{[Pendiente. Capítulo dedicado a la implementación del prototipo siguiendo la metodología Scrum adaptada descrita en el Capítulo~\ref{cap:especificacion}. Para cada iteración se incluirán nuevas historias de usuario, diagramas, \textit{storyboards}, detalles de implementación y juegos de pruebas.]}
+Este capítulo describe la implementación del prototipo siguiendo la metodología Scrum adaptada presentada en el Capítulo~\ref{cap:especificacion}. El desarrollo se ha organizado en seis iteraciones incrementales; cada una aborda un conjunto de historias de usuario (Tabla~\ref{tab:historias-usuario}), produce funcionalidad demostrable y se cierra con sus propias pruebas. Para cada iteración se detallan las historias abordadas, la implementación en el servidor (Spring Boot) y en el cliente (Angular), las decisiones técnicas más relevantes, las incidencias encontradas con su solución y un conjunto de pruebas que validan el resultado.
+
+El registro pormenorizado de decisiones e incidencias procede de la bitácora de desarrollo mantenida durante todo el proyecto, que ha servido como material directo para la elaboración de este capítulo. Al término de las iteraciones, la Sección~\ref{sec:pruebas-finales} recoge las pruebas finales de verificación, validación y usabilidad realizadas sobre el sistema completo.
+
+Como marco común, el prototipo se compone de un servidor REST sin estado desarrollado con Spring Boot 3.4.5 y Java~21 (Spring Web, Spring Security, Spring Data JPA y Spring Mail), y de un cliente SPA desarrollado con Angular~21 mediante componentes \textit{standalone} y \textit{signals}. La autenticación se resuelve con \textit{tokens} JWT (biblioteca jjwt), que el cliente adjunta a las peticiones protegidas a través de un interceptor. La estructura por capas (controladores, servicios y repositorios) y por módulos funcionales descrita en el Capítulo~\ref{cap:diseno-inicial} se mantiene a lo largo de todas las iteraciones.
+
+\paragraph{Organización del trabajo y control de versiones.}
+Aunque el proyecto lo desarrolla un único alumno, a partir de la tercera iteración se adoptó un flujo de trabajo con control de versiones basado en una variante simplificada de \textit{GitHub Flow}: una rama estable (\texttt{main}) y una rama por iteración (\texttt{feature/iteration-XX-<nombre>}), integrada mediante \textit{Pull Request} tras revisar el conjunto de cambios. Los mensajes de \textit{commit} siguen una convención cercana a \textit{Conventional Commits} (\texttt{feat}, \texttt{fix}, \texttt{refactor}, \texttt{docs}, \texttt{chore}). Esta práctica aporta trazabilidad por funcionalidad, capacidad de \textit{rollback} granular y un historial limpio que sirve como evidencia documental de cada hito, acercando el desarrollo individual a un flujo profesional.
+
 
 \section{Iteración 1: Preparación del proyecto y autenticación}
 \label{sec:iteracion-1}
 
-\textit{[Pendiente. Estructura base del prototipo, registro, inicio y cierre de sesión de usuarios.]}
+\subsection{Objetivo e historias abordadas}
+
+La primera iteración levanta el esqueleto del backend y del frontend e implementa el flujo completo de registro e inicio de sesión con JWT. Se abordan las historias HU-01 y HU-02, que dan soporte a los requisitos RF-01 a RF-05.
+
+\subsection{Implementación}
+
+En el servidor, generado con Spring Initializr, se organizó el código en los paquetes \texttt{config}, \texttt{controller}, \texttt{dto}, \texttt{exception}, \texttt{model}, \texttt{repository}, \texttt{security} y \texttt{service}. La entidad \texttt{User} implementa \texttt{UserDetails} de Spring Security. El módulo de autenticación se compone de \texttt{AuthController}, con los \textit{endpoints} \texttt{/api/auth/register} y \texttt{/api/auth/login}; \texttt{JwtUtil}, que genera y valida \textit{tokens} HMAC SHA-256; \texttt{JwtAuthFilter}, un \texttt{OncePerRequestFilter} que valida el \textit{token} de cada petición; y \texttt{SecurityConfig}, con sesión \texttt{STATELESS}, CSRF desactivado y CORS configurado para el origen del cliente. Las contraseñas se almacenan cifradas con BCrypt (RNF-03). El flujo se corresponde con el diagrama de secuencia de la Figura~\ref{fig:seq-autenticacion}.
+
+En el cliente, generado con Angular \textit{standalone} sin SSR, se adoptó una estructura modular (\texttt{core/}, \texttt{features/}, \texttt{shared/}). \texttt{AuthService} se basa en \textit{signals} (\texttt{signal}, \texttt{computed}); \texttt{TokenStorageService} persiste la sesión en el almacenamiento local del navegador (\texttt{localStorage}); un \texttt{JwtInterceptor} funcional añade la cabecera \texttt{Authorization: Bearer} a cada petición; y un \texttt{AuthGuard} protege las rutas privadas. Se configuró la internacionalización con \textit{ngx-translate} (español e inglés, RNF-02) con cambio de idioma en caliente, y un tema de Angular Material~21 (Material Design~3) con paleta azul/cian acorde a un contexto de transporte.
+
+\subsection{Decisiones técnicas}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{5.5cm}|p{8.5cm}|}
+\hline
+\textbf{Decisión} & \textbf{Motivación} \\ \hline
+Spring Boot 3.4.5 (rama LTS) & Las versiones 4.0.x no eran estables al iniciar el desarrollo; 3.4.5 mantiene la misma API. \\ \hline
+JWT en lugar de sesiones en servidor & Cliente y servidor desacoplados; la API permanece sin estado (RNF-04). \\ \hline
+Componentes \textit{standalone} (sin \texttt{NgModules}) & Estándar moderno en Angular 17+, con un árbol de dependencias más explícito. \\ \hline
+\textit{Signals} con \texttt{inject()} a nivel de campo & Permite inicializar señales con servicios inyectados sin depender del orden de construcción del constructor. \\ \hline
+Perfiles Spring \texttt{dev} (H2) y \texttt{postgres} & Permite desarrollar sin instalar PostgreSQL y acercarse a producción cuando se desee (RNF-07). \\ \hline
+\end{tabular}
+\caption{Decisiones técnicas de la iteración 1.}
+\label{tab:dec-it1}
+\end{table}
+
+\subsection{Incidencias y soluciones}
+
+Durante el arranque del proyecto se resolvieron varias incidencias propias de la puesta a punto del \textit{toolchain} moderno de Angular y de la configuración de Spring, recogidas en la Tabla~\ref{tab:inc-it1}.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{5cm}|p{7cm}|}
+\hline
+\textbf{Cód.} & \textbf{Síntoma / causa} & \textbf{Solución} \\ \hline
+E1.1 & \texttt{npm install} falla por conflicto de versión de TypeScript (DevKit 21.2 exige TS 5.9+). & Actualizar TypeScript a \texttt{\textasciitilde 5.9.0} y reinstalar. \\ \hline
+E1.2 & Pantalla en blanco (\texttt{NG0908}): falta Zone.js, pero \texttt{provideZoneChangeDetection} lo requiere. & Añadir \texttt{zone.js} a los \textit{polyfills} de \texttt{angular.json}. \\ \hline
+E1.4 & Error de compilación: cambió la firma del constructor de \texttt{TranslateHttpLoader} (v16+). & Migrar al API funcional (\texttt{provideTranslateHttpLoader} con \textit{prefix}/\textit{suffix}). \\ \hline
+E1.5 & \texttt{TS2729}: campo \textit{signal} inicializado con un servicio antes de su asignación en el constructor. & Usar \texttt{inject()} a nivel de campo en lugar de inyección por constructor. \\ \hline
+E1.7 & El backend no arranca: \textit{connection refused} a PostgreSQL (5432). & Separar la configuración en perfiles (\texttt{dev} con H2 en memoria como \textit{default}). \\ \hline
+\end{tabular}
+\caption{Principales incidencias de la iteración 1 y su solución.}
+\label{tab:inc-it1}
+\end{table}
+
+\subsection{Pruebas de la iteración}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{6.5cm}|p{5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Prueba} & \textbf{Resultado esperado} & \textbf{Res.} \\ \hline
+PR-1.1 & Registro con datos válidos. & Usuario creado y \textit{token} emitido. & OK \\ \hline
+PR-1.2 & Registro con correo ya existente. & Error controlado, sin duplicar usuario. & OK \\ \hline
+PR-1.3 & Inicio de sesión con credenciales correctas. & Acceso concedido y JWT válido. & OK \\ \hline
+PR-1.4 & Inicio de sesión con contraseña incorrecta. & Acceso denegado. & OK \\ \hline
+PR-1.5 & Acceso a ruta protegida sin \textit{token}. & Petición rechazada. & OK \\ \hline
+\end{tabular}
+\caption{Pruebas de la iteración 1 (autenticación).}
+\label{tab:pruebas-it1}
+\end{table}
+
 
 \section{Iteración 2: Consulta de transporte y mapa}
 \label{sec:iteracion-2}
 
-\textit{[Pendiente. Consulta de líneas, rutas, paradas y primera visualización en mapa interactivo (Leaflet).]}
+\subsection{Objetivo e historias abordadas}
+
+La segunda iteración implementa el módulo de consulta de transporte (líneas, paradas y búsqueda origen-destino), su visualización en un mapa interactivo y la integración con fuentes de datos reales. Se abordan las historias HU-03 a HU-06 y HU-16, en cobertura de los requisitos RF-06 a RF-10 y RF-22, RF-23.
+
+\subsection{Implementación: modelo de datos y búsqueda}
+
+El modelo se apoya en tres entidades (Figura~\ref{fig:modelo-dominio}): \texttt{Stop} (parada física, con código, nombre, municipio y coordenadas), \texttt{Line} (línea, con código, nombre, color y lista de salidas diarias) y \texttt{LineStop}, tabla intermedia que asocia una parada a una línea con su orden (\texttt{sequence}) y los minutos desde el origen (\texttt{minutesFromStart}). Esta estructura permite que una misma parada pertenezca a varias líneas sin duplicar datos.
+
+La búsqueda de trayectos, implementada en \texttt{TransportService} (Figura~\ref{fig:seq-busqueda}), localiza el origen y el destino por nombre en cada línea, comprueba que el origen precede al destino en la secuencia, calcula la duración del tramo como diferencia de minutos acumulados y, para cada salida del día, obtiene la hora de paso por el origen y la de llegada al destino, descartando las salidas anteriores a la hora solicitada y ordenando los resultados. Al seleccionar el origen, el planificador ofrece únicamente los destinos alcanzables aguas abajo (RF-08), y cada parada muestra su municipio cuando aporta información adicional (RF-09).
+
+\subsection{Implementación: integración con datos reales}
+
+Para dotar al prototipo de datos verosímiles (HU-16, RF-22) se integraron varias fuentes complementarias del transporte interurbano del área de Jaén:
+
+\begin{itemize}
+  \item \textbf{API abierta de CTAN} (Red de Consorcios de Transporte de Andalucía), consumida en modo solo lectura para el consorcio de Jaén (\texttt{idConsorcio = 7}). El paquete \texttt{transport/ctan} incluye \texttt{CtanProperties} (configuración), \texttt{CtanClient} (cliente \texttt{RestClient}), los DTO de mapeo del JSON y \texttt{CtanSyncService}, que realiza el \textit{upsert} idempotente de paradas y líneas. Como la API no expone los minutos acumulados por parada, se estiman a partir de la distancia \textit{haversine} entre paradas consecutivas y una velocidad media configurable, garantizando tiempos estrictamente crecientes; las horas de salida se extraen de los horarios reales, con un horario de respaldo cuando una línea no los publica.
+  \item \textbf{\textit{Feed} GTFS unificado de CTAN} (paquete \texttt{transport/gtfs}), que aporta horarios reales (\texttt{stop\_times}) y color de línea (\texttt{route\_color}). \texttt{GtfsSyncService} elige como recorrido canónico la expedición con más paradas y deriva los minutos desde cabecera con las horas reales.
+  \item \textbf{Líneas rurales curadas} (\texttt{CuratedLinesSeeder}), ocho líneas interurbanas (códigos \texttt{JA-01} a \texttt{JA-08}) ajenas al consorcio metropolitano, con coordenadas reales de municipio.
+  \item \textbf{Datos locales de respaldo} (\texttt{TransportDataLoader}), siete líneas y dieciséis paradas del entorno de Jaén que garantizan el arranque del prototipo incluso sin conexión.
+\end{itemize}
+
+El cargador orquesta las fuentes con una estrategia de respaldo (GTFS como origen primario, API REST de CTAN como respaldo y \textit{seed} local como último recurso) y siempre añade las líneas rurales. La carga es idempotente. Adicionalmente, una clase \texttt{CtanTextNormalizer} corrige la capitalización, los acentos de municipios conocidos y los sufijos espurios de los nombres recibidos. En una ejecución real contra la API se sincronizaron 43 líneas y 78 paradas reales del consorcio de Jaén.
+
+\subsection{Implementación: cliente y mapa}
+
+En el cliente se desarrollaron el planificador de trayectos con autocompletado, la vista de líneas y su detalle, y el mapa interactivo basado en Leaflet sobre cartografía de OpenStreetMap (RF-10). Tras una revisión visual, el mapa se rediseñó para mejorar su legibilidad: tiles claros (CartoDB Positron), paradas como \texttt{circleMarker} (renderizado en \textit{canvas} mediante \texttt{preferCanvas}, más eficiente al crecer la red), recorridos con halo de fondo, transiciones suaves (\texttt{flyToBounds}) y \textit{tooltips} de estilo coherente con la aplicación.
+
+\subsection{Decisiones técnicas}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{5.5cm}|p{8.5cm}|}
+\hline
+\textbf{Decisión} & \textbf{Motivación} \\ \hline
+Tabla intermedia \texttt{LineStop} & Permite compartir paradas entre líneas y representar el orden del recorrido. \\ \hline
+Código de parada \texttt{CTAN-<id>} & Clave estable para el \textit{upsert} idempotente; permite re-sincronizar sin duplicar. \\ \hline
+Estimación de minutos por \textit{haversine} & La API de CTAN no publica los minutos por parada; se calculan por distancia y velocidad media. \\ \hline
+Estrategia de respaldo entre fuentes & El prototipo siempre arranca con datos, incluso sin conexión (demo \textit{offline} garantizada). \\ \hline
+Carga de Leaflet dinámica y CSS global & Evita problemas de SSR y asegura que las reglas de posicionamiento lleguen a los elementos que Leaflet crea fuera del árbol Angular. \\ \hline
+\end{tabular}
+\caption{Decisiones técnicas de la iteración 2.}
+\label{tab:dec-it2}
+\end{table}
+
+\subsection{Incidencias y soluciones}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{5cm}|p{7cm}|}
+\hline
+\textbf{Cód.} & \textbf{Síntoma / causa} & \textbf{Solución} \\ \hline
+E2.1 & Peticiones públicas devuelven 403: el \texttt{JwtAuthFilter} falla al validar un \textit{token} de un usuario inexistente (H2 reiniciada). & Hacer el filtro defensivo (\texttt{try/catch}): si la validación falla, se limpia el contexto y se continúa como anónimo. \\ \hline
+E2.2 & \texttt{EntityNotFoundException} devuelve 500 en lugar de 404. & Añadir un \texttt{@ExceptionHandler} específico en el \texttt{GlobalExceptionHandler}. \\ \hline
+E2.3 & Mapa Leaflet roto: tiles desordenadas; el contenedor se inicializa con tamaño \texttt{0} en una SPA con \textit{routing}. & Cargar el CSS de Leaflet globalmente y llamar a \texttt{invalidateSize()} tras crear el mapa. \\ \hline
+E4.1 & La API de CTAN devuelve 404 en \texttt{/v1/Consorcios}. & Usar el patrón completo del enrutado (\texttt{/v1/Consorcios/consorcios}, \texttt{/v1/Consorcios/7/lineas}). \\ \hline
+E4.3 & Riesgo de \texttt{NullPointerException} por interacción de \texttt{@Builder.Default} de Lombok con colecciones. & Construir las líneas nuevas inicializando explícitamente las listas; limpiar las existentes con \texttt{orphanRemoval}. \\ \hline
+\end{tabular}
+\caption{Principales incidencias de la iteración 2 y su solución.}
+\label{tab:inc-it2}
+\end{table}
+
+\subsection{Pruebas de la iteración}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{6.5cm}|p{5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Prueba} & \textbf{Resultado esperado} & \textbf{Res.} \\ \hline
+PR-2.1 & Consulta del catálogo de líneas y paradas. & Listado correcto de datos. & OK \\ \hline
+PR-2.2 & Selección de origen en el planificador. & Solo se ofrecen destinos alcanzables. & OK \\ \hline
+PR-2.3 & Búsqueda de un trayecto válido. & Resultados con horarios y paradas. & OK \\ \hline
+PR-2.4 & Visualización de una línea en el mapa. & Recorrido y paradas representados. & OK \\ \hline
+PR-2.5 & Sincronización contra la API de CTAN en el arranque. & Catálogo poblado con líneas y paradas reales. & OK \\ \hline
+\end{tabular}
+\caption{Pruebas de la iteración 2 (consulta, integración y mapa).}
+\label{tab:pruebas-it2}
+\end{table}
+
 
 \section{Iteración 3: Reservas y selección de asiento}
 \label{sec:iteracion-3}
 
-\textit{[Pendiente. Flujo de reserva de billete y selección de plaza disponible.]}
+\subsection{Objetivo e historias abordadas}
+
+La tercera iteración implementa el flujo de reserva con selección de asiento sobre los trayectos del módulo de transporte. Se abordan las historias HU-07 y HU-08 (RF-11 a RF-13 y RF-16). El pago y la emisión del ticket se trasladan a la iteración siguiente; aquí la reserva queda en estado \textit{pendiente de pago}.
+
+\subsection{Implementación}
+
+En el servidor se definió la entidad \texttt{Reservation} (estado \texttt{ReservationStatus}: pendiente de pago, confirmada o cancelada), con un código legible de formato \texttt{BK-AAAA-NNNNN} y los datos del tramo, el asiento, el precio y la fecha de creación. Una restricción de unicidad sobre la combinación de línea, fecha, hora de salida y asiento impide reservar dos veces la misma plaza en un mismo viaje (RF-13), reforzando la validación del servicio con una garantía a nivel de base de datos. El \textit{layout} del autobús se modela como una clase utilitaria \texttt{SeatLayout} de 10 filas por 4 columnas (40 plazas). El importe lo calcula \texttt{PricingService} mediante una fórmula del prototipo: un precio base de 3,00~\euro{} más 0,12~\euro{} por minuto de trayecto (por ejemplo, 6,60~\euro{} para Jaén--Martos o 10,20~\euro{} para Jaén--Úbeda). El \texttt{ReservationController} expone el mapa de asientos (público), la creación de la reserva, la consulta de \og mis reservas\fg{}, el detalle y la cancelación, protegidos con JWT salvo el primero.
+
+En el cliente se añadieron el botón de reserva en las tarjetas del planificador y los componentes de selección de asiento (con representación visual del autobús y estados libre/seleccionado/ocupado), confirmación, \og mis reservas\fg{} y detalle estilo billete. Un \texttt{BookingFlowService} mantiene el contexto del flujo multipágina (trayecto y asiento seleccionados) mediante \textit{signals} persistidas en \texttt{sessionStorage}, de modo que el proceso sobrevive a recargas.
+
+\subsection{Decisiones técnicas}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{5.5cm}|p{8.5cm}|}
+\hline
+\textbf{Decisión} & \textbf{Motivación} \\ \hline
+\texttt{BookingFlowService} con \texttt{sessionStorage} & Mantiene el contexto del flujo multipaso sin URLs largas ni estado de \textit{router}; resiste recargas. \\ \hline
+\texttt{SeatLayout} como clase utilitaria & El \textit{layout} del autobús es fijo en el prototipo; podrá modelarse por vehículo sin alterar la entidad \texttt{Reservation}. \\ \hline
+Mapa de asientos público & Permite previsualizar la disponibilidad antes de iniciar sesión; la creación de la reserva sí exige JWT. \\ \hline
+Unicidad de asiento en base de datos & Doble protección contra reservas dobles: validación en el servicio y restricción de unicidad. \\ \hline
+Estado \textit{pendiente de pago} desde el inicio & Deja preparada la transición a \textit{confirmada} que implementa la iteración 4 al simular el pago. \\ \hline
+\end{tabular}
+\caption{Decisiones técnicas de la iteración 3.}
+\label{tab:dec-it3}
+\end{table}
+
+\subsection{Incidencias y soluciones}
+
+La incidencia más relevante de esta iteración (E3.1) consolidó el manejo de sesiones caducadas. Al confirmar una reserva con un \textit{token} correspondiente a un usuario ya inexistente, la API respondía con un 403 confuso. La solución, estándar en aplicaciones SPA sobre Spring Security sin estado, consistió en un \texttt{JsonAuthenticationEntryPoint} que devuelve un 401 con un cuerpo JSON claro y, en el cliente, un \texttt{authErrorInterceptor} que, ante un 401, limpia la sesión y redirige al inicio de sesión informando de la caducidad. Con ello se logra la semántica HTTP correcta (401 \textit{no autenticado} frente a 403 \textit{sin permiso}) y una autocuración de la sesión transparente para el usuario.
+
+\subsection{Pruebas de la iteración}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{6.5cm}|p{5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Prueba} & \textbf{Resultado esperado} & \textbf{Res.} \\ \hline
+PR-3.1 & Reserva de un asiento disponible. & Reserva creada en estado pendiente. & OK \\ \hline
+PR-3.2 & Intento de reservar un asiento ocupado. & Operación rechazada. & OK \\ \hline
+PR-3.3 & Cálculo del importe de la reserva. & Importe correcto según la fórmula. & OK \\ \hline
+PR-3.4 & Consulta de las reservas del usuario. & Listado correcto de sus reservas. & OK \\ \hline
+PR-3.5 & Reserva con \textit{token} caducado. & Redirección al inicio de sesión (401). & OK \\ \hline
+\end{tabular}
+\caption{Pruebas de la iteración 3 (reservas y asiento).}
+\label{tab:pruebas-it3}
+\end{table}
+
 
 \section{Iteración 4: Pago simulado y ticket electrónico}
 \label{sec:iteracion-4}
 
-\textit{[Pendiente. Confirmación de reserva, simulación del pago y generación del ticket con QR (ZXing).]}
+\subsection{Objetivo e historias abordadas}
+
+La cuarta iteración completa el ciclo del viaje con el pago simulado, la emisión del ticket electrónico, su verificación y la cancelación. Se abordan las historias HU-09 a HU-12 (RF-14, RF-15, RF-17 y RF-18).
+
+\subsection{Implementación}
+
+En el servidor se incorporó \texttt{SimulatedPaymentGateway}, que simula la autorización del pago sin realizar transacciones reales (restricción R-04), y se amplió \texttt{ReservationService} con la operación de pago: al confirmarse, la reserva pasa a \textit{confirmada} y se registran el instante de pago, los últimos dígitos de la tarjeta y un \textit{token} para el QR. El ticket se genera con \texttt{QrCodeService}, basado en la biblioteca ZXing, conforme al diagrama de secuencia de la Figura~\ref{fig:seq-reserva}. Se añadieron la verificación pública del ticket a partir del QR (Figura~\ref{fig:seq-verificacion}, RF-18) y la cancelación con su política de reembolso simulado (RF-17). En el cliente se desarrollaron la pasarela de pago simulado, la pantalla del ticket con el código QR y las acciones de cancelación desde el área de reservas.
+
+\subsection{Pruebas de la iteración}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{6.5cm}|p{5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Prueba} & \textbf{Resultado esperado} & \textbf{Res.} \\ \hline
+PR-4.1 & Pago simulado de una reserva pendiente. & Reserva confirmada y ticket emitido. & OK \\ \hline
+PR-4.2 & Pago rechazado por la pasarela. & Reserva permanece pendiente. & OK \\ \hline
+PR-4.3 & Verificación de un ticket válido. & Resultado positivo con datos del viaje. & OK \\ \hline
+PR-4.4 & Verificación de un ticket cancelado. & Resultado negativo con el motivo. & OK \\ \hline
+PR-4.5 & Cancelación de una reserva confirmada. & Reserva cancelada y reembolso aplicado. & OK \\ \hline
+\end{tabular}
+\caption{Pruebas de la iteración 4 (pago y ticket).}
+\label{tab:pruebas-it4}
+\end{table}
+
 
 \section{Iteración 5: Incidencias, correo, FAQ y contacto}
 \label{sec:iteracion-5}
 
-\textit{[Pendiente. Avisos por correo electrónico, módulo de preguntas frecuentes y formulario de contacto.]}
+\subsection{Objetivo e historias abordadas}
+
+La quinta iteración añade la comunicación con el usuario: notificaciones por correo electrónico, sección de preguntas frecuentes y formulario de contacto. Se abordan las historias HU-13 a HU-15 (RF-19 a RF-21).
+
+\subsection{Implementación}
+
+En el servidor se implementó \texttt{EmailService} sobre \texttt{JavaMailSender}, que envía un correo HTML de confirmación tras el pago, incrustando el código QR del ticket como imagen en línea (RF-19). El envío se diseñó tolerante a fallos: si el servidor de correo no está disponible, la operación de pago o de contacto no se interrumpe ni falla (RNF-06). Se añadió el módulo de contacto (\texttt{ContactController} y \texttt{ContactRequest} con validación de datos), que remite el mensaje al buzón de soporte (RF-21). Durante el desarrollo, las notificaciones se comprueban con un servidor de correo de pruebas (Mailpit), que captura los mensajes salientes sin enviarlos a destinatarios reales.
+
+En el cliente se desarrollaron la sección de preguntas frecuentes, mediante un acordeón con contenido internacionalizado (RF-20), y el formulario de contacto, con validación reactiva y notificación del resultado. Ambas secciones se incorporaron a la barra de navegación y al sistema de traducciones.
+
+\subsection{Decisiones técnicas}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{5.5cm}|p{8.5cm}|}
+\hline
+\textbf{Decisión} & \textbf{Motivación} \\ \hline
+Envío de correo tolerante a fallos & Las operaciones principales (pago, contacto) nunca deben fallar por una incidencia del servicio de correo (RNF-06). \\ \hline
+QR incrustado en línea (\textit{inline}) & El ticket viaja dentro del propio correo HTML, sin depender de recursos externos. \\ \hline
+Mailpit como servidor de pruebas & Permite verificar los correos en desarrollo sin enviar mensajes a destinatarios reales. \\ \hline
+Contenido de FAQ internacionalizado & Reutiliza la infraestructura de \textit{ngx-translate} y mantiene la coherencia es/en. \\ \hline
+\end{tabular}
+\caption{Decisiones técnicas de la iteración 5.}
+\label{tab:dec-it5}
+\end{table}
+
+\subsection{Pruebas de la iteración}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{6.5cm}|p{5cm}|c|}
+\hline
+\textbf{Código} & \textbf{Prueba} & \textbf{Resultado esperado} & \textbf{Res.} \\ \hline
+PR-5.1 & Pago de una reserva con correo activo. & Correo de confirmación con QR recibido. & OK \\ \hline
+PR-5.2 & Pago con el servidor de correo caído. & Pago confirmado pese al fallo de envío. & OK \\ \hline
+PR-5.3 & Envío del formulario de contacto. & Mensaje recibido en el buzón de soporte. & OK \\ \hline
+PR-5.4 & Envío de contacto con datos inválidos. & Validación que impide el envío. & OK \\ \hline
+PR-5.5 & Consulta de la sección de FAQ. & Preguntas y respuestas mostradas. & OK \\ \hline
+\end{tabular}
+\caption{Pruebas de la iteración 5 (correo, FAQ y contacto).}
+\label{tab:pruebas-it5}
+\end{table}
+
 
 \section{Iteración 6: Integración y pruebas finales}
 \label{sec:iteracion-6}
 
-\textit{[Pendiente. Corrección de incidencias, validación general y recopilación de evidencias.]}
+\subsection{Objetivo}
+
+La sexta iteración se dedica a la integración del conjunto, la corrección de incidencias detectadas y la validación general del prototipo. En ella se consolidan los módulos de las iteraciones anteriores, se revisa la coherencia de la experiencia de extremo a extremo y se recopilan las evidencias que sustentan las pruebas finales.
+
+\subsection{Trabajo realizado}
+
+Se ejecutaron pruebas de integración del flujo completo del viaje —desde el registro hasta la recepción del correo con el ticket—, se ajustaron detalles de la interfaz y se revisaron los mensajes de internacionalización. Entre las mejoras de integración de esta fase destacan la sustitución de las estadísticas fijas de la página de inicio por datos reales obtenidos del catálogo (mediante \texttt{forkJoin}), la corrección del renderizado del mini-mapa del detalle de línea (resuelta con \textit{signals} \texttt{viewChild} y un \texttt{effect()} que dibuja el mapa cuando coinciden datos y elemento del DOM), la normalización de los horarios al formato \texttt{HH:MM} y la unificación del estilo visual mediante iconos de Material en lugar de elementos decorativos. Las pruebas resultantes se describen de forma agrupada en la sección siguiente.
+
 
 \section{Pruebas finales}
 \label{sec:pruebas-finales}
 
-\textit{[Pendiente. Pruebas realizadas tras la conclusión del desarrollo del proyecto, complementarias a las pruebas realizadas dentro de cada iteración.]}
+Concluido el desarrollo iterativo, se realizaron pruebas finales sobre el sistema completo, complementarias a las efectuadas dentro de cada iteración. Estas pruebas se clasifican en pruebas de verificación, de validación y de usabilidad.
+
 
 \subsection{Pruebas de verificación del sistema}
 
-\textit{[Pendiente.]}
+Las pruebas de verificación comprueban que el sistema se ha construido correctamente, es decir, que cumple los requisitos especificados. Se verificó la trazabilidad entre los requisitos funcionales (Tablas~\ref{tab:rf-auth} a~\ref{tab:rf-comunicacion}) y la funcionalidad implementada, comprobando que cada requisito cuenta con, al menos, una prueba asociada en las tablas de las iteraciones precedentes. Se verificó también la correcta integración entre el cliente y el servidor a través de la API REST, el cumplimiento de las condiciones de seguridad (autenticación por JWT con respuesta 401 coherente y cifrado de contraseñas con BCrypt) y el comportamiento del sistema ante situaciones de error, como \textit{tokens} caducados, recursos inexistentes o la indisponibilidad del servicio de correo.
+
 
 \subsection{Pruebas de validación del sistema}
 
-\textit{[Pendiente.]}
+Las pruebas de validación comprueban que el sistema construido es el que el usuario necesita, esto es, que satisface las historias de usuario definidas. Se validó el recorrido principal del viajero: registro e inicio de sesión, consulta y búsqueda de trayectos sobre datos reales de CTAN, reserva con selección de asiento, pago simulado, obtención del ticket con QR, recepción del correo de confirmación y, en su caso, cancelación de la reserva. Se validó igualmente la verificación pública del ticket por parte del personal de control y la comunicación a través de la sección de preguntas frecuentes y del formulario de contacto. En todos los casos, el comportamiento observado se ajustó al valor esperado por las historias de usuario de la Tabla~\ref{tab:historias-usuario}.
+
 
 \subsection{Validación de la usabilidad del sistema}
 
-\textit{[Pendiente.]}
+La validación de la usabilidad se centró en comprobar que la interacción con el prototipo resulta clara, coherente y accesible desde distintos dispositivos (RNF-01). Se revisó la navegación entre las áreas funcionales, la coherencia visual de los componentes, la disponibilidad del sistema en español e inglés (RNF-02), la legibilidad de la información de transporte sobre el mapa rediseñado y la claridad de los mensajes de error y confirmación. Las observaciones derivadas de esta validación se incorporaron como ajustes menores de la interfaz durante la iteración de integración, como la mejora del estilo del mapa, la normalización del formato de los horarios y la sustitución de elementos decorativos por iconografía coherente.

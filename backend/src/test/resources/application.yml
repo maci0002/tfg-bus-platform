@@ -1,6 +1,9 @@
+# Configuración exclusiva para la ejecución de pruebas.
+# Usa H2 en memoria y desactiva las integraciones externas (correo, CTAN y GTFS)
+# para que el contexto de Spring cargue de forma rápida y sin acceso a la red.
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
     driver-class-name: org.h2.Driver
     username: sa
     password: ""
@@ -8,6 +11,14 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  mail:
+    host: localhost
+    port: 1025
+
+server:
+  servlet:
+    context-path: /api
 
 app:
   jwt:
@@ -15,3 +26,28 @@ app:
     expiration-ms: 3600000
   cors:
     allowed-origins: http://localhost:4200
+  ticket:
+    verify-base-url: http://localhost:8080/api/bookings/verify
+  mail:
+    enabled: false
+    from: "BusJaén <noreply@busjaen.local>"
+    support-inbox: soporte@busjaen.local
+
+# Integraciones externas desactivadas durante las pruebas (sin acceso a red).
+ctan:
+  enabled: false
+  base-url: http://api.ctan.es/v1
+  consorcio-id: 7
+  connect-timeout-ms: 5000
+  read-timeout-ms: 15000
+  average-speed-kmh: 45
+  max-lines: 0
+  min-stops: 3
+
+gtfs:
+  enabled: false
+  url: https://api.ctan.es/v1/datos/UNIFICADO/gtfs.zip
+  agency-id: CTJA
+  connect-timeout-ms: 10000
+  read-timeout-ms: 60000
+  min-stops: 3

@@ -1,24 +1,58 @@
 \chapter{Modelo de negocio}
 \label{cap:modelo-negocio}
 
-\textit{[Opcional. Capítulo dedicado a proponer un modelo de negocio para una hipotética comercialización futura del prototipo de gestión de transporte. No debe confundirse con la relación contractual real o simulada que dio lugar al proyecto: aquí se aborda la posible comercialización del producto resultante.]}
+Este capítulo plantea, con carácter prospectivo, un posible modelo de negocio para una hipotética comercialización futura del prototipo de gestión de transporte desarrollado. No se trata de una relación contractual real, sino de un ejercicio que explora cómo podría convertirse el producto resultante en una solución comercializable, en línea con lo previsto por la plantilla de la EPSJ.
+
 
 \section{Objetivos}
 \label{sec:negocio-objetivos}
 
-\textit{[Pendiente. Objetivos cualitativos y cuantitativos desde el punto de vista comercial.]}
+Desde el punto de vista comercial, el objetivo cualitativo sería ofrecer a consorcios de transporte, operadores de autobús de pequeño y mediano tamaño y administraciones locales una plataforma web llave en mano que unifique la información al viajero (líneas, paradas, horarios y mapa) con la venta y gestión de billetes, partiendo de los datos abiertos de transporte ya disponibles. Como objetivos cuantitativos orientativos se plantearían la captación de un primer cliente piloto durante el primer año, la incorporación progresiva de operadores adicionales y la consecución de la sostenibilidad económica del producto a medio plazo mediante un modelo de suscripción.
+
 
 \section{Análisis del entorno}
 \label{sec:negocio-entorno}
 
-\textit{[Pendiente. Análisis del entorno económico (PESTEL) incluyendo factores políticos, económicos, socioculturales y tecnológicos. Se recomienda matriz DAFO.]}
+\subsection{Análisis PESTEL}
+
+\begin{itemize}
+  \item \textbf{Político-legal.} El impulso de las administraciones a la movilidad sostenible y a los datos abiertos de transporte favorece soluciones digitales como la propuesta. En contrapartida, la comercialización exigiría cumplir la normativa de protección de datos y, en caso de venta de billetes, la regulación de pagos.
+  \item \textbf{Económico.} La presión por optimizar costes en el transporte público y la digitalización de servicios crean oportunidad de mercado, si bien los presupuestos de operadores pequeños pueden ser limitados.
+  \item \textbf{Sociocultural.} La creciente adopción de servicios digitales por parte de la ciudadanía y la preferencia por la consulta y compra desde el móvil refuerzan la demanda de plataformas accesibles.
+  \item \textbf{Tecnológico.} La disponibilidad de estándares abiertos (GTFS, GTFS-Realtime) y de \textit{frameworks} maduros reduce la barrera técnica y facilita la integración con múltiples operadores.
+  \item \textbf{Ecológico.} El fomento del transporte público como alternativa sostenible al vehículo privado alinea el producto con objetivos medioambientales.
+\end{itemize}
+
+\subsection{Análisis DAFO}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{7cm}|p{7cm}|}
+\hline
+\textbf{Debilidades} & \textbf{Amenazas} \\ \hline
+Producto en fase de prototipo; pago aún simulado. Dependencia de la calidad de los datos de terceros. & Competencia de plataformas consolidadas y de soluciones propias de grandes operadores. \\ \hline
+\textbf{Fortalezas} & \textbf{Oportunidades} \\ \hline
+Integración con datos abiertos, arquitectura desacoplada y ampliable, experiencia de usuario unificada. & Operadores pequeños y medianos sin solución digital propia; impulso público a la movilidad y a los datos abiertos. \\ \hline
+\end{tabular}
+\caption{Análisis DAFO del producto.}
+\label{tab:dafo}
+\end{table}
+
 
 \section{Plan de mercadotecnia}
 \label{sec:negocio-marketing}
 
-\textit{[Pendiente. Política de producto, política de precios, estrategia de comunicación y distribución.]}
+\textbf{Política de producto.} Plataforma web modular ofrecida como servicio (SaaS), con un núcleo de consulta y planificación y módulos adicionales de reserva, pago y comunicación, personalizable con la imagen de cada operador.
+
+\textbf{Política de precios.} Modelo de suscripción por niveles según el tamaño del operador y los módulos contratados, con una posible comisión por transacción en la venta de billetes. Se contemplaría un periodo de prueba para facilitar la captación.
+
+\textbf{Estrategia de comunicación.} Presencia en ferias y foros de movilidad y transporte público, demostraciones a consorcios y administraciones, y difusión a través de casos de éxito del cliente piloto.
+
+\textbf{Distribución.} Comercialización directa mediante venta consultiva a operadores y administraciones, dado el carácter especializado del producto y la necesidad de integración y soporte.
+
 
 \section{Forma jurídica de la empresa}
 \label{sec:negocio-forma}
 
-\textit{[Pendiente. Forma jurídica de la empresa para iniciar la comercialización (incluyendo, en su caso, el régimen de trabajadores autónomos).]}
+Para iniciar la comercialización, la forma jurídica más razonable en una fase inicial sería la de trabajador autónomo o, en función del volumen y de la necesidad de limitar la responsabilidad, una sociedad limitada (S.L.), por su flexibilidad y por el reducido capital social mínimo requerido. La elección definitiva dependería de la previsión de ingresos, del número de socios y del riesgo asumido, y se acompañaría del cumplimiento de las obligaciones fiscales y laborales correspondientes.

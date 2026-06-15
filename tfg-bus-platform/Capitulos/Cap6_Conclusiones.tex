@@ -1,4 +1,40 @@
 \chapter{Conclusiones y trabajos futuros}
 \label{cap:conclusiones}
 
-\textit{[Pendiente. Enumeración de las principales conclusiones obtenidas tras terminar el proyecto, en especial las que suponen un avance en los términos descritos en el trabajo. Se incluirá también una propuesta de trabajo futuro que recoja los aspectos más relevantes susceptibles de ser mejorados o evolucionados (por ejemplo, integración con más operadores, pagos reales con pasarela, aplicación móvil nativa, notificaciones \textit{push}, etc.).]}
+Este capítulo recoge las principales conclusiones obtenidas tras la realización del trabajo y propone un conjunto de líneas de mejora y evolución futuras. Las conclusiones se formulan en relación con los objetivos planteados en el Capítulo~\ref{cap:especificacion} y con los resultados presentados en el Capítulo~\ref{cap:experimentacion}.
+
+
+\section{Conclusiones}
+\label{sec:conclusiones}
+
+El trabajo ha culminado con el desarrollo de un prototipo web funcional para la gestión de transporte en autobús en el ámbito de Jaén, que integra en una única plataforma la consulta de información de transporte, la planificación de trayectos, la visualización en mapa, la reserva con selección de asiento, el pago simulado, la emisión de un ticket electrónico con código QR y la comunicación con el usuario mediante correo electrónico, preguntas frecuentes y formulario de contacto. Con ello se considera alcanzado el objetivo general del proyecto.
+
+En relación con los objetivos específicos, pueden extraerse las siguientes conclusiones:
+
+\begin{itemize}
+  \item Se ha diseñado e implementado una arquitectura cliente-servidor desacoplada, con una API REST sin estado y un cliente SPA, que ha demostrado ser adecuada para organizar el desarrollo por módulos y mantener la coherencia a lo largo de las iteraciones.
+  \item Se ha logrado integrar el prototipo con fuentes de datos reales de transporte (la API abierta de CTAN y el \textit{feed} GTFS del consorcio de Jaén), lo que constituye uno de los aportes más valiosos del trabajo, al sustituir datos aproximados por información pública verosímil.
+  \item Se ha validado el ciclo completo del viaje, incluidos el pago simulado y la generación y verificación del ticket electrónico, demostrando la viabilidad funcional de la solución dentro de las restricciones de un entorno de prototipado.
+  \item Se ha aplicado una metodología ágil (Scrum adaptada a un único desarrollador) apoyada en un control de versiones por iteraciones, lo que ha permitido un desarrollo incremental, trazable y verificable.
+\end{itemize}
+
+Desde un punto de vista formativo, el trabajo ha supuesto la puesta en práctica integrada de competencias de análisis, diseño, desarrollo \textit{full-stack}, integración con servicios externos, seguridad, pruebas y documentación, así como la resolución de numerosas incidencias técnicas reales (recogidas en el Capítulo~\ref{cap:desarrollo}) propias de la construcción de una aplicación moderna.
+
+
+\section{Trabajos futuros}
+\label{sec:trabajos-futuros}
+
+El carácter de prototipo del sistema deja abiertas diversas líneas de evolución que permitirían acercarlo a un producto en explotación real:
+
+\begin{itemize}
+  \item \textbf{Integración con más operadores y consorcios.} Extender la sincronización a otros consorcios de transporte de Andalucía o a operadores adicionales, aprovechando la arquitectura de ingesta de datos ya desacoplada.
+  \item \textbf{Información en tiempo real.} Incorporar GTFS-Realtime para reflejar retrasos, posiciones de vehículos e incidencias en directo, superando el tratamiento estático actual de los horarios.
+  \item \textbf{Tiempos de viaje precisos.} Sustituir la estimación por distancia geográfica por tiempos reales de recorrido cuando la fuente los publique, o mediante servicios de cálculo de rutas.
+  \item \textbf{Pago real.} Sustituir la pasarela simulada por una integración con un proveedor de pago real (por ejemplo, mediante una pasarela en modo \textit{sandbox} primero), con la consiguiente gestión de seguridad y cumplimiento normativo.
+  \item \textbf{Aplicación móvil y notificaciones \textit{push}.} Complementar la aplicación web con una aplicación móvil nativa y con notificaciones \textit{push} de avisos e incidencias, ampliando los canales de comunicación más allá del correo.
+  \item \textbf{Accesibilidad y experiencia de usuario.} Profundizar en la conformidad con estándares de accesibilidad web y en la realización de pruebas de usabilidad con usuarios reales.
+  \item \textbf{Panel de administración.} Añadir un área de gestión para operadores que permita administrar líneas, horarios, tarifas e incidencias desde la propia plataforma.
+  \item \textbf{Despliegue en producción.} Migrar de forma definitiva a PostgreSQL, contenerizar la aplicación y desplegarla en un entorno en la nube con integración y despliegue continuos.
+\end{itemize}
+
+En conjunto, estas líneas de trabajo confirman que el prototipo desarrollado constituye una base sólida y ampliable sobre la que seguir construyendo una solución integral de gestión de transporte en autobús.
